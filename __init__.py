@@ -2,7 +2,7 @@
 ################################################################################
 ## 
 ## SVGrafZ
-## Version: $Id: __init__.py,v 1.14 2004/03/09 21:23:57 ctheune Exp $
+## Version: $Id: __init__.py,v 1.15 2004/03/12 11:05:52 ctheune Exp $
 ##
 ################################################################################
 
@@ -79,7 +79,13 @@ def startBatikServer():
     
     # Start a new batik server blindly
     LOG("SVGrafZ", 0, "Starting new BatikServer.")
-    os.spawnl(os.P_NOWAIT, config.SVGrafZ_Java_Path, "-Djava.awt.headless==true", "-classpath", "%s;%s" % (config.SVGrafZ_Batik_Path, config.SVGrafZ_BatikServer), "batikServer", "-l", "batikserver.log")
+    if os.name == "posix":
+        pathsep = ":"
+    elif os.name == "nt":
+        pathsep = ";"
+    else:
+        raise AssertionError, "Unsupported Operating System: %s" % os.name
+    os.spawnl(os.P_NOWAIT, config.SVGrafZ_Java_Path, "-Djava.awt.headless==true", "-classpath", "%s%s%s" % (config.SVGrafZ_Batik_Path, pathsep, config.SVGrafZ_BatikServer), "batikServer", "-l", "batikserver.log")
     sleep(3)
 
     try:

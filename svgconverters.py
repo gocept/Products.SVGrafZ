@@ -2,7 +2,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: FormatConverters
-## Version: $Id: svgconverters.py,v 1.16 2004/03/09 15:10:37 ctheune Exp $
+## Version: $Id: svgconverters.py,v 1.17 2004/03/12 11:05:52 ctheune Exp $
 ##
 ################################################################################
 
@@ -13,9 +13,36 @@ import socket
 from urllib import quote
 
 from interfaces import ISVGConverter
-from config import SVGrafZ_Java_Path, SVGrafZ_Batik_Path
-from config import SVGrafZ_BatikServer_Host, SVGrafZ_BatikServer_Port
-from config import SVGrafZ_SVG_not_supported, SVGrafZ_download_PDF
+import config
+
+import Queue
+from thread import start_new_thread
+from time import sleep
+import os
+
+unlink_queue = Queue.Queue(0)
+
+def unlinker(queue):
+    print "unlinker started"
+    while 1:
+        print "round"
+        try:
+            x, times = queue.get()
+        except Exception, m:
+            print "exception on pop", m
+            sleep(1)
+            continue
+        try:
+            print "trying to unlink", x,
+            os.unlink(x)
+            print "done"
+        except Exception, m:
+            print "requeing", x, m
+            if times < 20:
+                queue.put((x, times+1))
+        sleep(1)
+
+start_new_thread(unlinker, (unlink_queue,))
 
 class SVG2xxx:
     """Abstract base class for converters."""
@@ -91,10 +118,8 @@ class SVG2SVG (SVG2xxx):
                  width,
                  height,
                  url,
-                 SVGrafZ_SVG_not_supported)
+                 config.SVGrafZ_SVG_not_supported)
     getHTML = staticmethod(getHTML)
-
-
 
 
 class SVG2Batik (SVG2xxx):
@@ -107,16 +132,13 @@ class SVG2Batik (SVG2xxx):
 
     def __init__(self):
         """Init."""
-        global SVGrafZ_Java_Path, SVGrafZ_Batik_Path
-        global SVGrafZ_BatikServer_Host, SVGrafZ_BatikServer_Port
-
         self.stylesheetPath = None
 
         try:
-            a = SVGrafZ_Java_Path
-            a = SVGrafZ_Batik_Path
-            a = SVGrafZ_BatikServer_Host
-            a = SVGrafZ_BatikServer_Port
+            a = config.SVGrafZ_Java_Path
+            a = config.SVGrafZ_Batik_Path
+            a = config.SVGrafZ_BatikServer_Host
+            a = config.SVGrafZ_BatikServer_Port
         except (NameError):
             self.error_text = 'Java or Batik-Path not set in config.py. \
             Please talk to your Administrator.'
@@ -147,9 +169,6 @@ class SVG2Batik (SVG2xxx):
         ret = False
         if self.error_text:
             return ret
-
-        global SVGrafZ_Java_Path, SVGrafZ_Batik_Path
-        global SVGrafZ_BatikServer_Host, SVGrafZ_BatikServer_Port
         
         # write source data to tmp-file
         sourceFile = mktemp('SVGrafZ')
@@ -164,8 +183,9 @@ class SVG2Batik (SVG2xxx):
         rfh.close()
 
         # try connection to batikServer
+        import pdb; pdb.set_trace() 
         try:
-            conn = Telnet(SVGrafZ_BatikServer_Host, SVGrafZ_BatikServer_Port)
+            conn = Telnet(config.SVGrafZ_BatikServer_Host, config.SVGrafZ_BatikServer_Port)
             cmd = 'CONF %s TO %s AS %s BSP 1.0\n\n' % (
                 quote(sourceFile),
                 quote(resultFile),
@@ -175,10 +195,10 @@ class SVG2Batik (SVG2xxx):
             if conn.read_all():
                 ret = True
             conn.close()
-        except (socket.error): # no batikServer, use batikRenderer
-            cmd = SVGrafZ_Java_Path + \
+        except Exception: # no batikServer, use batikRenderer
+            cmd = config.SVGrafZ_Java_Path + \
                   ' -Djava.awt.headless=true -jar ' + \
-                  SVGrafZ_Batik_Path + \
+                  config.SVGrafZ_Batik_Path + \
                   ' -d ' + resultFile + \
                   ' -m ' + self.getDestinationFormat() + \
                   ' ' + sourceFile
@@ -194,10 +214,11 @@ class SVG2Batik (SVG2xxx):
             rfh.close()
 
         # cleaning up
-        if self.stylesheetPath:
-            unlink(self.stylesheetPath)
-        unlink(sourceFile)
-        unlink(resultFile)
+        print "putting in unlinker"
+        if self.stylesheetPath:     # XXX this can fail badly on windows
+            unlink_queue.put((self.stylesheetPath, 0))
+        unlink_queue.put((sourceFile, 0))
+        unlink_queue.put((resultFile, 0))
         return ret
 
     def getErrorResult(self):
@@ -268,5 +289,5 @@ class SVG2PDF (SVG2Batik):
             height,
             url,
             url,
-            SVGrafZ_download_PDF)
+            config.SVGrafZ_download_PDF)
     getHTML = staticmethod(getHTML)
