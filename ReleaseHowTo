@@ -7,3 +7,4 @@ ReleaseHowTo
 - cvs checkin der Änderungen
 - cvs tag
 - ./makeRelease ausrufen
+- Dokumentation auf Webseite updaten
