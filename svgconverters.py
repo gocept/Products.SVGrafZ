@@ -1,13 +1,12 @@
 ################################################################################
 ## 
 ## SVGrafZ: FormatConverters
-## Version: $Id: svgconverters.py,v 1.1 2003/05/23 12:43:18 mac Exp $
+## Version: $Id: svgconverters.py,v 1.2 2003/05/23 12:47:55 mac Exp $
 ##
 ################################################################################
 
 from os import popen, unlink, path
 from tempfile import mktemp
-from urllib import urlretrieve
 
 from interfaces import ISVGConverter
 from config import SVGrafZ_Java_Path, SVGrafZ_Batik_Path
