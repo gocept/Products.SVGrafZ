@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ
-## Version: $Id: svgrafz.py,v 1.4 2003/04/16 14:14:38 mac Exp $
+## Version: $Id: svgrafz.py,v 1.5 2003/04/17 10:43:19 mac Exp $
 ##
 ################################################################################
 
@@ -12,9 +12,14 @@ from AccessControl import ClassSecurityInfo
 from Globals import InitializeClass
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from helper import TALESMethod
+from ZODB.PersistentMapping import PersistentMapping
 
 _www = os.path.join(os.path.dirname(__file__), 'www')
 _defaultSVGrafZ = 'defaultSVGrafZ'
+
+def pdb():
+    import pdb
+    pdb.set_trace()
 
 
 class SVGrafZProduct(SimpleItem):
@@ -24,7 +29,7 @@ class SVGrafZProduct(SimpleItem):
 
     manage_options = (
         {'label':'Properties', 'action':'manage_editForm'},
-        {'label':'View', 'action':'html'},
+        {'label':'View', 'action':'manage_view'},
         ) + SimpleItem.manage_options
 
 
@@ -33,12 +38,16 @@ class SVGrafZProduct(SimpleItem):
     security.declareProtected('View management screens', 'manage_editForm')
     manage_editForm = PageTemplateFile('SVGrafZEdit', _www)
 
+    security.declareProtected('View management screens', 'manage_view')
+    manage_view = PageTemplateFile('SVGrafZView', _www)
+
 
     security.declareProtected('View management screens', 'manage_edit')
     def manage_edit(self, REQUEST=None):# title, graph, gridlines, height, width, REQUEST=None):
         """Save the new property values."""
         self.changeProperties(REQUEST)
-        REQUEST.RESPONSE.redirect('../manage_main')
+        return self.manage_editForm(manage_tabs_message = 'Properties saved.')
+
 
     security.declareProtected('View management screens', 'changeProperties')
     def changeProperties(self, REQUEST=None, encoding='iso-8859-1', **kw):
@@ -46,104 +55,121 @@ class SVGrafZProduct(SimpleItem):
             REQUEST = kw
         if REQUEST == {}:
             return
-        
-        
-        self.dat['title']     = REQUEST.get("title", self.title)
-        self.dat['graphname'] = REQUEST.get("graph", self.graphname)
-        self.dat['stylesheet']= REQUEST.get("stylesheet", self.stylesheet)
-        try:
-            if REQUEST.get("gridlines"):
-                self.dat['gridlines'] = int(REQUEST.get("gridlines"))
-            if REQUEST.get("height"):
-                self.dat['height']    = int(REQUEST.get("height"))
-            if REQUEST.get("width"):
-                self.dat['width']     = int(REQUEST.get("width"))
-        except ValueError:
-            raise ValueError, 'gridlines, height, width must be integer numbers'
-        
 
+        data = ['title', 'graphname', 'stylesheet']
+        for d in data:
+            req = REQUEST.get(d, None)
+            if req:
+                self.dat[d] = req
+            else:
+                self.dat[d] = None
+
+        try:
+            dataInt = ["gridlines", "height", "width"]
+            for dd in dataInt:
+                if REQUEST.get(dd):
+                    self.dat[dd] = int(REQUEST.get(dd))
+                else:
+                    self.dat[dd] = None
+        except ValueError:
+            raise ValueError, '%s must be an integer number' % (dd)
+        
         # Update TALES Methods
         tales = ["data", "legend", "colnames", ]
         for x in tales:
             expression = REQUEST.get(x)
             if expression is None:
-                continue
-            self.dat[x] = TALESMethod(unicode(expression, encoding))
-
-        self._p_changed = 1 # tell Persistence Module of change
+                self.dat[x] = TALESMethod(None)
+            else:
+                self.dat[x] = TALESMethod(unicode(expression, encoding))
 
 
     def __init__(self, id):
         self.id        = id
-        self.dat = {'title':     None,
-                    'graphname': None,
-                    'gridlines': None,
-                    'height':    None,
-                    'width':     None,
-                    'data':      None,
-                    'legend':    None,
-                    'colnames':  None,
-                    'stylesheet':None,
-                    }
+        self.dat = PersistentMapping() # automatical Persictence of Dictionary
+        self.dat.update({'title':     None,
+                         'graphname': None,
+                         'gridlines': None,
+                         'height':    None,
+                         'width':     None,
+                         'data':      TALESMethod(None),
+                         'legend':    TALESMethod(None),
+                         'colnames':  TALESMethod(None),
+                         'stylesheet':None,
+                         })
 
     security.declareProtected('View', 'title')
     def title(self, default=None):
         "get title."
-        self.getAttribute('title', None, default)
+        return self.getAttribute('title', None, default)
 
     security.declareProtected('View', 'graphname')
     def graphname(self, default=None):
         "get graphname."
-        self.getAttribute('graphname', Registry.getDefaultKindName(), default)
+        return self.getAttribute('graphname',
+                                 Registry.getDefaultKindName(),
+                                 default)
 
     security.declareProtected('View', 'gridlines')
     def gridlines(self, default=None):
         "get gridlines."
-        self.getAttribute('gridlines', 9, default)
+        return self.getAttribute('gridlines', 9, default)
 
     security.declareProtected('View', 'height')
     def height(self, default=None):
         "get height."
-        self.getAttribute('height', 300, default)
+        return self.getAttribute('height', 300, default)
 
     security.declareProtected('View', 'width')
     def width(self, default=None):
         "get width."
-        self.getAttribute('width', 600, default)
+        return self.getAttribute('width', 600, default)
 
     security.declareProtected('View', 'data')
     def data(self, default=None):
         "get data."
-        self.getAttribute('data', None, default)
+        return self.getAttribute('data', TALESMethod(None), default)
 
     security.declareProtected('View', 'legend')
     def legend(self, default=None):
         "get legend."
-        self.getAttribute('legend', None, default)
+        return self.getAttribute('legend', TALESMethod(None), default)
 
     security.declareProtected('View', 'colnames')
     def colnames(self, default=None):
         "get colnames."
-        self.getAttribute('colnames', None, default)
+        return self.getAttribute('colnames', TALESMethod(None), default)
 
     security.declareProtected('View', 'stylesheet')
     def stylesheet(self, default=None):
         "get stylesheet."
-        self.getAttribute('stylesheet', None, default)
+        return self.getAttribute('stylesheet', None, default)
 
 
     def getAttribute(self, attrib, defaultVal, default=None):
         "Get the value of an attribute or aquire it."
         if not default: # try in self first if not excplicitly getting defaults
             if self.dat[attrib] is not None:
-                return self.dat[attrib]
+                if isinstance(self.dat[attrib], TALESMethod):
+                    if self.dat[attrib].getExpression():
+                        return self.dat[attrib]
+                else:
+                    return self.dat[attrib]
         return self.aquireAttribute(attrib, defaultVal)
 
 
     def aquireAttribute(self, attrib, defaultVal):
         "Aquire an attribute from default."
         try:
-            default = getattr(self, _defaultSVGrafZ)
+            if self.id == _defaultSVGrafZ:
+                # go one directory up, if self is defaultGraph
+                default = getattr(self.aq_inner.aq_parent.aq_parent, _defaultSVGrafZ)
+            else:
+                # search in same dir first
+                default = getattr(self.aq_parent, _defaultSVGrafZ)
+            if default == self:
+                # no default graph found in upper direction
+                raise AttributeError
             return default.getAttribute(attrib, defaultVal)
         except AttributeError:
             return defaultVal
@@ -174,19 +200,37 @@ class SVGrafZProduct(SimpleItem):
     def getPropertyValues(self):
         "Get the real or aquired PropertyValues."
         return self._getAllAttributes(0)
+    
+    security.declareProtected('View management screens',
+                              'getRealPropertyValues')
+    def getRealPropertyValues(self):
+        "Get the real PropertyValues."
+        r = {}
+        for i,v in self.dat.items():
+            if isinstance(v, TALESMethod):
+                n = v.getExpression()
+            else:
+                n = v
+            r[i] = n
+        return r
+
 
     def _getAllAttributes(self, default):
         "Get the values of all attibutes as dictionary"
         res ={}
         for p in self.dat.keys():
             res[p] = getattr(self, p)(default=default)
+            if default and isinstance(res[p], TALESMethod):
+                res[p] = res[p].getExpression()
         return res
         
 
     security.declareProtected('View', 'html')
     def html(self):
         """Get HTML-Text to embed SVG-Image."""
-        return u'<object type="image/svg+xml" width="%s" height="%s" data="%s">Ihr Browser unterstützt keine SVG-Grafiken. Schade.</object>' % (self.dat['width'], self.dat['height'], self.id)
+        return u'<object type="image/svg+xml" width="%s" height="%s" data="%s">Ihr Browser unterstützt keine SVG-Grafiken. Schade.</object>' % (self.width(), self.height(), self.id)
+
+
 
     security.declareProtected('View', 'index_html')
     def index_html(self, client=None, REQUEST=None):
@@ -205,20 +249,20 @@ class SVGrafZProduct(SimpleItem):
                 self.getDataMethodExpression())
             data = [[[1,1]]]
         try:
-            legend = self.getValue(curent['legend'])
+            legend = self.getValue(current['legend'])
         except KeyError:
             title = 'KeyError: legend not existing'
             legend = None
         try:
-            colnames = self.getValue(curent['colnames'])
+            colnames = self.getValue(current['colnames'])
         except KeyError:
             title = 'KeyError: column names not existing'
             colnames = None
 
         stylesheet = None
-        if curent['stylesheet']:
+        if current['stylesheet']:
             try:
-                stylesheet = getattr(self, curent['stylesheet']).absolute_url()
+                stylesheet = getattr(self, current['stylesheet']).absolute_url()
             except AttributeError:
                 title = 'AttributeError: stylesheet not existing'
 
@@ -226,42 +270,15 @@ class SVGrafZProduct(SimpleItem):
                            legend    = legend,
                            colnames  = colnames,
                            title     = title,
-                           gridlines = curent['gridlines'],
-                           height    = curent['height'],
-                           width     = curent['width'],
+                           gridlines = current['gridlines'],
+                           height    = current['height'],
+                           width     = current['width'],
                            stylesheet= stylesheet)
         if REQUEST.RESPONSE:
             REQUEST.RESPONSE.setHeader('Content-Type', 'image/svg+xml')
         return graph.compute().encode('UTF-8')
 
     
-    def _getMethodExpression(self, method):
-        """returns expression of method or '' if method is not a TALESMethod
-        """
-        # Uh.. this is ugly, but Python2.1's isinstance does not work with
-        # extension classes
-        try:
-            if method.__class__.__name__ == 'TALESMethod':
-                return method.getExpression()
-        except AttributeError:            
-            pass
-        return ''
-
-    security.declareProtected('View management screens',
-        'getDataMethodExpression')
-    def getDataMethodExpression(self):
-        return self._getMethodExpression(self.data)
-
-    security.declareProtected('View management screens',
-        'getLegendMethodExpression')
-    def getLegendMethodExpression(self):
-        return self._getMethodExpression(self.legend)
-
-    security.declareProtected('View management screens',
-        'getColnamesMethodExpression')
-    def getColnamesMethodExpression(self):
-        return self._getMethodExpression(self.colnames)
-
 
     security.declareProtected('View', 'getValue')
     def getValue(self, method, context=None):
@@ -271,6 +288,8 @@ class SVGrafZProduct(SimpleItem):
                 returned.
         """
         if not isinstance(method, TALESMethod): 
+            return None
+        if not method.getExpression():
             return None
 
         if not context:

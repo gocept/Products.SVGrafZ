@@ -1,7 +1,7 @@
 <!--
 Copyright (c) 2003 gocept gmbh & co. kg. All rights reserved.
 See also LICENSE.txt
-$Id: SVGrafZEdit.zpt,v 1.1 2003/04/16 14:14:39 mac Exp $
+$Id: SVGrafZEdit.zpt,v 1.2 2003/04/17 10:43:20 mac Exp $
 -->
 
   <h1 tal:replace="structure here/manage_page_header">Header</h1>
@@ -11,7 +11,8 @@ $Id: SVGrafZEdit.zpt,v 1.1 2003/04/16 14:14:39 mac Exp $
   <h2 tal:define="form_title string:Edit SVGrafZ"
     tal:replace="structure here/manage_form_title">Form Title</h2>
   <form action="manage_edit">
-    <table tal:define="def here/getDefaultPropertyValues">
+    <table tal:define="def here/getDefaultPropertyValues;
+                       cur here/getRealPropertyValues;">
       <tr>
         <td colspan="2"></td>
         <th>Default</th>
@@ -20,7 +21,7 @@ $Id: SVGrafZEdit.zpt,v 1.1 2003/04/16 14:14:39 mac Exp $
       </tr>
       <tr>
         <td class="form-text">Title:</td>
-        <td><input type="text" name="title" tal:attributes="value here/title"></td>
+        <td><input type="text" name="title" tal:attributes="value cur/title"></td>
         <td class="form-mono" tal:content="def/title"></td>
       </tr>
       <tr>
@@ -30,12 +31,12 @@ $Id: SVGrafZEdit.zpt,v 1.1 2003/04/16 14:14:39 mac Exp $
               tal:attributes="label graphtype/name">
               <tal:block tal:repeat="graph graphtype/kinds">
                 <option
-                  tal:condition="python: graph.get('name') != here.graphname"
+                  tal:condition="python: graph.get('name') != cur['graphname']"
                   tal:attributes="value graph/name"
                   tal:content="graph/name">DiagramKind not selected
                 </option>
                 <option
-                  tal:condition="python: graph.get('name') == here.graphname"
+                  tal:condition="python: graph.get('name') == cur['graphname']"
                   tal:attributes="value graph/name"
                   tal:content="graph/name" selected="1">selected DiagramKind
                 </option>
@@ -47,43 +48,43 @@ $Id: SVGrafZEdit.zpt,v 1.1 2003/04/16 14:14:39 mac Exp $
         <td class="form-text">DataSource (TALES): </td>
         <td><input type="text"
                    name="data"
-                   tal:attributes="value here/getDataMethodExpression"></td>
+                   tal:attributes="value cur/data"></td>
         <td class="form-mono" tal:content="def/data"></td>
       </tr>
       <tr>
         <td class="form-text">Grindlines: </td>
         <td><input type="text"
                    name="gridlines"
-                   tal:attributes="value here/gridlines"></td>
+                   tal:attributes="value cur/gridlines"></td>
         <td class="form-mono" tal:content="def/gridlines"></td>
         <td class="form-text">ColumnNames (TALES): </td>
         <td><input type="text"
                    name="colnames"
-                   tal:attributes="value here/getColnamesMethodExpression"></td>
+                   tal:attributes="value cur/colnames"></td>
         <td class="form-mono" tal:content="def/colnames"></td>
       </tr>
       <tr>
         <td class="form-text">Height: </td>
         <td><input type="text"
                    name="height"
-                   tal:attributes="value here/height"></td>
+                   tal:attributes="value cur/height"></td>
         <td class="form-mono" tal:content="def/height"></td>
         <td class="form-text">Legend (TALES): </td>
         <td><input type="text"
                    name="legend"
-                   tal:attributes="value here/getLegendMethodExpression"></td>
+                   tal:attributes="value cur/legend"></td>
         <td class="form-mono" tal:content="def/legend"></td>
       </tr>
       <tr>
         <td class="form-text">Width: </td>
         <td><input type="text"
                    name="width"
-                   tal:attributes="value here/width"></td>
+                   tal:attributes="value cur/width"></td>
         <td class="form-mono" tal:content="def/width"></td>
         <td class="form-text">StyleSheet (Path): </td>
         <td><input type="text"
                    name="stylesheet"
-                   tal:attributes="value here/stylesheet"></td>
+                   tal:attributes="value cur/stylesheet"></td>
         <td class="form-mono" tal:content="def/stylesheet"></td>
       </tr>
       <tr>
