@@ -2,7 +2,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: FormatConverters
-## Version: $Id: svgconverters.py,v 1.12 2003/10/27 10:12:15 mac Exp $
+## Version: $Id: svgconverters.py,v 1.13 2003/11/20 15:18:21 ctheune Exp $
 ##
 ################################################################################
 
@@ -16,6 +16,8 @@ from interfaces import ISVGConverter
 from config import SVGrafZ_Java_Path, SVGrafZ_Batik_Path
 from config import SVGrafZ_BatikServer_Host, SVGrafZ_BatikServer_Port
 from config import SVGrafZ_SVG_not_supported, SVGrafZ_download_PDF
+
+import time
 
 class SVG2xxx:
     """Abstract base class for converters."""

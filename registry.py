@@ -3,7 +3,7 @@
 ## 
 ## SVGrafZ_DiagramRegistry
 ##
-## Version: $Id: registry.py,v 1.10 2003/10/15 07:08:34 mac Exp $
+## Version: $Id: registry.py,v 1.11 2003/11/20 15:18:21 ctheune Exp $
 ################################################################################
 
 from interfaces import IDiagramType, IDiagramKind, IDefaultDiagramKind
@@ -63,7 +63,7 @@ class Registry:
         """
 
         if name not in self._diagramKinds:
-            print 'SVGrafZ-Error: DiagramKind "%s" does not exist.' % (name)
+            #print 'SVGrafZ-Error: DiagramKind "%s" does not exist.' % (name)
             raise RuntimeError, 'SVGrafZ-Error: DiagramKind "%s" does not exist.' % (name)
 
         return self._diagramKinds[name]

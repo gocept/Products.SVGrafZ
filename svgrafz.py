@@ -3,7 +3,7 @@
 ## 
 ## SVGrafZ
 ##
-## $Id: svgrafz.py,v 1.32 2003/10/20 09:59:04 ctheune Exp $
+## $Id: svgrafz.py,v 1.33 2003/11/20 15:18:21 ctheune Exp $
 ################################################################################
 
 import os
@@ -204,7 +204,7 @@ class SVGrafZProduct(SimpleItem):
             self.dat['taltitle'] = TALESMethod(None)
             self.current_version = '0.21'
         if self.current_version < '0.22':
-            print "deleting rnd"
+            #print "deleting rnd"
             del self.rnd
             self.current_version = '0.22'
         if self.current_version < '0.23':
