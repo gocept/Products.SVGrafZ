@@ -1,6 +1,6 @@
 #! /bin/bash
 
-DIR=SVGrafZ_0.22
+DIR=SVGrafZ_0.22.1
 
 ##
 DOC=$DIR/doc
