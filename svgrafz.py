@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ
-## Version: $Id: svgrafz.py,v 1.7 2003/04/17 13:24:32 mac Exp $
+## Version: $Id: svgrafz.py,v 1.8 2003/04/17 14:15:43 mac Exp $
 ##
 ################################################################################
 
@@ -28,7 +28,9 @@ class SVGrafZProduct(SimpleItem):
     meta_type = 'SVGrafZ'
 
     manage_options = (
-        {'label':'Properties', 'action':'manage_editForm'},
+        {'label':'Properties',
+         'action':'manage_editForm',
+         'help':('SVGrafZ','SVGrafZ_Properties.html')},
         {'label':'View', 'action':'manage_view'},
         ) + SimpleItem.manage_options
 
