@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ
-## Version: $Id: svgrafz.py,v 1.9 2003/05/22 14:22:21 mac Exp $
+## Version: $Id: svgrafz.py,v 1.10 2003/05/23 12:43:18 mac Exp $
 ##
 ################################################################################
 
@@ -13,7 +13,7 @@ from Globals import InitializeClass
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from helper import TALESMethod
 from ZODB.PersistentMapping import PersistentMapping
-from formatconverters import SVG2SVG
+from svgconverters import SVG2SVG, SVG2PNG
 
 _www = os.path.join(os.path.dirname(__file__), 'www')
 _defaultSVGrafZ = 'defaultSVGrafZ'
@@ -27,12 +27,14 @@ class SVGrafZProduct(SimpleItem):
     """ProductClass of SVGrafZ."""
 
     meta_type = 'SVGrafZ'
+    version = '0.1a'
 
     manage_options = (
         {'label':'Properties',
          'action':'manage_editForm',
          'help':('SVGrafZ','SVGrafZ_Properties.html')},
-        {'label':'View', 'action':'manage_view'},
+        {'label':'View as SVG', 'action':'manage_view'},
+        {'label':'View as PNG', 'action':'manage_viewPNG'},
         ) + SimpleItem.manage_options
 
 
@@ -43,6 +45,10 @@ class SVGrafZProduct(SimpleItem):
 
     security.declareProtected('View management screens', 'manage_view')
     manage_view = PageTemplateFile('SVGrafZView', _www)
+
+    
+    security.declareProtected('View management screens', 'manage_viewPNG')
+    manage_viewPNG = PageTemplateFile('SVGrafZViewPNG', _www)
 
 
     security.declareProtected('View management screens', 'manage_edit')
@@ -246,12 +252,26 @@ class SVGrafZProduct(SimpleItem):
             if default and isinstance(res[p], TALESMethod):
                 res[p] = res[p].getExpression()
         return res
-        
+
+
+    def _getConverterClass(self):
+        if (self.REQUEST.SESSION.get('SVGrafZ_PixelMode', 0) == 0) and \
+               (self.REQUEST.get('SVGrafZ_PixelMode', 0) == 0):
+            return SVG2SVG
+        else:
+            return SVG2PNG
+
 
     security.declareProtected('View', 'html')
-    def html(self):
+    def html(self, REQUEST=None):
         """Get HTML-Text to embed Image."""
-        return SVG2SVG.getHTML(self.id, self.height(), self.width()) # XXX test for other class
+        if self.REQUEST.get('SVGrafZ_PixelMode', 0) != 0:
+            url = self.id + '?SVGrafZ_PixelMode=1'
+        else:
+            url = self.id
+        return self._getConverterClass().getHTML(url,
+                                                 self.height(),
+                                                 self.width())
 
 
 
@@ -262,11 +282,12 @@ class SVGrafZProduct(SimpleItem):
 
     def __call__(self, client=None, REQUEST={}):
         """Render the diagram."""
-        graphClass = Registry.getKind(self.graphname())
-        print graphClass
-        current    = self.getPropertyValues()
-        title      = current['title']
-        converter  = SVG2SVG() # XXX test for other class
+        graphClass     = Registry.getKind(self.graphname())
+        current        = self.getPropertyValues()
+        title          = current['title']
+        converterClass = self._getConverterClass()
+        converter      = converterClass()
+
         try:
             data = self.getValue(current['data'])
         except KeyError:
@@ -287,7 +308,8 @@ class SVGrafZProduct(SimpleItem):
         stylesheet = None
         if current['stylesheet']:
             try:
-                stylesheet = getattr(self, current['stylesheet']).absolute_url()
+                stylesheet = getattr(self, current['stylesheet'])
+                stylesheet = converter.getStyleSheetURL(stylesheet)
             except AttributeError:
                 title = 'AttributeError: stylesheet not existing'
 
@@ -300,7 +322,8 @@ class SVGrafZProduct(SimpleItem):
                            width     = current['width'],
                            stylesheet= stylesheet)
         if REQUEST.RESPONSE:
-            REQUEST.RESPONSE.setHeader('Content-Type', 'image/svg+xml')
+            REQUEST.RESPONSE.setHeader('Content-Type',
+                                       converterClass.getDestinationFormat())
         converter.setSourceData(graph.compute().encode('UTF-8'))
         if not converter.convert():
             return converter.getErrorResult()

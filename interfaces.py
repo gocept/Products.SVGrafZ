@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: Interfaces
-## Version: $Id: interfaces.py,v 1.5 2003/05/22 14:22:21 mac Exp $
+## Version: $Id: interfaces.py,v 1.6 2003/05/23 12:43:18 mac Exp $
 ##
 ################################################################################
 
@@ -61,13 +61,9 @@ class IDiagramKindDefault(IDiagramKind):
 
 
     
-class IDataFormatConverter(Interface):
+class ISVGConverter(Interface):
     """Interface for Classes which convert DataFormats."""
 
-    def getSourceFormat():
-        """Return the mine type of the SourceFormat the Converter can handle.
-        static method!
-        """
 
     def getDestinationFormat():
         """Return the mine type of the DestinationFormat the Converter produces.
@@ -79,6 +75,19 @@ class IDataFormatConverter(Interface):
 
         Parameter:
           inputData: string which is to convert."""
+
+
+    def getStyleSheetURL(obj):
+        """Compute the URL of the Stylesheet.
+
+        Necessary because of problems on conversion which environments where
+        authentification is necessary.
+        
+        Parameter:
+          obj: the stylesheet object wraped into context
+        Returns:
+          URL or path of stylesheet
+        """
 
     def convert():
         """Do the conversion from source to destination format.
