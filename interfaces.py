@@ -1,21 +1,29 @@
 ################################################################################
 ## 
 ## SVGrafZ: Interfaces
-## Version: $Id: interfaces.py,v 1.1 2003/04/09 12:25:55 mac Exp $
+## Version: $Id: interfaces.py,v 1.2 2003/04/09 13:28:04 mac Exp $
 ##
 ################################################################################
 
-from Interface import Interface
+from Interface import Interface,Attribute
 
 class IDiagramType(Interface):
     """Interface for DiagramTypes."""
 
-    def name():
-        """Get the Name of the DiagramType."""
+    name = Attribute("Get the Name of the DiagramType.")
+        
+
 
 
 class IDiagramKind(Interface):
     """Interface for DiagramKinds."""
 
-    def name():
-        """Get the Name of the DiagramKind."""
+    name = Attribute ("Get the Name of the DiagramKind.")
+
+
+
+class IDiagramKindDefault(IDiagramKind):
+    """MarkerInterface for DefaultDiagramKinds."""
+
+
+    

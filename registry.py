@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ_Registry
-## Version: $Id: registry.py,v 1.1 2003/04/09 12:25:55 mac Exp $
+## Version: $Id: registry.py,v 1.2 2003/04/09 13:28:04 mac Exp $
 ##
 ################################################################################
 
@@ -19,23 +19,23 @@ class Registry:
     def registerType(self, type):
         """Register a DiagrammType.
 
-        type ... instance of DiagramType
+        type ... class implementing IDiagramType
 
         returns 1 on success
                 0 type already in registry
         exception RuntimeError, if type not implementing Interface
         """
-        if not IDiagramType.isImplementedBy(type):
+        if not IDiagramType.isImplementedByInstancesOf(type):
             raise RuntimeError, 'Not implementing IDiagramType.'
                      
-        if type.name() in self._diagrams.keys():
+        if type.name in self._diagrams.keys():
             return 0
         
-        self._diagrams[type.name()] = {}
+        self._diagrams[type.name] = {}
         return 1
 
     def getTypes(self):
-        """Get the registered DiagrammTypes."""
+        """Get the registered DiagramTypes."""
         return self._diagrams.keys()
 
 
@@ -44,33 +44,33 @@ class Registry:
 
         If DiagramType is not yet registered, it gets registered within here.
 
-        type ... instance of DiagramType
-        kind ... instance of DiagramKind
+        type ... class implementing IDiagramType
+        kind ... class implementing IDiagramKind
 
         returns 1 on success
                 0 if kind already in registry
         exception RuntimeError, if not implementing Interface
         """
 
-        if not IDiagramType.isImplementedBy(type):
+        if not IDiagramType.isImplementedByInstancesOf(type):
             raise RuntimeError, 'Not implementing IDiagramType.'
-        if not IDiagramKind.isImplementedBy(kind):
+        if not IDiagramKind.isImplementedByInstancesOf(kind):
             raise RuntimeError, 'Not implementing IDiagramKind.'
 
-        if type.name() not in self._diagrams.keys():
+        if type.name not in self._diagrams.keys():
             self.registerType(type)
 
-        if kind.name() in self._diagrams[type.name()].keys():
+        if kind.name in self._diagrams[type.name].keys():
             return 0
         
-        self._diagrams[type.name()][kind.name()] = kind
+        self._diagrams[type.name][kind.name] = kind
         return 1
 
 
     def getKinds(self, typeName):
         """Get the DiagrammKinds registered for a DiagrammType.
 
-        typeName ... Name of the DiagrammType
+        typeName ... Name of the DiagramType
 
         returns dictionary kindName:kindObj
                 None when typeName is not a registered Type

@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: BarGraphs
-## Version: $Id: types.py,v 1.1 2003/04/09 12:25:55 mac Exp $
+## Version: $Id: types.py,v 1.2 2003/04/09 13:28:04 mac Exp $
 ##
 ################################################################################
 
@@ -12,20 +12,15 @@ class BarGraphs:
 
     __implements__ = IDiagramType
 
-    def name(self):
-        ""+IDiagramType.name.__doc__
-        return 'Balkendiagramme'
+    name = 'Balkendiagramme'
 
-BarGraphs = BarGraphs() # make it singleton like
+
 
 class RowGraphs:
     """DiagramType of row graphs."""
 
     __implements__ = IDiagramType
 
-    def name(self):
-        ""+IDiagramType.name.__doc__
-        return 'Säulendiagramme'
+    name = 'Säulendiagramme'
 
 
-RowGraphs = RowGraphs() # make it singleton like

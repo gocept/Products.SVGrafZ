@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: SimpleBarGraph
-## Version: $Id: bar.py,v 1.1 2003/04/09 12:25:55 mac Exp $
+## Version: $Id: bar.py,v 1.2 2003/04/09 13:28:04 mac Exp $
 ##
 ################################################################################
 
@@ -12,8 +12,5 @@ class SimpleBarGraph:
 
     __implements__ = IDiagramKind
 
-    def name(self):
-        ""+IDiagramKind.name.__doc__
-        return 'Einfaches Balkendiagramm'
+    name = 'Einfaches Balkendiagramm'
 
-SimpleBarGraph = SimpleBarGraph() # make it singleton-like
