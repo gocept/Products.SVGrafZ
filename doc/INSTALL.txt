@@ -2,14 +2,14 @@
 ###
 ### SVGrafZ: INSTALL
 ###
-### $Revision: 1.8 $
+### $Revision: 1.9 $
 ################################################################################
-$Id: INSTALL.txt,v 1.8 2003/08/28 11:50:47 mac Exp $
+$Id: INSTALL.txt,v 1.9 2003/10/15 08:17:46 mac Exp $
 
 
 REQUIREMENTS
 ------------
-  - Zope-Version: tested only with Zope-HEAD (from CVS) but 2.6+ should do fine
+  - Zope-Version: tested 2.6+ should do fine
   - installed Products:
       + PageTemplates
 
@@ -31,6 +31,11 @@ TESTED BATIK versions:
  1.5beta5
  1.5
 
+TESTED ZOPE versions:
+---------------------
+ 2.6-HEAD
+ 2.7
+
 INSTALL
 -------
   blah ... as usual for a Zope Product
@@ -50,4 +55,4 @@ PROBLEMS
 - BatikServer can't run on on a different host than Zope, because they must
   share the default temp directory. But this is quite impossible. Reason is a
   limitation in pythons module tempfile (tempfile path is only setable
-  systemwide and python 2.3 is not supported by Zope.)
+  systemwide and BatikServer is not yet using python 2.3 features)

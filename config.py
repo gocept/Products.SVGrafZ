@@ -3,16 +3,44 @@
 ## 
 ## SVGrafZ: Configure File
 ##
-## $Id: config.py,v 1.6 2003/10/15 07:08:34 mac Exp $
+## $Id: config.py,v 1.7 2003/10/15 08:17:46 mac Exp $
 ################################################################################
 
 
-### global options ###
+### global SVGrafZ options ###
+
 ## default color for the graph curves. used when no stylesheet is given.
 SVGrafZ_default_Color = 'lightgreen'
 
 ## name of 'legend' in local language
+# deutsch (German)
 SVGrafZ_legend_name = 'Legende:'
+# English
+#SVGrafZ_legend_name = 'Legend:'
+
+## error text, if dataset is empty
+# deutsch (German)
+SVGrafZ_empty_dataset = 'Keine Daten! Also kann nichts dargestellt werden.'
+# English
+#SVGrafZ_empty_dataset = "No data, so I can not display anything."
+
+## error text, if SVG images are not supported by browser
+# deutsch (German)
+SVGrafZ_SVG_not_supported = "Ihr Browser kann keine SVG-Grafiken darstellen. Bitte stellen Sie im Modul 'Einstellungen' auf PNG-Grafiken um oder wenden Sie sich an Ihren Administor, um Ihren Browser entsprechend so umzukonfigurieren, dass er SVG-Grafiken darstellen kann."
+# English
+# SVGrafZ_SVG_not_supported = "Your Browser does not support SVG images. Please contact your Administrator."
+
+## word 'error' in local language
+# deutsch (German)
+SVGrafZ_error_name = 'Fehler'
+# English
+#SVGrafZ_error_name = 'Error'
+
+## text for link to download PDF-File
+# deutsch (German)
+SVGrafZ_download_PDF = "PDF-Datei herunterladen"
+# English
+#SVGrafZ_download_PDF = "download PDF file"
 
 
 #### either you use batikServer or batikRasterizer

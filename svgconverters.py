@@ -2,7 +2,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: FormatConverters
-## Version: $Id: svgconverters.py,v 1.10 2003/10/15 07:08:34 mac Exp $
+## Version: $Id: svgconverters.py,v 1.11 2003/10/15 08:17:46 mac Exp $
 ##
 ################################################################################
 
@@ -15,7 +15,7 @@ from urllib import quote
 from interfaces import ISVGConverter
 from config import SVGrafZ_Java_Path, SVGrafZ_Batik_Path
 from config import SVGrafZ_BatikServer_Host, SVGrafZ_BatikServer_Port
-
+from config import SVGrafZ_SVG_not_supported, SVGrafZ_download_PDF
 
 class SVG2xxx:
     """Abstract base class for converters."""
@@ -86,11 +86,12 @@ class SVG2SVG (SVG2xxx):
           heigth: height of the image
           width:  width of the image
           """
-        return u'<object type="%s" width="%s" height="%s" data="%s">\
-        Ihr Browser unterst&#xFC;tzt keine SVG-Grafiken. \
-        Wenden Sie sich an Ihren Administor, um Unterst&#xFC;tzung von\
-        SVG-Grafiken zu bekommen bzw. auf PNG-Grafiken umzustellen.</object>'%(
-            SVG2SVG.getDestinationFormat(), width, height, url)
+        return u'<object type="%s" width="%s" height="%s" data="%s">%s</object>'\
+               %(SVG2SVG.getDestinationFormat(),
+                 width,
+                 height,
+                 url,
+                 SVGrafZ_SVG_not_supported)
     getHTML = staticmethod(getHTML)
 
 
@@ -262,6 +263,11 @@ class SVG2PDF (SVG2Batik):
           width:  width of the image
         """
         return u'<object type="%s" width="%s" height="%s" data="%s">\
-        <a href="%s">download PDF-Dokument</a></object>' % (
-            SVG2PDF.getDestinationFormat(), width, height, url, url)
+        <a href="%s">%s</a></object>' % (
+            SVG2PDF.getDestinationFormat(),
+            width,
+            height,
+            url,
+            url,
+            SVGrafZ_download_PDF)
     getHTML = staticmethod(getHTML)

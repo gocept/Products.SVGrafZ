@@ -2,13 +2,14 @@
 ################################################################################
 ## 
 ## SVGrafZ: Base
-## Version: $Id: base.py,v 1.23 2003/10/15 07:08:34 mac Exp $
+## Version: $Id: base.py,v 1.24 2003/10/15 08:17:46 mac Exp $
 ##
 ################################################################################
 
 from math import log10,floor,ceil
 from types import *
 from config import SVGrafZ_default_Color, SVGrafZ_legend_name
+from config import SVGrafZ_empty_dataset, SVGrafZ_error_name
 from string import split
 
 # set this var to 1 to use the dom generation (not complete yet)
@@ -247,7 +248,7 @@ class BaseGraph:
 
     def _testFormatOfData(self):
         if self.data is None:
-            raise RuntimeError, 'No Data. (Data is None)'
+            raise RuntimeError, SVGrafZ_empty_dataset
         if type(self.data) != ListType:
             raise RuntimeError, 'Data is not a list. Maybe wrong converter.'
         if len(self.data) == 0:
@@ -426,7 +427,9 @@ class BaseGraph:
 
         step = 0
         print `self.errortext`
-        for errortext in split(self.confLT('Error: ' + self.errortext), '\n'):
+        for errortext in split(self.confLT(SVGrafZ_error_name +
+                                           ': ' +
+                                           self.errortext), '\n'):
             res += '<text x="%s" y="%s" font-size="12pt" text-anchor="middle" fill="red">%s</text>' % (
                 self.width / 2,
                 (self.gridbasey - self.gridboundy) / 2 + step,

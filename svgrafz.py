@@ -3,7 +3,7 @@
 ## 
 ## SVGrafZ
 ##
-## $Id: svgrafz.py,v 1.30 2003/10/15 07:08:34 mac Exp $
+## $Id: svgrafz.py,v 1.31 2003/10/15 08:17:46 mac Exp $
 ################################################################################
 
 import os
@@ -31,7 +31,7 @@ class SVGrafZProduct(SimpleItem):
     """ProductClass of SVGrafZ."""
 
     meta_type = 'SVGrafZ'
-    version = '0.21'
+    version = '0.21' # update also version.txt!
 
     manage_options = (
         {'label':'Properties',
