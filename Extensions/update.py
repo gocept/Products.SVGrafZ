@@ -1,6 +1,9 @@
 # explicit update
 
 def update_all(self):
+    return _update_all_req(self) + "\nUpdate complete."
+
+def _update_all_req(self):
     ret = ''
     if self.meta_type == 'SVGrafZ':
         ret += "updated: %s\n" % '/'.join(self.getPhysicalPath())
@@ -12,9 +15,8 @@ def update_all(self):
     except AttributeError:
         childs = []
     for child in childs:
-        ret += update_all(child)
+        ret += _update_all_req(child)
 
-    ret += "\nUpdate complete."
     return ret
         
 
