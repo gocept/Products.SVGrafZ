@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ: LineGraphs
 ##
-## $Id: line.py,v 1.9 2003/10/08 07:47:26 mac Exp $
+## $Id: line.py,v 1.10 2003/10/10 15:29:49 mac Exp $
 ################################################################################
 
 from interfaces import IDiagramKind
@@ -62,16 +62,18 @@ class Simple(LineDiagram):
                 try:
                     val = float(dataset[distX[j]])
                 except KeyError:
+                    val = None
                     if not start:
                         res +='"/>\n"'
                         start = 1
-                if start:
-                    res += '<path class="dataset%s" stroke-width="2" fill="none" stroke="%s" d="M' % (i, SVGrafZ_default_Color)
-                else:
-                    res += 'L'
-                res += "%s,%s " % (base + j * xWidth,
-                                   self.gridbasey - (val * self.yScale))
-                start = 0
+                if val is not None:
+                    if start:
+                        res += '<path class="dataset%s" stroke-width="2" fill="none" stroke="%s" d="M' % (i, SVGrafZ_default_Color)
+                    else:
+                        res += 'L'
+                    res += "%s,%s " % (base + j * xWidth,
+                                       self.gridbasey - (val * self.yScale))
+                    start = 0
             res += '"/>\n'
             start = 1
 
