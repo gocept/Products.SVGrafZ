@@ -2,7 +2,7 @@
 ################################################################################
 ## 
 ## SVGrafZ
-## Version: $Id: __init__.py,v 1.15 2004/03/12 11:05:52 ctheune Exp $
+## Version: $Id: __init__.py,v 1.16 2005/01/05 14:30:22 mac Exp $
 ##
 ################################################################################
 
@@ -76,6 +76,7 @@ def startBatikServer():
             LOG("SVGrafZ", 0, logtxt)
         conn.close()
         return res
+    
     
     # Start a new batik server blindly
     LOG("SVGrafZ", 0, "Starting new BatikServer.")
