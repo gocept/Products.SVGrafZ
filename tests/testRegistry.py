@@ -1,15 +1,11 @@
 ################################################################################
 ## 
 ## SVGrafZ: Test of Registry
-## Version: $Id: testRegistry.py,v 1.2 2003/04/09 13:28:04 mac Exp $
+## Version: $Id: testRegistry.py,v 1.3 2003/04/10 13:58:50 mac Exp $
 ##
 ################################################################################
 
-import sys
-sys.path.append('/home/zagy/zope/servers/Zope-HEAD/lib/python')
-sys.path.append('/home/mac/SVGrafZ')
-
-
+import main
 import unittest
 from registry import Registry
 from interfaces import IDiagramType, IDiagramKind

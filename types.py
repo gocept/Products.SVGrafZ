@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: BarGraphs
-## Version: $Id: types.py,v 1.2 2003/04/09 13:28:04 mac Exp $
+## Version: $Id: types.py,v 1.3 2003/04/10 13:58:50 mac Exp $
 ##
 ################################################################################
 
@@ -13,7 +13,6 @@ class BarGraphs:
     __implements__ = IDiagramType
 
     name = 'Balkendiagramme'
-
 
 
 class RowGraphs:
