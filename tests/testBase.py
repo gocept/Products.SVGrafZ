@@ -1,11 +1,11 @@
 ################################################################################
 ## 
 ## SVGrafZ: Test of Class BaseGraph
-## Version: $Id: testBase.py,v 1.2 2003/04/11 13:21:08 mac Exp $
+## Version: $Id: testBase.py,v 1.3 2003/05/27 15:24:09 mac Exp $
 ##
 ################################################################################
 
-import main
+import config
 import unittest
 from base import BaseGraph
 

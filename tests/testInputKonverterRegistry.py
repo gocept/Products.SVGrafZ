@@ -1,7 +1,7 @@
 ################################################################################
 ## 
-## SVGrafZ: Test of Registry
-## Version: $Id: testRegistry.py,v 1.6 2003/05/27 15:24:09 mac Exp $
+## SVGrafZ: Test of InputConverterRegistry
+## Version: $Id: testInputKonverterRegistry.py,v 1.1 2003/05/27 15:24:09 mac Exp $
 ##
 ################################################################################
 
@@ -35,7 +35,7 @@ class DiagramKind2:
     name = 'Kind2'
 
 
-class RegistryTests(unittest.TestCase):
+class InputKonverterRegistryTests(unittest.TestCase):
     """Tests for the DiagramType and -Kind Registry.
     """
 
