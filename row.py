@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ: RowGraphs
 ##
-## $Id: row.py,v 1.1 2003/06/04 08:56:17 mac Exp $
+## $Id: row.py,v 1.2 2003/06/16 08:13:31 mac Exp $
 ################################################################################
 
 from interfaces import IDiagramKind
@@ -18,6 +18,13 @@ class RowDiagram(DataOnYAxis):
         return [RowGraphs]
     registration = staticmethod(registration)
 
+    def description():
+        """see interfaces.IDiagamKind.description
+        """
+        return DataOnYAxis.description() + [
+            'Continuous data displayed as colored columns.',]
+    description = staticmethod(description)    
+
 
 class Simple(RowDiagram):
     """Simple RowGraph with multiple DataRows,
@@ -30,6 +37,18 @@ class Simple(RowDiagram):
 
     name = 'simple column diagram'
 
+
+    def description():
+        """see interfaces.IDiagamKind.description
+        """
+        return RowDiagram.description() + [
+            "Multiple Datasets possible.",
+            "Y-axis is always starting at zero, so no negative values are \
+            possible.",
+            "The labels on the x-axis are written vertically.",
+            ]
+
+    description = staticmethod(description)
 
     def drawGraph(self):
         "Draw the Bars of the graph."
@@ -61,3 +80,4 @@ class Simple(RowDiagram):
                                          xBarFull)
 
         return res + '</g>\n'
+

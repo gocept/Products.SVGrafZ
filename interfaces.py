@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ: Interfaces
 ##
-## $Id: interfaces.py,v 1.13 2003/06/13 10:23:57 mac Exp $
+## $Id: interfaces.py,v 1.14 2003/06/16 08:13:31 mac Exp $
 ################################################################################
 
 from Interface import Interface,Attribute
@@ -73,8 +73,22 @@ class IDiagramKind(Interface):
         No tests are done here, do them in compute.
         """
 
+    def description():
+        """Description of the abilities of the DiagramKind.
+
+        This method must be a class method!
+        Use following code inside class:
+        description = staticmethod(description)
+
+        Return: list of strings describing DiagramKind. each string is for one
+                  paragraph.
+        """
+
+
+
 class IDefaultDiagramKind(IDiagramKind):
     """MarkerInterface for default DiagramKind."""
+
 
 
 class ISVGConverter(Interface):
@@ -163,6 +177,12 @@ class IInputConverter(Interface):
         Exception RuntimeError with error-text if an error occured
         """
 
+    def description():
+        """Description of the abilities of the InputConverter.
+
+        Return: list of strings describing InputConverter. each string is for
+                  one paragraph.
+        """
 
 class IInputConverterWithLegend(IInputConverter):
     """InputConverter which is able to generate the legend from its input

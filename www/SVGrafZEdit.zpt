@@ -1,7 +1,7 @@
 <!--
 Copyright (c) 2003 gocept gmbh & co. kg. All rights reserved.
 See also LICENSE.txt
-$Id: SVGrafZEdit.zpt,v 1.8 2003/06/06 13:37:02 mac Exp $
+$Id: SVGrafZEdit.zpt,v 1.9 2003/06/16 08:13:32 mac Exp $
 -->
 
   <h1 tal:replace="structure here/manage_page_header">Header</h1>
@@ -139,6 +139,26 @@ $Id: SVGrafZEdit.zpt,v 1.8 2003/06/06 13:37:02 mac Exp $
       <tr tal:condition="hasErrors">
         <td align="left" valign="middle" class="form-label">Errors</td>
         <td align="left" valign="middle" style="background-color: #FFDDDD" colspan="4" tal:content="hasErrors"></td>
+      </tr>
+      <tr>
+        <td colspan="5">
+          <br />
+          <b>DiagramKind Description:</b>
+          <ul>
+            <li tal:repeat="descr here/viewDiagramKindDesription"
+                tal:content="descr/item"></li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="5">
+          <br />
+          <b>DataConverter Description:</b>
+          <ul>
+            <li tal:repeat="descr here/viewInputConverterDesription"
+                tal:content="descr/item"></li>
+          </ul>
+        </td>
       </tr>
     </table>
   </form>

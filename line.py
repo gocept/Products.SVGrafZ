@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ: LineGraphs
 ##
-## $Id: line.py,v 1.5 2003/06/10 10:11:06 mac Exp $
+## $Id: line.py,v 1.6 2003/06/16 08:13:31 mac Exp $
 ################################################################################
 
 from interfaces import IDiagramKind
@@ -17,7 +17,14 @@ class LineDiagram(DataOnYAxis):
         """See IDiagramKind.registration()."""
         return [LineGraphs]
     registration = staticmethod(registration)
-    
+
+    def description():
+        """see interfaces.IDiagamKind.description
+        """
+        return DataOnYAxis.description() + [
+            'Continuous data displayed as colored lines.',]
+    description = staticmethod(description)
+
 
 class Simple(LineDiagram):
     """Simple LineGraph with multiple DataRows,
@@ -65,6 +72,21 @@ class Simple(LineDiagram):
         res += self.xAxis_verticalLabels(distX, base, xWidth)
 
         return res + '</g>\n'
+
+    def description():
+        """see interfaces.IDiagamKind.description
+        """
+        return LineDiagram.description() + [
+            "Multiple Datasets possible.",
+            "Y-axis is always starting at zero, so no negative values are \
+            possible.",
+            "No double values on x-axis inside one dataset allowed. (random \
+            value gets choosen in this case).",
+            "Missing x-values in a dataset are left out on display.",
+            "The labels on the x-axis written vertically.",
+            ]
+
+    description = staticmethod(description)
 
 
 
@@ -173,3 +195,20 @@ class Mirrored(LineDiagram):
                       self.confLT(yval))
             res += '\n'
         return res + '</g>\n'
+
+    def description():
+        """see interfaces.IDiagamKind.description
+        """
+        return LineDiagram.description() + [
+            "Multiple Datasets possible.",
+            "Points are drawn as little x on diagram.",
+            "Y-axis is mirrored, so the biggest values are at bottom.",
+            "Y-axis is always starting at zero, so no negative values are \
+            possible.",
+            "No double values on x-axis inside one dataset allowed. (random \
+            value gets choosen in this case).",
+            "Missing x-values in a dataset are left out on display.",
+            "The labels on the x-axis written vertically.",
+            ]
+
+    description = staticmethod(description)

@@ -2,9 +2,9 @@
 ###
 ### SVGrafZ
 ###
-### $Revision: 1.1 $
+### $Revision: 1.2 $
 ################################################################################
-$Id: INSTALL.txt,v 1.1 2003/06/13 08:43:22 mac Exp $
+$Id: INSTALL.txt,v 1.2 2003/06/16 08:13:31 mac Exp $
 
 
 REQUIREMENTS
@@ -16,9 +16,11 @@ REQUIREMENTS
 
 RECOMANDATIONS
 --------------
- for generating PNG-Images for Browsers which have no SVG-Support
-   batik-1.5beta5 or higher from http://xml.apache.org/batik/
-   (Binary distribution is fine.)
+ * For generating PNG-Images for Browsers which have no SVG-Support
+     batik-1.5beta5 or higher from http://xml.apache.org/batik/
+     (Binary distribution is fine.)
+     The batik-tool needs a running XServer or a redirected display, although it
+     does not use it.
 
 INSTALL
 -------

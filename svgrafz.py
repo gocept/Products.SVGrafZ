@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ
 ##
-## $Id: svgrafz.py,v 1.20 2003/06/10 11:16:09 mac Exp $
+## $Id: svgrafz.py,v 1.21 2003/06/16 08:13:31 mac Exp $
 ################################################################################
 
 import os
@@ -494,7 +494,28 @@ class SVGrafZProduct(SimpleItem):
         for diagramType in Registry.getKind(self.graphname()).registration():
             if diagramType in diagramTypesOfConverter:
                 return False
-        return "DiagramKind and Converter are incompatible. Please choose another Converter."
+        return "DiagramKind and Converter are incompatible. \
+        Please choose another Converter."
+
+
+    security.declareProtected('View management screens',
+                              'viewInputConverterDesription')
+    def viewInputConverterDesription(self):
+        return self._list2dictlist(ICRegistry.getConverter(
+            self.convertername()).description())
+
+
+    security.declareProtected('View management screens',
+                              'viewDiagramKindDesription')
+    def viewDiagramKindDesription(self):
+        return self._list2dictlist(Registry.getKind(
+            self.graphname()).description())
+
+
+    def _list2dictlist(self, list):
+        return [{'item': x} for x in list]
+
+
 
 InitializeClass(SVGrafZProduct)
 

@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: Base
-## Version: $Id: base.py,v 1.14 2003/06/11 13:16:30 mac Exp $
+## Version: $Id: base.py,v 1.15 2003/06/16 08:13:31 mac Exp $
 ##
 ################################################################################
 
@@ -469,3 +469,10 @@ class DataOnYAxis(BaseGraph):
     def drawGraph(self):
         "Abstract Method: Draw the Lines of the graph and name the columns."
         raise RuntimeError, "Can't use the abstract methon drawGraph!"
+
+
+    def description():
+        """see interfaces.IDiagamKind.description
+        """
+        return ['Continuous data on y-axis. Discrete data on x-axis.']
+    description = staticmethod(description)

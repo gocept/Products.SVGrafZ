@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ: BarGraphs
 ##
-## $Id: bar.py,v 1.15 2003/06/13 12:03:30 mac Exp $
+## $Id: bar.py,v 1.16 2003/06/16 08:13:31 mac Exp $
 ################################################################################
 
 from interfaces import IDiagramKind, IDefaultDiagramKind
@@ -131,3 +131,15 @@ class SimpleBarGraph(BaseGraph):
         return res + '</g>\n'
 
 
+
+    def description():
+        """see interfaces.IDiagamKind.description
+        """
+        return ['Continuous data on x-axis. Discrete data on y-axis.',
+                'Continuous data is shown as bars of different colors.',
+                'You can have multiple Datasets.',
+                'X-axis is always starting at zero, so you cannot have negative\
+                continuous values.',
+                ]
+    
+    description = staticmethod(description)
