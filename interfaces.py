@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: Interfaces
-## Version: $Id: interfaces.py,v 1.4 2003/04/16 14:14:38 mac Exp $
+## Version: $Id: interfaces.py,v 1.5 2003/05/22 14:22:21 mac Exp $
 ##
 ################################################################################
 
@@ -61,3 +61,45 @@ class IDiagramKindDefault(IDiagramKind):
 
 
     
+class IDataFormatConverter(Interface):
+    """Interface for Classes which convert DataFormats."""
+
+    def getSourceFormat():
+        """Return the mine type of the SourceFormat the Converter can handle.
+        static method!
+        """
+
+    def getDestinationFormat():
+        """Return the mine type of the DestinationFormat the Converter produces.
+        static method!
+        """
+
+    def setSourceData(sourceData):
+        """Put the data for conversion into the Class.
+
+        Parameter:
+          inputData: string which is to convert."""
+
+    def convert():
+        """Do the conversion from source to destination format.
+
+        Returns boolean value telling if conversion was successful.
+        """
+
+    def getErrorResult():
+        """Return data(in destination format) describing error, if conversion unsuccessful."""
+
+    def getResultData():
+        """Returns the result data after the conversion."""
+
+    def getHTML(url, height, width):
+        """Returns a string to integrate result into HTML.
+
+        static method!
+        
+        Parameters:
+          url:    string containing the url (absolute or relative) to the result
+          heigth: height of the image
+          width:  width of the image
+          """
+

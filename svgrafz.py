@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ
-## Version: $Id: svgrafz.py,v 1.8 2003/04/17 14:15:43 mac Exp $
+## Version: $Id: svgrafz.py,v 1.9 2003/05/22 14:22:21 mac Exp $
 ##
 ################################################################################
 
@@ -13,6 +13,7 @@ from Globals import InitializeClass
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from helper import TALESMethod
 from ZODB.PersistentMapping import PersistentMapping
+from formatconverters import SVG2SVG
 
 _www = os.path.join(os.path.dirname(__file__), 'www')
 _defaultSVGrafZ = 'defaultSVGrafZ'
@@ -249,8 +250,8 @@ class SVGrafZProduct(SimpleItem):
 
     security.declareProtected('View', 'html')
     def html(self):
-        """Get HTML-Text to embed SVG-Image."""
-        return u'<object type="image/svg+xml" width="%s" height="%s" data="%s">Ihr Browser unterstützt keine SVG-Grafiken. Schade.</object>' % (self.width(), self.height(), self.id)
+        """Get HTML-Text to embed Image."""
+        return SVG2SVG.getHTML(self.id, self.height(), self.width()) # XXX test for other class
 
 
 
@@ -265,6 +266,7 @@ class SVGrafZProduct(SimpleItem):
         print graphClass
         current    = self.getPropertyValues()
         title      = current['title']
+        converter  = SVG2SVG() # XXX test for other class
         try:
             data = self.getValue(current['data'])
         except KeyError:
@@ -299,7 +301,12 @@ class SVGrafZProduct(SimpleItem):
                            stylesheet= stylesheet)
         if REQUEST.RESPONSE:
             REQUEST.RESPONSE.setHeader('Content-Type', 'image/svg+xml')
-        return graph.compute().encode('UTF-8')
+        converter.setSourceData(graph.compute().encode('UTF-8'))
+        if not converter.convert():
+            return converter.getErrorResult()
+        else:
+            return converter.getResultData()
+        
 
     
 
