@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ: InputConverters
 ##
-## $Id: ic.py,v 1.10 2003/06/16 08:13:31 mac Exp $
+## $Id: ic.py,v 1.11 2003/07/15 06:50:42 mac Exp $
 ################################################################################
 
 from interfaces import IInputConverter, IInputConverterWithLegend, \
@@ -95,6 +95,9 @@ class ConvertFrom_ZSQLMethod_DataInColumns (ConvertFrom_ZSQLMethod):
                   "Reference Column not set, but it's required by converter."
         ret = []
 
+        if not len(res):
+            raise RuntimeError, \
+                  "No Data to display."
         params = len(res[0])
         for i in range(0,params-1):
             ret.append([])
