@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ
 ##
-## $Id: svgrafz.py,v 1.24 2003/06/17 12:46:32 mac Exp $
+## $Id: svgrafz.py,v 1.25 2003/06/17 13:36:46 mac Exp $
 ################################################################################
 
 import os
@@ -502,10 +502,14 @@ class SVGrafZProduct(SimpleItem):
         e.g. conflicts between diagramKind and converter
         """
         if whichTests == 'all':
-            if self.version != self.current_version:
-                return "Diagram is older than SVGrafZ. \
-                Update it as described in doc/update.txt"
-        
+            if self.current_version < self.version:
+                return "Diagram is older than SVGrafZ-Product. \
+                Please update the diagram as described in doc/update.txt"
+
+            if self.current_version > self.version:
+                return "Diagram is newer than SVGrafZ-Product. \
+                Please update your SVGrafZ-Product to the latest version."
+
         diagramTypesOfConverter = ICRegistry.getConverter(
             self.convertername()).registration().keys()
 
