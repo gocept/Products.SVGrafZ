@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: Base
-## Version: $Id: base.py,v 1.15 2003/06/16 08:13:31 mac Exp $
+## Version: $Id: base.py,v 1.16 2003/06/19 12:53:32 mac Exp $
 ##
 ################################################################################
 
@@ -84,7 +84,7 @@ class BaseGraph:
         if val == 0:
             return 0
         valBase = 10 ** (int(log10(abs(val))))
-        return valBase * ceil((float(val) / valBase)+1)
+        return valBase * ceil((float(val + valBase / 10.0) / valBase))
 
     def _compRoundedValMin(self, val):
         """Compute a rounded minimum value."""
@@ -355,6 +355,45 @@ class BaseGraph:
                             self.confLT(str(label)))
         return res
 
+    def xAxis_diagonalLabels(self, labels, firstWidth, xWidth, withLines=0):
+        """Print labels on x-axis diagonally from bottom-left to upper-right.
+
+        labels     ... list of strings with labelnames, if self.colnames
+                         exists, then it is taken instead
+        firstWidth ... float points from self.gridbasex to first label
+        xWidth     ... float points between labels
+        withLines  ... if withLines: draw lines in parallel to y-axis
+        """
+        if self.colnames: # use colnames, if given
+            labels = self.colnames
+        res = ''
+        diff = self.height - self.gridbasey
+        for i in range(len(labels)):
+            label = labels[i]
+            res += '''<defs>
+            <path d="M %s %s l 600 600" id="xAxisLabel%s"/>
+            </defs>\n
+            <text style="text-anchor: start;">
+            <textPath xlink:href="#xAxisLabel%s">%s</textPath>
+            </text>\n''' % (firstWidth + i * xWidth - 7,
+                            self.gridbasey + 7,
+                            i,
+                            i,
+                            self.confLT(str(label)))
+##            res += '<line x1="%s" x2="%s" y1="%s" y2="%s" />\n' % (
+##                firstWidth + i * xWidth - 7,
+##                firstWidth + i * xWidth + 600 -7 ,
+##                self.gridbasey + 7,
+##                self.gridbasey + 607,
+##                )
+            if withLines:
+                res += '<line x1="%s" x2="%s" y1="%s" y2="%s" />\n' % (
+                    firstWidth + i * xWidth,
+                    firstWidth + i * xWidth,
+                    self.gridbasey,
+                    self.gridboundy - 10,)
+        return res
+
     def yAxis_horizontalLabels(self, labels, firstHeight, yHeight):
         """Print horizontal Labels on yAxis.
 
@@ -373,14 +412,78 @@ class BaseGraph:
                       self.confLT(label))
         return res
         
+
+    def compute(self):
+        """Compute the Diagram."""
+        if self.result:
+            return self.result
+
+        self.result = self.svgHeader()
+        if self.errortext:
+            self.result += self.printError()
+        else:
+            try:
+                for action in self.getDrawingActions():
+                    self.result += action()
+            except RuntimeError:
+                import sys
+                self.errortext = str(sys.exc_info()[1])
+                self.result = self.svgHeader() + self.printError()
+
+        self.result += self.svgFooter()
+        return self.result
+
+
+    def computeYScale(self):
+        """Compute scaling factor for y-direction."""
+        if self.maxY() is None:
+            raise RuntimeError, 'All values on y-axis must be numbers!'
+        self.specialAttribHook()
+
+        difY = float(self.maxY() - self.minY())
+        if difY:
+            self.yScale = float((self.gridbasey-self.gridboundy) / difY)
+        else:
+            self.yScale = 1.0
+        return ''
+
+
+    def computeXScale(self):
+        """Compute scaling factor for x-direction."""
+        if self.maxX() is None:
+            raise RuntimeError, 'All values on x-axis must be numbers!'
+        self.specialAttribHook()
+        
+        difX = float(self.maxX() - self.minX())
+        if difX:
+            self.xScale = float((self.gridboundx-self.gridbasex) / difX)
+        else:
+            self.xScale = 1.0
+        return ''
+
+
     def confLT(self, text):
         """Convert the littler than symbols ('<') to &lt;."""
         return str(text).replace('<', '&lt;')
+
+    def getDrawingActions(self):
+        """Returns the methods which are used to draw the graph."""
+        return [self.drawGraph,
+                self.drawXYAxis,
+                self.drawLegend,
+                self.drawTitle]
+
 
     
 class DataOnYAxis(BaseGraph):
     """Abstract class for DiagramKinds which have their data on y-axis.
     """
+
+    def description():
+        """see interfaces.IDiagamKind.description
+        """
+        return ['Continuous data on y-axis. Discrete data on x-axis.']
+    description = staticmethod(description)
 
     def __init__(self,
                  data=None,
@@ -422,39 +525,6 @@ class DataOnYAxis(BaseGraph):
             self.gridboundx = self.width * 0.98
 
 
-    def compute(self):
-        """Compute the Diagram."""
-        if self.result:
-            return self.result
-
-        self.result = self.svgHeader()
-        if self.errortext:
-            self.result += self.printError()
-        else:
-            try:
-                if self.maxY() is None:
-                    raise RuntimeError, 'All values on y-axis must be numbers!'
-                self.specialAttribHook()
-                difY = float(self.maxY() - self.minY())
-                if difY:
-                    self.yScale = float((self.gridbasey-self.gridboundy) / difY)
-                else:
-                    self.yScale = 1.0
-                    
-                self.result += self.drawYGrindLines()
-                self.result += self.drawGraph()
-                self.result += self.drawXYAxis()
-                self.result += self.drawLegend()
-                self.result += self.drawTitle()
-            except RuntimeError:
-                import sys
-                self.errortext = str(sys.exc_info()[1])
-                self.result = self.svgHeader() + self.printError()
-
-        self.result += self.svgFooter()
-        return self.result
-
-
     def specialAttribHook(self):
         """Handling of the specialAttrib.
 
@@ -466,13 +536,15 @@ class DataOnYAxis(BaseGraph):
         """
         pass # no specialAttrib things by default
 
+
+
+    def getDrawingActions(self):
+        """Returns the methods which are used to draw the graph."""
+        return [self.computeYScale,
+                self.drawYGrindLines,] + \
+                BaseGraph.getDrawingActions(self)
+
     def drawGraph(self):
         "Abstract Method: Draw the Lines of the graph and name the columns."
         raise RuntimeError, "Can't use the abstract methon drawGraph!"
 
-
-    def description():
-        """see interfaces.IDiagamKind.description
-        """
-        return ['Continuous data on y-axis. Discrete data on x-axis.']
-    description = staticmethod(description)

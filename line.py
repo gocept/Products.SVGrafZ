@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ: LineGraphs
 ##
-## $Id: line.py,v 1.6 2003/06/16 08:13:31 mac Exp $
+## $Id: line.py,v 1.7 2003/06/19 12:53:32 mac Exp $
 ################################################################################
 
 from interfaces import IDiagramKind
@@ -100,17 +100,36 @@ class Mirrored(LineDiagram):
                       values on x-axis are taken as discrete,
                       specialAttribute for defining minimun units on y-axis,
                       points are drawn as little x on diagram
+                      labels on x-axis diagonally written
     """
 
     __implements__ = IDiagramKind
     name              = 'mirrored line diagram'
     specialAttribName = 'minimum of shown units on y-axis'
 
+    def description():
+        """see interfaces.IDiagamKind.description
+        """
+        return LineDiagram.description() + [
+            "Multiple Datasets possible.",
+            "Points are drawn as little x on diagram.",
+            "Y-axis is mirrored, so the biggest values are at bottom.",
+            "Y-axis is always starting at zero, so no negative values are \
+            possible.",
+            "No double values on x-axis inside one dataset allowed. (random \
+            value gets choosen in this case).",
+            "Missing x-values in a dataset are left out on display.",
+            "The labels on the x-axis written diagonally.",
+            ]
+    description = staticmethod(description)
+
     def specialAttribHook(self):
         "Do the checking of specialAttrib things."
         self._change_computed_result('realMinY', 0.0)
-        self._change_computed_result('minY', self._compRoundedValMax(0.0))
+        self._change_computed_result('minY', self._compRoundedValMin(0.0))
         
+        self.gridbasey  = self.height * 0.88 # more room for labels on y-axis
+
         if self.specialAttrib is None:
             return
         try:
@@ -138,8 +157,8 @@ class Mirrored(LineDiagram):
         
         distX    = self.distValsX()
         lenDistX = len(distX)
-        xWidth   = float(self.gridboundx - self.gridbasex) / (lenDistX + 1)
-        base     = self.gridbasex + xWidth
+        xWidth   = float(self.gridboundx - self.gridbasex) / lenDistX
+        base     = self.gridbasex + xWidth / 2
         res      = '<g id="data">\n'
         
         distX.sort()
@@ -172,13 +191,16 @@ class Mirrored(LineDiagram):
                         res += ' L%s,%s' % (point[0], point[1])
                 res += '"/>\n'
 
-        res += self.xAxis_verticalLabels(distX, base, xWidth)
+        res += self.xAxis_diagonalLabels(distX, base, xWidth, 'lines')
         
         return res + '</g>\n'
 
 
     def drawYGrindLines(self):
-        """Draw gridlines in parallel to the x-axis."""
+        """Draw gridlines in parallel to the x-axis.
+
+        Overwriting existing method because of mirrored y-axis.
+        """
         if not self.gridlines:
             return ''
         res  = '<g id="yGrid">\n'
@@ -196,19 +218,4 @@ class Mirrored(LineDiagram):
             res += '\n'
         return res + '</g>\n'
 
-    def description():
-        """see interfaces.IDiagamKind.description
-        """
-        return LineDiagram.description() + [
-            "Multiple Datasets possible.",
-            "Points are drawn as little x on diagram.",
-            "Y-axis is mirrored, so the biggest values are at bottom.",
-            "Y-axis is always starting at zero, so no negative values are \
-            possible.",
-            "No double values on x-axis inside one dataset allowed. (random \
-            value gets choosen in this case).",
-            "Missing x-values in a dataset are left out on display.",
-            "The labels on the x-axis written vertically.",
-            ]
 
-    description = staticmethod(description)

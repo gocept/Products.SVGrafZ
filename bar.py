@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ: BarGraphs
 ##
-## $Id: bar.py,v 1.16 2003/06/16 08:13:31 mac Exp $
+## $Id: bar.py,v 1.17 2003/06/19 12:53:32 mac Exp $
 ################################################################################
 
 from interfaces import IDiagramKind, IDefaultDiagramKind
@@ -64,41 +64,6 @@ class SimpleBarGraph(BaseGraph):
         else:
             self.gridboundx = self.width * 0.98
 
-
-    def compute(self):
-        """Compute the Diagram."""
-        if self.result:
-            return self.result
-        self.result  = self.svgHeader()
-        if self.errortext:
-            self.result += self.printError()
-        else:
-            try:
-                if self.maxX() is None:
-                    raise RuntimeError, 'All values on x-axis must be numbers!'
-                self._change_computed_result('realMinX', 0.0)
-                self._change_computed_result('minX',
-                                             self._compRoundedValMax(0.0))
-                difX = float(self.maxX())
-                if difX:
-                    self.xScale = float((self.gridboundx-self.gridbasex) / difX)
-                else:
-                    self.xScale = 1.0
-                    
-                self.result += self.drawXGrindLines()
-                self.result += self.drawGraph()
-                self.result += self.drawXYAxis()
-                self.result += self.drawLegend()
-                self.result += self.drawTitle()
-            except RuntimeError:
-                import sys
-                self.errortext = str(sys.exc_info()[1])
-                self.result = self.svgHeader() + self.printError()
-
-            self.result += self.svgFooter()
-        return self.result
-
-
     def drawGraph(self):
         "Draw the Bars of the graph."
         distY    = self.distValsY()
@@ -143,3 +108,24 @@ class SimpleBarGraph(BaseGraph):
                 ]
     
     description = staticmethod(description)
+
+
+    def specialAttribHook(self):
+        """Handling of the specialAttrib.
+
+        Test datatype of specialAttrib & change data influenced by
+          specialAttrib.
+
+        Return: void
+        On error: raise RuntimeError
+        """
+        self._change_computed_result('realMinX', 0.0)
+        self._change_computed_result('minX',
+                                     self._compRoundedValMax(0.0))
+
+
+    def getDrawingActions(self):
+        """Returns the methods which are used to draw the graph."""
+        return [self.computeXScale,
+                self.drawXGrindLines,] + \
+                BaseGraph.getDrawingActions(self)
