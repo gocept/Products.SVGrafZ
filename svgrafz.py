@@ -3,7 +3,7 @@
 ## 
 ## SVGrafZ
 ##
-## $Id: svgrafz.py,v 1.34 2003/12/11 10:35:00 mac Exp $
+## $Id: svgrafz.py,v 1.35 2004/02/24 14:43:29 mac Exp $
 ################################################################################
 
 import os
@@ -437,7 +437,7 @@ class SVGrafZProduct(SimpleItem):
     def html(self, REQUEST=None):
         """Get HTML-Text to embed Image."""
         converter, value = self._getOutputConverter()
-        url = self.absolute_url() + '?SVGrafZ_PixelMode=%s&rnd=%s' % (
+        url = self.absolute_url() + '?SVGrafZ_PixelMode=%s&amp;rnd=%s' % (
             value,
             self._v_rnd.random())
         # rnd is to prevent caching of browser
