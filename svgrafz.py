@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ
-## Version: $Id: svgrafz.py,v 1.10 2003/05/23 12:43:18 mac Exp $
+## Version: $Id: svgrafz.py,v 1.11 2003/05/27 11:11:38 mac Exp $
 ##
 ################################################################################
 
@@ -255,24 +255,25 @@ class SVGrafZProduct(SimpleItem):
 
 
     def _getConverterClass(self):
-        if (self.REQUEST.SESSION.get('SVGrafZ_PixelMode', 0) == 0) and \
-               (self.REQUEST.get('SVGrafZ_PixelMode', 0) == 0):
-            return SVG2SVG
+        """Compute Converter-Class and value of SVGrafZ_PixelMode."""
+        mode = self.REQUEST.get('SVGrafZ_PixelMode', None)
+        if mode is None:
+            mode = self.REQUEST.SESSION.get('SVGrafZ_PixelMode', None)
+        if mode in [None, 0, '0']:
+            return SVG2SVG, 0
         else:
-            return SVG2PNG
+            return SVG2PNG, 1
 
 
     security.declareProtected('View', 'html')
     def html(self, REQUEST=None):
         """Get HTML-Text to embed Image."""
-        if self.REQUEST.get('SVGrafZ_PixelMode', 0) != 0:
-            url = self.id + '?SVGrafZ_PixelMode=1'
-        else:
-            url = self.id
-        return self._getConverterClass().getHTML(url,
-                                                 self.height(),
-                                                 self.width())
-
+        converter, value = self._getConverterClass()
+        url = self.id + '?SVGrafZ_PixelMode=%s' % (value,)
+        return converter.getHTML(url,
+                                 self.height(),
+                                 self.width())
+    
 
 
     security.declareProtected('View', 'index_html')
@@ -285,7 +286,7 @@ class SVGrafZProduct(SimpleItem):
         graphClass     = Registry.getKind(self.graphname())
         current        = self.getPropertyValues()
         title          = current['title']
-        converterClass = self._getConverterClass()
+        converterClass, dummy = self._getConverterClass()
         converter      = converterClass()
 
         try:

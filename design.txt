@@ -1,7 +1,7 @@
 DESIGN:
 -------
 
-$Id: design.txt,v 1.4 2003/05/22 10:21:42 mac Exp $
+$Id: design.txt,v 1.5 2003/05/27 11:11:38 mac Exp $
 
 Klassen:
         - Registry
@@ -13,10 +13,12 @@ Klassen:
 Übersetzung nach Pixel-Grafik:
         - entweder Anzeige der SVG-Grafik oder der Pixel-Grafik, da sonst
           SVG-enabled-Users zu lange warten müssen.
-        - Entscheidung über SVG- oder Pixel-Grafik anhand einer Session-
-          oder Request-Variable names 'SVGrafZ_PixelMode'. Ist diese Variable
+        - Entscheidung über SVG- oder Pixel-Grafik anhand einer Request-
+          oder Session-Variable names 'SVGrafZ_PixelMode'. Ist diese Variable
           nicht gesetzt oder hat sie den Wert 0, so werden SVG-Grafiken 
-          gezeichnet ansonsten Pixel-Grafiken
+          gezeichnet ansonsten Pixel-Grafiken. Existiert im Request und in der
+          Session eine Variable namens 'SVGrafZ_PixelMode', dann wird der Wert,
+          der im Request steht benutzt.
         - Nutzung von batik-rasterizer 1.1.1+ (ist zwar etwas langsam, 
           funktioniert aber) siehe http://xml.apache.org/batik
         - Batik-1.1.1 unterstützt PNG und JPEG als von jedem Browser 
