@@ -2,7 +2,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: FormatConverters
-## Version: $Id: svgconverters.py,v 1.11 2003/10/15 08:17:46 mac Exp $
+## Version: $Id: svgconverters.py,v 1.12 2003/10/27 10:12:15 mac Exp $
 ##
 ################################################################################
 
@@ -194,11 +194,10 @@ class SVG2Batik (SVG2xxx):
             rfh.close()
 
         # cleaning up
-        if ret: # XXX wieder ändern auf immer clean-up
-            if self.stylesheetPath:
-                unlink(self.stylesheetPath)
-                unlink(sourceFile)
-                unlink(resultFile)
+        if self.stylesheetPath:
+            unlink(self.stylesheetPath)
+        unlink(sourceFile)
+        unlink(resultFile)
         return ret
 
     def getErrorResult(self):

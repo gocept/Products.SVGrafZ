@@ -2,7 +2,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: Base
-## Version: $Id: base.py,v 1.24 2003/10/15 08:17:46 mac Exp $
+## Version: $Id: base.py,v 1.25 2003/10/27 10:12:14 mac Exp $
 ##
 ################################################################################
 
@@ -498,7 +498,7 @@ class BaseGraph:
                     firstWidth + i * xWidth,
                     firstWidth + i * xWidth,
                     self.gridbasey,
-                    self.gridboundy - 10,)
+                    self.gridboundy,)
         return res
 
     def yAxis_horizontalLabels(self, labels, firstHeight, yHeight):

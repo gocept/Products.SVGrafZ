@@ -3,7 +3,7 @@
 ## 
 ## SVGrafZ: LineGraphs
 ##
-## $Id: line.py,v 1.12 2003/10/15 07:08:34 mac Exp $
+## $Id: line.py,v 1.13 2003/10/27 10:12:15 mac Exp $
 ################################################################################
 
 from interfaces import IDiagramKind
@@ -202,6 +202,7 @@ class Mirrored(PointsAsCrosses):
 
         Overwriting existing method because of mirrored y-axis.
         """
+        print self.getDrawingActions() # *** del
         if not self.gridlines:
             return ''
         if self.intcaption:
