@@ -2,13 +2,21 @@
 ################################################################################
 ## 
 ## SVGrafZ: Test of Class SimpleBarGraph
-## Version: $Id: testBar.py,v 1.9 2003/10/15 07:08:34 mac Exp $
+## Version: $Id: testBar.py,v 1.10 2005/02/16 08:54:52 mac Exp $
 ##
 ################################################################################
 
-import config4test
+
+import os, sys
+if __name__ == '__main__':
+    execfile(os.path.join(sys.path[0], 'framework.py'))
+
 import unittest
-from bar import Simple
+
+from Testing import ZopeTestCase
+ZopeTestCase.installProduct('SVGrafZ')
+
+from Products.SVGrafZ.bar import Simple
 
 
 class SimpleBarGraphTests(unittest.TestCase):
@@ -63,4 +71,4 @@ def test_suite():
     return suite
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
+    framework()

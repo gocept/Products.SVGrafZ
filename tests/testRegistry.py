@@ -2,14 +2,22 @@
 ################################################################################
 ## 
 ## SVGrafZ: Test of Registry
-## Version: $Id: testRegistry.py,v 1.11 2003/10/15 07:08:34 mac Exp $
+## Version: $Id: testRegistry.py,v 1.12 2005/02/16 08:54:52 mac Exp $
 ##
 ################################################################################
 
-import config4test
+import os, sys
+if __name__ == '__main__':
+    execfile(os.path.join(sys.path[0], 'framework.py'))
+
 import unittest
-from registry import Registry
-from interfaces import IDiagramType, IDiagramKind, IDefaultDiagramKind
+
+from Testing import ZopeTestCase
+ZopeTestCase.installProduct('SVGrafZ')
+
+from Products.SVGrafZ.registry import Registry
+from Products.SVGrafZ.interfaces import \
+     IDiagramType, IDiagramKind, IDefaultDiagramKind
 
 class NoDiagramType: pass
 class DiagramType1:
@@ -76,11 +84,13 @@ class RegistryTests(unittest.TestCase):
 
     def test_1singleton(self):
         """Test if Registry is a singleton."""
-        from registry import Registry
+        from Products.SVGrafZ.registry import Registry
         a = Registry
         b = Registry
 
-        self.assertEqual(str(a.__class__), 'registry.Registry', 'classtest')
+        self.assertEqual(str(a.__class__),
+                         'Products.SVGrafZ.registry.Registry',
+                         'classtest')
         self.assertRaises(AttributeError, Registry) # failing of instanciation
         self.assertEqual(a, b, 'a==b')
         a.testAttributeWhichRegistryNeverHas = 'test'
@@ -96,7 +106,10 @@ class RegistryTests(unittest.TestCase):
         b = DiagramType1
         c = DiagramType2
 
-        self.assertEqual([], Registry.getTypes(), 'get from empty reg')
+        Registry._clear() # remove filling of __init__.py
+        self.assertEqual([],
+                         Registry.getTypes(),
+                         'get from empty reg. got: %s' % Registry.getTypes())
         self.assertRaises(RuntimeError, Registry._registerType, n)
         self.failUnless(Registry._registerType(a), 'register type1')
         self.failIf(Registry._registerType(a), 'register type1 second time')
@@ -254,4 +267,4 @@ def test_suite():
     return suite
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
+    framework()

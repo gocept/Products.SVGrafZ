@@ -2,15 +2,22 @@
 ################################################################################
 ## 
 ## SVGrafZ: Test of ICRegistry
-## $Id: testICRegistry.py,v 1.6 2003/10/15 07:08:34 mac Exp $
+## $Id: testICRegistry.py,v 1.7 2005/02/16 08:54:52 mac Exp $
 ##
 ################################################################################
 
-import config4test
+import os, sys
+if __name__ == '__main__':
+    execfile(os.path.join(sys.path[0], 'framework.py'))
+
 import unittest
-from icreg import ICRegistry
-from interfaces import IDiagramType, IInputConverter, IDefaultInputConverter,\
-     IDataSource
+
+from Testing import ZopeTestCase
+ZopeTestCase.installProduct('SVGrafZ')
+
+from Products.SVGrafZ.icreg import ICRegistry
+from Products.SVGrafZ.interfaces import \
+     IDiagramType, IInputConverter, IDefaultInputConverter, IDataSource
 
 class NoDiagramType: pass
 class DiagramType1:
@@ -86,12 +93,12 @@ class ICRegistryTests(unittest.TestCase):
 
     def test_1singleton(self):
         """Test if ICRegistry is a singleton."""
-        from icreg import ICRegistry
+        from Products.SVGrafZ.icreg import ICRegistry
         a = ICRegistry
         b = ICRegistry
 
         self.assertEqual(str(a.__class__),
-                         'icreg.ICRegistry',
+                         'Products.SVGrafZ.icreg.ICRegistry',
                          'classtest')
         self.assertRaises(AttributeError,
                           ICRegistry) # failing of instanciation
@@ -103,12 +110,12 @@ class ICRegistryTests(unittest.TestCase):
 
     def test_2register_get_Type(self):
         """Test _registerType(type) and getTypes()."""
-
         n = NoDiagramType
         a = DiagramType1
         b = DiagramType1
         c = DiagramType2
-        
+
+        ICRegistry._clear() # remove filling of __init__.py
         self.assertRaises(RuntimeError, ICRegistry._registerType, n)
         self.failUnless(ICRegistry._registerType(a),
                         'register type1')
@@ -337,4 +344,4 @@ def test_suite():
     return suite
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
+    framework()

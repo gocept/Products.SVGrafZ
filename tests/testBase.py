@@ -2,13 +2,20 @@
 ################################################################################
 ## 
 ## SVGrafZ: Test of Class BaseGraph
-## Version: $Id: testBase.py,v 1.7 2003/10/15 07:08:34 mac Exp $
+## Version: $Id: testBase.py,v 1.8 2005/02/16 08:54:52 mac Exp $
 ##
 ################################################################################
 
-import config4test
+import os, sys
+if __name__ == '__main__':
+    execfile(os.path.join(sys.path[0], 'framework.py'))
+
 import unittest
-from base import BaseGraph
+
+from Testing import ZopeTestCase
+ZopeTestCase.installProduct('SVGrafZ')
+
+from Products.SVGrafZ.base import BaseGraph
 
 class BaseGraphData(BaseGraph):
     "Concrete subclass of BaseGraph, to get data into it."
@@ -305,5 +312,7 @@ def test_suite():
     suite.addTest(unittest.makeSuite(BaseGraphTests))
     return suite
 
+
 if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
+    framework()
+
