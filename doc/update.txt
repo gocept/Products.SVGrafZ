@@ -1,0 +1,22 @@
+################################################################################
+##
+## SVGrafZ: Update Instructions
+##
+## $Id: update.txt,v 1.1 2003/05/30 09:31:20 mac Exp $
+################################################################################
+
+
+If you updated the SVGrafZ-Product from an older version you have to convert
+your SVGrafZ-Instances.
+
+Follow these steps:
+  - Login to ZMI as a user having the role 'Manager'.
+  - Go to the topmost directory from which on you want to convert
+      SVGrafZ-instances.
+  - Add a new 'external Method':
+     + Name: update_SVRafZ
+     + Title: 
+     + Module Name: SVGrafZ.update
+     + Function Name: update_all
+  - Click on the test-tab.
+  - A long list of updated directories will be shown.
