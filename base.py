@@ -1,13 +1,19 @@
 ################################################################################
 ## 
 ## SVGrafZ: Base
-## Version: $Id: base.py,v 1.16 2003/06/19 12:53:32 mac Exp $
+## Version: $Id: base.py,v 1.17 2003/08/14 08:18:34 mac Exp $
 ##
 ################################################################################
 
 from math import log10,floor,ceil
 from types import *
 from config import SVGrafZ_default_Color, SVGrafZ_legend_name
+
+# set this var to 1 to use the dom generation (not complete yet)
+usedom = 0
+if usedom:
+    from xml.dom.minidom import Document
+
 
 class BaseGraph:
     """Abstract base class for all diagramKinds providing base functionallity.
@@ -26,6 +32,26 @@ class BaseGraph:
         "Has the graph a legend?"
         return (type(self.legend) == type([])) and self.legend
 
+    def getDom(self):
+        import pdb2
+        self.xmldoc = Document()
+        # XXX minidom kann keine customisierte xml-processing instruction
+        # XXX also mit umlauten testen, ob 'encoding="UTF-8"' nötig
+##        xml = self.xmldoc.createProcessingInstruction(
+##            'xml',
+##            'version="1.0" encoding="UTF-8"')
+##        self.xmldoc.appendChild(xml)
+        if self.stylesheet:
+            style = self.xmldoc.createProcessingInstruction(
+                'xml-stylesheet',
+                'href="%s" type="text/css"' % self.stylesheet)
+            self.xmldoc.appendChild(style)
+        svg = self.xmldoc.appendChild(self.xmldoc.createElement("svg"))
+        svg.setAttribute('xmlns', "http://www.w3.org/2000/svg")
+        svg.setAttribute('xmlns:xlink', "http://www.w3.org/1999/xlink")
+        svg.setAttribute('width', str(self.width))
+        svg.setAttribute('height', str(self.height))
+
 
     def svgHeader(self):
         res = u"""<?xml version="1.0" encoding="UTF-8" ?>\n"""
@@ -33,10 +59,10 @@ class BaseGraph:
             res += u"""<?xml-stylesheet href="%s" type="text/css"?>\n""" % (
                 self.stylesheet)
         return res + """<svg xmlns="http://www.w3.org/2000/svg"
-             xmlns:xlink="http://www.w3.org/1999/xlink"
-             width="%i"
-             height="%i">
-             """ % (self.width, self.height)
+                             xmlns:xlink="http://www.w3.org/1999/xlink"
+                             width="%i"
+                             height="%i">
+                             """ % (self.width, self.height)
         
 
     def svgFooter(self):
@@ -418,6 +444,10 @@ class BaseGraph:
         if self.result:
             return self.result
 
+        if usedom:
+            self.getDom()
+            return self.xmldoc.toxml()
+        # else: not usedom
         self.result = self.svgHeader()
         if self.errortext:
             self.result += self.printError()
