@@ -2,7 +2,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: FormatConverters
-## Version: $Id: svgconverters.py,v 1.18 2004/03/12 11:45:02 ctheune Exp $
+## Version: $Id: svgconverters.py,v 1.19 2004/07/29 07:52:44 mac Exp $
 ##
 ################################################################################
 
@@ -57,6 +57,11 @@ class SVG2xxx:
         """Returns the result data after the conversion."""
         return self.result
 
+    def setHTTPHeaders(self, response, filename):
+        """Set the necessary HTTP-Headers on response (e.g. mime type)."""
+        response.setHeader('Content-Type',
+                           self.getDestinationFormat())
+
 
 class SVG2SVG (SVG2xxx):
     """Convert SVG2SVG, so it's a dummy converter."""
@@ -71,6 +76,7 @@ class SVG2SVG (SVG2xxx):
         "Return the mine type of the DestinationFormat the Converter produces."
         return 'image/svg+xml'
     getDestinationFormat = staticmethod(getDestinationFormat)
+
 
     def getStyleSheetURL(self, obj):
         """Compute the URL of the Stylesheet.
@@ -136,6 +142,7 @@ class SVG2Batik (SVG2xxx):
         except (NameError):
             self.error_text = 'Java or Batik-Path not set in config.py. \
             Please talk to your Administrator.'
+
 
     def getStyleSheetURL(self, obj):
         """Compute the URL of the Stylesheet.
@@ -258,11 +265,23 @@ class SVG2PDF (SVG2Batik):
     __implements__ = ISVGConverter
 
     error_file = 'error.pdf' # name of file displayed in error-case
+    file_extension = '.pdf'
 
     def getDestinationFormat():
         "Return the mine type of the DestinationFormat the Converter produces."
         return 'application/pdf'
     getDestinationFormat = staticmethod(getDestinationFormat)
+
+    def setHTTPHeaders(self, response, filename):
+        """Set the necessary HTTP-Headers on response (e.g. mime type)."""
+        response.setHeader('Content-Type',
+                           '%s; name=%s%s'% (self.getDestinationFormat(),
+                                             filename,
+                                             self.file_extension))
+        response.setHeader('Content-Disposition',
+                           'attachment; filename=%s%s' % (filename,
+                                                          self.file_extension))
+
 
     def getHTML(url, height, width):
         """Returns a string to integrate result into HTML.

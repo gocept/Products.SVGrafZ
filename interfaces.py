@@ -3,7 +3,7 @@
 ## 
 ## SVGrafZ: Interfaces
 ##
-## $Id: interfaces.py,v 1.16 2003/10/15 07:08:34 mac Exp $
+## $Id: interfaces.py,v 1.17 2004/07/29 07:52:44 mac Exp $
 ################################################################################
 
 from Interface import Interface,Attribute
@@ -106,6 +106,13 @@ class ISVGConverter(Interface):
     def getDestinationFormat():
         """Return the mine type of the DestinationFormat the Converter produces.
         static method!
+        """
+
+    def setHTTPHeaders(response, filename):
+        """Set the necessary HTTP-Headers on response (e.g. mime type).
+
+        response: REQUEST.RESPONSE
+        filename: string ... name of the file without extension
         """
 
     def setSourceData(sourceData):

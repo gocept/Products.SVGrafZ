@@ -3,7 +3,7 @@
 ## 
 ## SVGrafZ
 ##
-## $Id: svgrafz.py,v 1.35 2004/02/24 14:43:29 mac Exp $
+## $Id: svgrafz.py,v 1.36 2004/07/29 07:52:44 mac Exp $
 ################################################################################
 
 import os
@@ -445,7 +445,7 @@ class SVGrafZProduct(SimpleItem):
                                  self.height(),
                                  self.width())
 
-        security.declareProtected('View', 'html')
+    security.declareProtected('View', 'html')
     def html2(self, REQUEST=None):
         """HTML-Text to embed Image + HTML-tags"""
         return '<HTML><HEAD><TITLE>%s</TITLE></HEAD><BODY>%s</BODY></HTML>'%(
@@ -525,8 +525,8 @@ class SVGrafZProduct(SimpleItem):
                            errortext  = errortext)
         graph.setSpecialAttrib(current['specialattrib'])
         if REQUEST.RESPONSE:
-            REQUEST.RESPONSE.setHeader('Content-Type',
-                                       outputConverter.getDestinationFormat())
+            outputConverter.setHTTPHeaders(REQUEST.RESPONSE,
+                                           title.replace(' ', '_') or 'unnamed')
         outputConverter.setSourceData(graph.compute().encode('UTF-8'))
         if not outputConverter.convert():
             return outputConverter.getErrorResult()
