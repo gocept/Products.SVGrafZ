@@ -3,10 +3,11 @@
 ## 
 ## SVGrafZ_DiagramRegistry
 ##
-## Version: $Id: registry.py,v 1.11 2003/11/20 15:18:21 ctheune Exp $
+## Version: $Id: registry.py,v 1.12 2005/02/16 09:06:52 mac Exp $
 ################################################################################
 
-from interfaces import IDiagramType, IDiagramKind, IDefaultDiagramKind
+from Products.SVGrafZ.interfaces import \
+    IDiagramType, IDiagramKind, IDefaultDiagramKind
 
 class Registry:
     """Registry for DiagramTypes and -Kinds.

@@ -2,15 +2,17 @@
 ################################################################################
 ## 
 ## SVGrafZ: Base
-## Version: $Id: base.py,v 1.27 2004/02/23 08:33:22 mac Exp $
+## Version: $Id: base.py,v 1.28 2005/02/16 09:06:52 mac Exp $
 ##
 ################################################################################
 
+# python imports
 from math import log10,floor,ceil
 from types import *
-from config import SVGrafZ_default_Color, SVGrafZ_legend_name
-from config import SVGrafZ_empty_dataset, SVGrafZ_error_name
 from string import split
+
+# sibling imports
+from Products.SVGrafZ import config
 
 # set this var to 1 to use the dom generation (not complete yet)
 usedom = 0
@@ -257,7 +259,7 @@ class BaseGraph:
 
     def _testFormatOfData(self):
         if self.data is None:
-            raise RuntimeError, SVGrafZ_empty_dataset
+            raise RuntimeError, config.SVGrafZ_empty_dataset
         if type(self.data) != ListType:
             raise RuntimeError, 'Data is not a list. Maybe wrong converter.'
         if len(self.data) == 0:
@@ -432,7 +434,7 @@ class BaseGraph:
         """ % ((self.gridboundx + self.width) / 2,
                self.gridboundy + 10,
                'text-anchor: middle; font-weight: bold;',
-               SVGrafZ_legend_name)
+               config.SVGrafZ_legend_name)
         for i in range(len(self.legend)):
             res += """<line class="%s" x1="%s" x2="%s" y1="%s" y2="%s" stroke-width="10" stroke-linecap="round" stroke="%s" />
             """ % ('dataset%s' % (i),
@@ -440,7 +442,7 @@ class BaseGraph:
                    self.width - 15,
                    self.gridboundy + 26 + (15 * i),
                    self.gridboundy + 26 + (15 * i),
-                   SVGrafZ_default_Color
+                   config.SVGrafZ_default_Color
                    )
             res += """<text x="%s" y="%s" style="text-anchor:end;">%s</text>"""\
                    % (self.width - 25,
@@ -468,7 +470,7 @@ class BaseGraph:
 
         step = 0
         print `self.errortext`
-        for errortext in split(self.confLT(SVGrafZ_error_name +
+        for errortext in split(self.confLT(config.SVGrafZ_error_name +
                                            ': ' +
                                            self.errortext), '\n'):
             res += '<text x="%s" y="%s" font-size="12pt" text-anchor="middle" fill="red">%s</text>' % (

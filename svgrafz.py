@@ -3,25 +3,31 @@
 ## 
 ## SVGrafZ
 ##
-## $Id: svgrafz.py,v 1.36 2004/07/29 07:52:44 mac Exp $
+## $Id: svgrafz.py,v 1.37 2005/02/16 09:06:52 mac Exp $
 ################################################################################
 
+# python imports
 import os
-from sys import exc_info
 import random
+from sys import exc_info
+
+# Zope imports
 from OFS.SimpleItem import SimpleItem
 from AccessControl import ClassSecurityInfo
 from Globals import InitializeClass
-from Products.PageTemplates.PageTemplateFile import PageTemplateFile
-from Products.PageTemplates.TALES import CompilerError
 from ZODB.PersistentMapping import PersistentMapping
 from ComputedAttribute import ComputedAttribute
 
-from interfaces import IInputConverterWithLegend
-from registry import Registry
-from icreg import ICRegistry
-from svgconverters import SVG2SVG, SVG2PNG, SVG2PDF
-from helper import TALESMethod
+# Zope products 
+from Products.PageTemplates.PageTemplateFile import PageTemplateFile
+from Products.PageTemplates.TALES import CompilerError
+
+# sibling imports
+from Products.SVGrafZ.interfaces import IInputConverterWithLegend
+from Products.SVGrafZ.registry import Registry
+from Products.SVGrafZ.icreg import ICRegistry
+from Products.SVGrafZ.svgconverters import SVG2SVG, SVG2PNG, SVG2PDF
+from Products.SVGrafZ.helper import TALESMethod
 
 
 _www                   = os.path.join(os.path.dirname(__file__), 'www')

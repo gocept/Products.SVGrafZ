@@ -3,13 +3,13 @@
 ## 
 ## SVGrafZ: BarGraphs
 ##
-## $Id: bar.py,v 1.21 2003/10/15 07:08:34 mac Exp $
+## $Id: bar.py,v 1.22 2005/02/16 09:06:52 mac Exp $
 ################################################################################
 
-from interfaces import IDiagramKind, IDefaultDiagramKind
-from base import DataOnXAxis
-from dtypes import *
-from config import SVGrafZ_default_Color
+from Products.SVGrafZ.interfaces import IDiagramKind, IDefaultDiagramKind
+from Products.SVGrafZ.base import DataOnXAxis
+from Products.SVGrafZ.dtypes import *
+from Products.SVGrafZ import config
 
 class BarDiagram(DataOnXAxis):
     """Abstract superclass for concrete BarDiagram classes."""
@@ -56,7 +56,7 @@ class Simple(BarDiagram):
                           self.gridbasey-(j*yBarFull)-ySpace-(i+1)*yHeight,
                           yHeight,
                           self.xScale * val,
-                          SVGrafZ_default_Color)
+                          config.SVGrafZ_default_Color)
 ##                    res += '<line x1="5" x2="600" y1="%s" y2="%s" />'%(self.gridbasey-(j*yBarFull),
 ##                                                                     self.gridbasey-(j*yBarFull)
 ##                                                                     )

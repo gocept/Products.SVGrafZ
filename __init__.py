@@ -2,27 +2,29 @@
 ################################################################################
 ## 
 ## SVGrafZ
-## Version: $Id: __init__.py,v 1.16 2005/01/05 14:30:22 mac Exp $
+## Version: $Id: __init__.py,v 1.17 2005/02/16 09:06:52 mac Exp $
 ##
 ################################################################################
 
-from registry import Registry
-from icreg import ICRegistry
-import bar, line, row
-import ic
-from svgrafz import SVGrafZProduct
-from interfaces import IInputConverter, IDiagramKind
+# python imports
 from telnetlib import Telnet
-
-from svgrafz import SVGrafZProduct, manage_addDiagramForm, \
-     manage_addDiagramFunction, manage_defaultPossible
-import config
-
-from zLOG import *
 import os
 import socket
-from telnetlib import Telnet
 from time import sleep
+
+# Zope imports
+from zLOG import *
+
+# sibling imports
+from Products.SVGrafZ.registry import Registry
+from Products.SVGrafZ.icreg import ICRegistry
+from Products.SVGrafZ import bar, line, row, ic
+from Products.SVGrafZ.svgrafz import SVGrafZProduct
+from Products.SVGrafZ.interfaces import IInputConverter, IDiagramKind
+from Products.SVGrafZ.svgrafz import \
+     SVGrafZProduct, manage_addDiagramForm, manage_addDiagramFunction, \
+     manage_defaultPossible
+from Products.SVGrafZ import config
 
 def initialize(registrar):
     # register diagramkinds

@@ -2,7 +2,7 @@
 ################################################################################
 ## 
 ## SVGrafZ
-## Version: $Id: helper.py,v 1.2 2003/10/15 07:08:34 mac Exp $
+## Version: $Id: helper.py,v 1.3 2005/02/16 09:06:52 mac Exp $
 ##
 ################################################################################
 """
@@ -10,9 +10,11 @@ Utility functions and classes
 Partly taken from Formulon which is (C) by gocept gmbh & co. kg
 """
 
+# Zope imports
 import Acquisition
 import Shared.DC.ZRDB.Results
 from Persistence import Persistent
+
 from Products.PageTemplates.Expressions import getEngine
 
 

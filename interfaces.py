@@ -3,10 +3,11 @@
 ## 
 ## SVGrafZ: Interfaces
 ##
-## $Id: interfaces.py,v 1.17 2004/07/29 07:52:44 mac Exp $
+## $Id: interfaces.py,v 1.18 2005/02/16 09:06:52 mac Exp $
 ################################################################################
 
-from Interface import Interface,Attribute
+# Zope imports
+from Interface import Interface, Attribute
 
 class IDiagramType(Interface):
     """Interface for DiagramTypes."""

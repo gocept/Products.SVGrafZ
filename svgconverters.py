@@ -2,23 +2,27 @@
 ################################################################################
 ## 
 ## SVGrafZ: FormatConverters
-## Version: $Id: svgconverters.py,v 1.19 2004/07/29 07:52:44 mac Exp $
+## Version: $Id: svgconverters.py,v 1.20 2005/02/16 09:06:52 mac Exp $
 ##
 ################################################################################
 
-from os import popen, unlink, path
+# python imports
+import os
+import os.path
 from tempfile import mktemp
+
 from telnetlib import Telnet
 import socket
 from urllib import quote
 
-from interfaces import ISVGConverter
-import config
-
 import Queue
 from thread import start_new_thread
 from time import sleep
-import os
+
+
+# sibling imports
+from Products.SVGrafZ.interfaces import ISVGConverter
+from Products.SVGrafZ import config
 
 unlink_queue = Queue.Queue(0)
 
@@ -160,7 +164,7 @@ class SVG2Batik (SVG2xxx):
         sfh.write(str(obj))
         sfh.close()
         
-        return path.basename(self.stylesheetPath)
+        return os.path.basename(self.stylesheetPath)
 
     def convert(self):
         """Do the conversion from source to destination format.
@@ -202,7 +206,7 @@ class SVG2Batik (SVG2xxx):
                   ' -d ' + resultFile + \
                   ' -m ' + self.getDestinationFormat() + \
                   ' ' + sourceFile
-            pfh = popen(cmd)
+            pfh = os.popen(cmd)
             res = pfh.read()
             if res[-8:-1] == 'success':
                 ret = True
@@ -222,7 +226,7 @@ class SVG2Batik (SVG2xxx):
 
     def getErrorResult(self):
         """Return data(in destination format) describing error, if conversion unsuccessful."""
-        erp = path.join(path.join(path.dirname(__file__), 'www'),
+        erp = os.path.join(os.path.join(os.path.dirname(__file__), 'www'),
                         self.error_file)
         efh = open(erp, 'rb')
         errorResult = efh.read()

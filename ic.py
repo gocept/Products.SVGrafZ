@@ -3,13 +3,17 @@
 ## 
 ## SVGrafZ: InputConverters
 ##
-## $Id: ic.py,v 1.16 2005/02/11 17:08:34 mac Exp $
+## $Id: ic.py,v 1.17 2005/02/16 09:06:52 mac Exp $
 ################################################################################
 
-from interfaces import IInputConverter, IInputConverterWithLegend, \
-     IDefaultInputConverter
-from dtypes import *
+# Zope imports
 from DateTime import DateTime
+
+# sibling imports
+from Products.SVGrafZ.interfaces import \
+     IInputConverter, IInputConverterWithLegend, IDefaultInputConverter
+from Products.SVGrafZ.dtypes import *
+
 
 class NoneConverter:
     """DefaultConverter which does no conversion."""

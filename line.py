@@ -3,13 +3,13 @@
 ## 
 ## SVGrafZ: LineGraphs
 ##
-## $Id: line.py,v 1.15 2004/02/23 08:33:22 mac Exp $
+## $Id: line.py,v 1.16 2005/02/16 09:06:52 mac Exp $
 ################################################################################
 
-from interfaces import IDiagramKind
-from base import DataOnYAxis
-from dtypes import *
-from config import SVGrafZ_default_Color
+from Products.SVGrafZ.interfaces import IDiagramKind
+from Products.SVGrafZ.base import DataOnYAxis
+from Products.SVGrafZ.dtypes import *
+from Products.SVGrafZ import config
 
 class LineDiagram(DataOnYAxis):
     """Abstract superclass for concrete LineDiagram classes."""
@@ -88,7 +88,7 @@ class LineDiagram(DataOnYAxis):
                         y = self.gridbasey - (val * self.yScale)
                     points.append([x,y])
                     if self.pointsAsCrosses:
-                        res += self._drawCross(x,y,i,SVGrafZ_default_Color)
+                        res += self._drawCross(x,y,i,config.SVGrafZ_default_Color)
                 except KeyError:
                     pass
 
@@ -98,7 +98,7 @@ class LineDiagram(DataOnYAxis):
                     if start:
                         res += '<path class="dataset%s" stroke-width="2" fill="none" stroke="%s" d="M%s,%s' % (
                             i,
-                            SVGrafZ_default_Color,
+                            config.SVGrafZ_default_Color,
                             point[0],
                             point[1])
                         start = 0

@@ -3,10 +3,10 @@
 ## 
 ## SVGrafZ: DataTypes ... Classes which do not get instanced
 ##
-## $Id: dtypes.py,v 1.5 2003/10/15 07:08:34 mac Exp $
+## $Id: dtypes.py,v 1.6 2005/02/16 09:06:52 mac Exp $
 ################################################################################
 
-from interfaces import IDiagramType, IDataSource
+from Products.SVGrafZ.interfaces import IDiagramType, IDataSource
 
 
 ## DiagramTypes

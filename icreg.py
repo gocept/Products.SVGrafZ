@@ -3,11 +3,11 @@
 ## 
 ## SVGrafZ: Registry of InputConverters
 ##
-## $Id: icreg.py,v 1.5 2003/10/15 07:08:34 mac Exp $
+## $Id: icreg.py,v 1.6 2005/02/16 09:06:52 mac Exp $
 ################################################################################
 
-from interfaces import IDiagramType, IInputConverter, IDefaultInputConverter, \
-     IDataSource
+from Products.SVGrafZ.interfaces import \
+     IDiagramType, IInputConverter, IDefaultInputConverter, IDataSource
 
 class ICRegistry:
     """Registry for InputConverters.

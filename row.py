@@ -3,13 +3,13 @@
 ## 
 ## SVGrafZ: RowGraphs
 ##
-## $Id: row.py,v 1.8 2003/12/11 10:35:00 mac Exp $
+## $Id: row.py,v 1.9 2005/02/16 09:06:52 mac Exp $
 ################################################################################
 
-from interfaces import IDiagramKind
-from base import DataOnYAxis
-from dtypes import *
-from config import SVGrafZ_default_Color
+from Products.SVGrafZ.interfaces import IDiagramKind
+from Products.SVGrafZ.base import DataOnYAxis
+from Products.SVGrafZ.dtypes import *
+from Products.SVGrafZ import config
 
 class RowDiagram(DataOnYAxis):
     """Abstract superclass for concrete RowDiagram classes."""
@@ -95,7 +95,7 @@ class Simple(RowDiagram):
                           self.gridbasey - val * self.yScale,
                           val * self.yScale,
                           xWidth,
-                          SVGrafZ_default_Color)
+                          config.SVGrafZ_default_Color)
                 except KeyError:
                     pass
 
@@ -150,7 +150,7 @@ class ABC_Analysis(Simple):
                           self.gridbasey - val * self.yScale,
                           val * self.yScale,
                           xWidth,
-                          SVGrafZ_default_Color)
+                          config.SVGrafZ_default_Color)
                     c += 1
                 except KeyError:
                     pass
