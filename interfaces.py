@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ: Interfaces
 ##
-## $Id: interfaces.py,v 1.9 2003/06/03 12:41:32 mac Exp $
+## $Id: interfaces.py,v 1.10 2003/06/03 15:03:13 mac Exp $
 ################################################################################
 
 from Interface import Interface,Attribute
@@ -18,7 +18,8 @@ class IDiagramType(Interface):
 class IDiagramKind(Interface):
     """Interface for DiagramKinds."""
 
-    name = Attribute ("Name of the DiagramKind.")
+    name = Attribute("Name of the DiagramKind.")
+    specialAttribName = Attribute("Name of the special Attribute or None.")
 
     def __init__(data=None,
                  width=None,
@@ -65,14 +66,15 @@ class IDiagramKind(Interface):
         Returns: [DiagrammKind1, DiagrammKind2, ...]
           (The names are references to classes!)
         """
+        
+    def setSpecialAttrib(value):
+        """Set the value of the special attribute.
 
+        No tests are done here, do them in compute.
+        """
     
 
-##class IDiagramKindDefault(IDiagramKind):
-##    """MarkerInterface for DefaultDiagramKinds."""
 
-
-    
 class ISVGConverter(Interface):
     """Interface for Classes which convert DataFormats."""
 

@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ
 ##
-## $Id: svgrafz.py,v 1.15 2003/06/03 12:41:32 mac Exp $
+## $Id: svgrafz.py,v 1.16 2003/06/03 15:03:13 mac Exp $
 ################################################################################
 
 import os
@@ -30,7 +30,7 @@ class SVGrafZProduct(SimpleItem):
     """ProductClass of SVGrafZ."""
 
     meta_type = 'SVGrafZ'
-    version = '0.1a1'
+    version = '0.1a3'
 
     manage_options = (
         {'label':'Properties',
@@ -88,7 +88,7 @@ class SVGrafZProduct(SimpleItem):
             self.dat[d] = req
 
 
-        data = ['title', 'stylesheet', 'fixcolumn']
+        data = ['title', 'stylesheet', 'fixcolumn', 'specialattrib']
         for d in data:
             req = REQUEST.get(d, None)
             if req:
@@ -116,6 +116,12 @@ class SVGrafZProduct(SimpleItem):
                 self.dat[x] = TALESMethod(unicode(expression, encoding))
 
 
+    security.declareProtected('View management screens', 'getSpecialAttribName')
+    def getSpecialAttribName(self):
+        "Get the name of the specialattrib of the currently selected diagram."
+        return Registry.getKind(self.graphname()).specialAttribName
+
+
     def __init__(self, id):
         self.id        = id
         self.dat = PersistentMapping() # automatical Persictence of Dictionary
@@ -130,6 +136,7 @@ class SVGrafZProduct(SimpleItem):
                          'stylesheet':None,
                          'convertername': None,
                          'fixcolumn': None,
+                         'specialattrib': None
                          })
 
     def _update(self):
@@ -137,6 +144,8 @@ class SVGrafZProduct(SimpleItem):
         if self.dat.has_key('fixColumn'):
             self.dat['fixcolumn'] = self.dat['fixColumn']
             del self.dat['fixColumn']
+        if not self.dat.has_key('specialattrib'):
+            self.dat['specialattrib'] = None
         
         
     security.declareProtected('View management screens', 'equalsGraphName')
@@ -219,6 +228,11 @@ class SVGrafZProduct(SimpleItem):
         "get stylesheet."
         return self.getAttribute('stylesheet', None, default)
 
+    security.declareProtected('View', 'specialattrib')
+    def specialattrib(self, default=None):
+        "get specialattrib."
+        return self.getAttribute('specialattrib', None, default)
+
 
     def getAttribute(self, attrib, defaultVal, default=None):
         "Get the value of an attribute or aquire it."
@@ -265,7 +279,7 @@ class SVGrafZProduct(SimpleItem):
         return res
 
 
-    security.declareProtected('View management screens', 'getPossibleConverters')
+    security.declareProtected('View management screens','getPossibleConverters')
     def getPossibleConverters(self):
         """Get a Dictionary ot available Converters."""
         diagramTypes = Registry.getKind(self.graphname()).registration()
@@ -280,7 +294,9 @@ class SVGrafZProduct(SimpleItem):
         for dt in diagramTypes:
             sources = []
             for source in ICRegistry.getSources(dt.name):
-                converters = [{'name': conv} for conv in ICRegistry.getConverters(dt.name, source)]
+                converters = [{'name': conv}
+                              for conv in ICRegistry.getConverters(dt.name,
+                                                                   source)]
                 sources.append({'name':       source,
                                 'converters': converters})
             ret.append({'name':    dt.name,
@@ -394,6 +410,7 @@ class SVGrafZProduct(SimpleItem):
                            width     = current['width'],
                            stylesheet= stylesheet,
                            errortext = errortext)
+        graph.setSpecialAttrib(current['specialattrib'])
         if REQUEST.RESPONSE:
             REQUEST.RESPONSE.setHeader('Content-Type',
                                        outputConverter.getDestinationFormat())
@@ -422,8 +439,8 @@ class SVGrafZProduct(SimpleItem):
             context = self
         root = self.getPhysicalRoot()
         value = method.__of__(self)(here=context, 
-                                        request=getattr(root, 'REQUEST', None), 
-                                        root=root)
+                                    request=getattr(root, 'REQUEST', None), 
+                                    root=root)
         if callable(value):
             value = value.__of__(self)
         return value

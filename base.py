@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: Base
-## Version: $Id: base.py,v 1.8 2003/06/03 12:41:32 mac Exp $
+## Version: $Id: base.py,v 1.9 2003/06/03 15:03:13 mac Exp $
 ##
 ################################################################################
 
@@ -13,6 +13,13 @@ class BaseGraph:
     """BaseClass for graphs providing base functionallity for all graphs."""
 
     __computed_results__ = None
+    specialAttribName    = None
+
+
+    def setSpecialAttrib(self, value):
+        """Set the value of the special attribute."""
+        self.specialAttrib = value
+
 
     def hasLegend(self):
         "Has the graph a legend?"
@@ -71,6 +78,25 @@ class BaseGraph:
         return len(self.data)
 
 
+    def _compRoundedValMax(self, val):
+        """Compute a rounded maximum value."""
+        if val == 0:
+            return 0
+        valBase = 10 ** (int(log10(abs(val))))
+        return valBase * ceil((float(val) / valBase)+1)
+
+    def _compRoundedValMin(self, val):
+        """Compute a rounded minimum value."""
+        if val == 0:
+            return 0
+        valBase = 10 ** (int(log10(abs(val))))
+        return valBase * floor((float(val) / valBase)-1)
+
+    def _getDistinctValues(self, list):
+        """Make a list having only distinct values."""
+        return dict([(x, 1) for x in list]).keys()
+
+
     def _computeMinMax(self, key):
         if self.__computed_results__:
             return self.__computed_results__[key]
@@ -78,20 +104,6 @@ class BaseGraph:
         self._testFormatOfData()
         self.__computed_results__ = {}
         cr = self.__computed_results__
-        def compRoundedValMax(val):
-            if val == 0:
-                return 0
-            valBase = 10 ** (int(log10(abs(val))))
-            return valBase * ceil((float(val) / valBase)+1)
-
-        def compRoundedValMin(val):
-            if val == 0:
-                return 0
-            valBase = 10 ** (int(log10(abs(val))))
-            return valBase * floor((float(val) / valBase)-1)
-
-        def getDistinctValues(list):
-            return dict([(x, 1) for x in list]).keys()
 
         allX = []
         allY = []
@@ -119,9 +131,9 @@ class BaseGraph:
             cr['minX']      = None
         else:
             cr['realMaxX']  = max(allX)
-            cr['maxX']      = compRoundedValMax(cr['realMaxX'])
+            cr['maxX']      = self._compRoundedValMax(cr['realMaxX'])
             cr['realMinX']  = min(allX)
-            cr['minX']      = compRoundedValMin(cr['realMinX'])
+            cr['minX']      = self._compRoundedValMin(cr['realMinX'])
 
 
         if stringInY:
@@ -131,13 +143,21 @@ class BaseGraph:
             cr['minY']      = None
         else:
             cr['realMaxY']  = max(allY)
-            cr['maxY']      = compRoundedValMax(cr['realMaxY'])
+            cr['maxY']      = self._compRoundedValMax(cr['realMaxY'])
             cr['realMinY']  = min(allY)
-            cr['minY']      = compRoundedValMin(cr['realMinY'])
+            cr['minY']      = self._compRoundedValMin(cr['realMinY'])
 
-        cr['distValsX'] = getDistinctValues(allX)
-        cr['distValsY'] = getDistinctValues(allY)
+        cr['distValsX'] = self._getDistinctValues(allX)
+        cr['distValsY'] = self._getDistinctValues(allY)
         return cr[key]
+
+    def _change_computed_result(self, key, value):
+        """Set the value of key in __computed_results__ after computation.
+
+        Use with caution!
+        """
+        self._computeMinMax(key)
+        self.__computed_results__[key] = value
 
 
     def _testFormatOfData(self):
