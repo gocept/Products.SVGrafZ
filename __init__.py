@@ -2,7 +2,7 @@
 ################################################################################
 ## 
 ## SVGrafZ
-## Version: $Id: __init__.py,v 1.12 2004/03/09 15:10:37 ctheune Exp $
+## Version: $Id: __init__.py,v 1.13 2004/03/09 21:21:59 ctheune Exp $
 ##
 ################################################################################
 
@@ -80,28 +80,16 @@ def startBatikServer():
         conn.close()
         return res
     
-    succesfulConnect = 0            
-    try: # first look, if Batikserver is already running
-        res = connect_BatikServer("Starting BatikServer ... already runs.")
-        if res != '0':
-            LOG("SVGrafZ", 100, "Connecting BatikServer ... failure."\
-                "(The process listening on %s:%s is not BatikServer.)" %
-                (config.SVGrafZ_BatikServer_Host,
-                 config.SVGrafZ_BatikServer_Port))
-        succesfulConnect = 1
-    except (socket.error): # not runnig ... so start it
-        streams = os.popen3(config.SVGrafZ_BatikServer_Invoke_Cmd)
-        for i in range(1, 10): # test if Batikserver is now running
-            try:
-                succesfulConnect = connect_BatikServer(
-                    "Starting BatikServer ... success.")
-                break
-            except (socket.error): 
-                sleep(1) # no batikServer runing, try again in 1 sec
+    # Start a new batik server blindly
+    LOG("SVGrafZ", 0, "Starting new BatikServer.")
+    os.spawnl(os.P_NOWAIT, config.SVGrafZ_Java_Path, "-Djava.awt.headless==true", "-classpath", "%s;%s" % (config.SVGrafZ_Batik_Path, config.SVGrafZ_BatikServer), "batikServer", "-l", "batikserver.log")
+    sleep(3)
 
-    if not succesfulConnect:
-        LOG("SVGrafZ",
-            100,
-            "Starting BatikServer ... failure (Server does not (yet) run "\
-            "(see BatikServer's logfile)")
+    try:
+        res = connect_BatikServer("Connecting to BatikServer ... success.")
+    except socket.error:
+        res = None
+
+    if res != '0':
+        LOG("SVGrafZ", 100, "Connecting to BatikServer ... failure. Maybe later.")
 
