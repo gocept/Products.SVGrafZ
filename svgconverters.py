@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: FormatConverters
-## Version: $Id: svgconverters.py,v 1.4 2003/06/17 09:42:43 mac Exp $
+## Version: $Id: svgconverters.py,v 1.5 2003/06/17 12:46:32 mac Exp $
 ##
 ################################################################################
 
@@ -16,7 +16,27 @@ from config import SVGrafZ_Java_Path, SVGrafZ_Batik_Path
 from config import SVGrafZ_BatikServer_Host, SVGrafZ_BatikServer_Port
 
 
-class SVG2SVG:
+class SVG2xxx:
+    """Abstract base class for converters."""
+
+    def getSourceFormat():
+        """Return the mine type of the SourceFormat the Converter can handle."""
+        return 'image/svg+xml'
+    getSourceFormat = staticmethod(getSourceFormat)
+
+    def setSourceData(self, sourceData):
+        """Put the data for conversion into the Class.
+
+        Parameter:
+          inputData: string which is to convert."""
+        self.source = sourceData
+
+    def getResultData(self):
+        """Returns the result data after the conversion."""
+        return self.result
+
+
+class SVG2SVG (SVG2xxx):
     """Convert SVG2SVG, so it's a dummy converter."""
     
     __implements__ = ISVGConverter
@@ -25,24 +45,10 @@ class SVG2SVG:
         """Init."""
         pass
 
-    def getSourceFormat():
-        """Return the mine type of the SourceFormat the Converter can handle."""
-        return 'image/svg+xml'
-
-    getSourceFormat = staticmethod(getSourceFormat)
-
     def getDestinationFormat():
         "Return the mine type of the DestinationFormat the Converter produces."
         return 'image/svg+xml'
-
     getDestinationFormat = staticmethod(getDestinationFormat)
-
-    def setSourceData(self, sourceData):
-        """Put the data for conversion into the Class.
-
-        Parameter:
-          inputData: string which is to convert."""
-        self.source = sourceData
 
     def getStyleSheetURL(self, obj):
         """Compute the URL of the Stylesheet.
@@ -69,10 +75,6 @@ class SVG2SVG:
         """Return data(in destination format) describing error, if conversion unsuccessful."""
         return 'There will be no error!' # there will be no error
 
-    def getResultData(self):
-        """Returns the result data after the conversion."""
-        return self.result
-
     def getHTML(url, height, width):
         """Returns a string to integrate result into HTML.
 
@@ -93,14 +95,13 @@ class SVG2SVG:
 
 
 
-class SVG2PNG:
-    """Convert SVG to PNG, using batik from http://xml.apache.org/batik/.
+class SVG2Batik (SVG2xxx):
+    """Convert SVG to other formats using batik from http://xml.apache.org/batik
        or batikServer from
        http://cvs.gocept.com/cgi-bin/viewcvs/viewcvs.cgi/batikServer/"""
     
-    __implements__ = ISVGConverter
-
     error_text = ''
+    error_file = None # name of file displayed in error-case
 
     def __init__(self):
         """Init."""
@@ -115,27 +116,6 @@ class SVG2PNG:
         except (NameError):
             self.error_text = 'Java or Batik-Path not set in config.py. \
             Please talk to your Administrator.'
-        
-
-    def getSourceFormat():
-        """Return the mine type of the SourceFormat the Converter can handle."""
-        return 'image/svg+xml'
-    getSourceFormat = staticmethod(getSourceFormat)
-
-
-    def getDestinationFormat():
-        "Return the mine type of the DestinationFormat the Converter produces."
-        return 'image/png'
-    getDestinationFormat = staticmethod(getDestinationFormat)
-
-
-    def setSourceData(self, sourceData):
-        """Put the data for conversion into the Class.
-
-        Parameter:
-          inputData: string which is to convert."""
-        self.source = sourceData
-
 
     def getStyleSheetURL(self, obj):
         """Compute the URL of the Stylesheet.
@@ -154,7 +134,6 @@ class SVG2PNG:
         sfh.close()
         
         return self.stylesheetPath
-
 
     def convert(self):
         """Do the conversion from source to destination format.
@@ -214,20 +193,30 @@ class SVG2PNG:
         unlink(self.stylesheetPath)
         unlink(sourceFile)
         unlink(resultFile)
-        
         return ret
 
     def getErrorResult(self):
         """Return data(in destination format) describing error, if conversion unsuccessful."""
-        erp = path.join(path.join(path.dirname(__file__), 'www'), 'error.png')
+        erp = path.join(path.join(path.dirname(__file__), 'www'),
+                        self.error_file)
         efh = open(erp, 'r')
         errorResult = efh.read()
         efh.close()
         return errorResult
 
-    def getResultData(self):
-        """Returns the result data after the conversion."""
-        return self.result
+
+
+class SVG2PNG (SVG2Batik):
+    """Convert SVG to PNG."""
+    
+    __implements__ = ISVGConverter
+
+    error_file = 'error.png' # name of file displayed in error-case
+
+    def getDestinationFormat():
+        "Return the mine type of the DestinationFormat the Converter produces."
+        return 'image/png'
+    getDestinationFormat = staticmethod(getDestinationFormat)
 
     def getHTML(url, height, width):
         """Returns a string to integrate result into HTML.
@@ -241,5 +230,36 @@ class SVG2PNG:
           """
         return u'<img src="%s" width="%s" height="%s"/>' % (
             url, width, height)
+    getHTML = staticmethod(getHTML)
 
+
+
+class SVG2PDF (SVG2Batik):
+    """Convert SVG to PDF."""
+    
+    __implements__ = ISVGConverter
+
+    error_file = 'error.pdf' # name of file displayed in error-case
+
+    def getDestinationFormat():
+        "Return the mine type of the DestinationFormat the Converter produces."
+        return 'application/pdf'
+    getDestinationFormat = staticmethod(getDestinationFormat)
+
+    def getHTML(url, height, width):
+        """Returns a string to integrate result into HTML.
+
+        static method!
+        
+        Parameters:
+          url: string containing the url (absolute or relative) to the result
+          heigth: height of the image
+          width:  width of the image
+          """
+
+        return u'<object type="%s" width="%s" height="%s" data="%s">\
+        <a href="%s">download PDF-Dokument</a></object>' % (
+            SVG2PDF.getDestinationFormat(), width, height, url, url)
+
+        return u'<a href="%s">PDF-Dokument</a>' % (url)
     getHTML = staticmethod(getHTML)

@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ
 ##
-## $Id: svgrafz.py,v 1.23 2003/06/17 09:42:43 mac Exp $
+## $Id: svgrafz.py,v 1.24 2003/06/17 12:46:32 mac Exp $
 ################################################################################
 
 import os
@@ -17,7 +17,7 @@ from ZODB.PersistentMapping import PersistentMapping
 from interfaces import IInputConverterWithLegend
 from registry import Registry
 from icreg import ICRegistry
-from svgconverters import SVG2SVG, SVG2PNG
+from svgconverters import SVG2SVG, SVG2PNG, SVG2PDF
 from helper import TALESMethod
 
 _www                   = os.path.join(os.path.dirname(__file__), 'www')
@@ -37,6 +37,7 @@ class SVGrafZProduct(SimpleItem):
          'help':('SVGrafZ','SVGrafZ_Properties.html')},
         {'label':'View as SVG', 'action':'manage_view'},
         {'label':'View as PNG', 'action':'manage_viewPNG'},
+        {'label':'View as PDF', 'action':'manage_viewPDF'},
         ) + SimpleItem.manage_options
 
 
@@ -51,6 +52,9 @@ class SVGrafZProduct(SimpleItem):
     
     security.declareProtected('View management screens', 'manage_viewPNG')
     manage_viewPNG = PageTemplateFile('SVGrafZViewPNG', _www)
+
+    security.declareProtected('View management screens', 'manage_viewPDF')
+    manage_viewPDF = PageTemplateFile('SVGrafZViewPDF', _www)
 
 
     security.declareProtected('View management screens', 'manage_edit')
@@ -371,6 +375,8 @@ class SVGrafZProduct(SimpleItem):
             mode = self.REQUEST.SESSION.get('SVGrafZ_PixelMode', None)
         if mode in [None, 0, '0']:
             return SVG2SVG(), 0
+        elif mode in ['PDF', 'pdf']:
+            return SVG2PDF(), 'pdf'
         else:
             return SVG2PNG(), 1
 
@@ -381,7 +387,7 @@ class SVGrafZProduct(SimpleItem):
         converter, value = self._getOutputConverter()
         url = self.id + '?SVGrafZ_PixelMode=%s&rnd=%s' % (value,
                                                           self.rnd.random())
-        # rnd is to prevent reload
+        # rnd is to prevent caching of browser
         return converter.getHTML(url,
                                  self.height(),
                                  self.width())

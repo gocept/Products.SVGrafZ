@@ -2,9 +2,9 @@
 ###
 ### SVGrafZ: INSTALL
 ###
-### $Revision: 1.3 $
+### $Revision: 1.4 $
 ################################################################################
-$Id: INSTALL.txt,v 1.3 2003/06/17 09:58:10 mac Exp $
+$Id: INSTALL.txt,v 1.4 2003/06/17 12:46:32 mac Exp $
 
 
 REQUIREMENTS
@@ -16,12 +16,13 @@ REQUIREMENTS
 
 RECOMANDATIONS
 --------------
- * For generating PNG-Images for Browsers which have no SVG-Support
+ * For generating PNG-Images or PDF-Files for Browsers which have no SVG-Support
+     resp. printers:
      + batikServer (which needs also batikRasterizer) -- batikServer is about
        3 times faster than batikRasterizer
        http://cvs.gocept.com/cgi-bin/viewcvs/viewcvs.cgi/BatikServer/
 
-     + or batikRasterizer alone
+     + or only batikRasterizer from
         batik-1.5beta5 or higher from http://xml.apache.org/batik/
         (Binary distribution is fine.)
         The batik-tool needs a running XServer or a redirected display,
@@ -29,8 +30,8 @@ RECOMANDATIONS
 
 INSTALL
 -------
- blah ... as usual for a Zope Product
+  blah ... as usual for a Zope Product
 
 CONFIGURE
 ---------
- Change the settings in config.py, if you have installed batik.
+  Change the settings in config.py to reflect your preferences and settings.

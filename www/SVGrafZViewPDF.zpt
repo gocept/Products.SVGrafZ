@@ -1,0 +1,19 @@
+<!--
+Copyright (c) 2003 gocept gmbh & co. kg. All rights reserved.
+See also LICENSE.txt
+$Id: SVGrafZViewPDF.zpt,v 1.1 2003/06/17 12:46:33 mac Exp $
+-->
+
+  <h1 tal:replace="structure here/manage_page_header">Header</h1>
+  <span tal:define="manage_tabs_message options/manage_tabs_message | nothing"
+    tal:replace="structure here/manage_tabs">Tabs</span>
+  
+  <h2 tal:define="form_title string:View SVGrafZ as PNG"
+    tal:replace="structure here/manage_form_title">Form Title</h2>
+
+  <tal:block tal:define="dummy python:request.set('SVGrafZ_PixelMode', 'pdf')">
+    <div tal:replace="structure here/html"/>
+  </tal:block>
+    
+  <h1 tal:replace="structure here/manage_page_footer">Footer</h1>
+

@@ -1,7 +1,7 @@
 DESIGN:
 -------
 
-$Id: design.txt,v 1.4 2003/06/13 10:23:57 mac Exp $
+$Id: design.txt,v 1.5 2003/06/17 12:46:32 mac Exp $
 
 Klassen:
         - Registry für DiagrammArten
@@ -40,10 +40,20 @@ Anforderungen:
           nicht gesetzt oder hat sie den Wert 0, so werden SVG-Grafiken 
           gezeichnet ansonsten Pixel-Grafiken. Existiert im Request und in der
           Session eine Variable namens 'SVGrafZ_PixelMode', dann wird der Wert,
-          der im Request steht benutzt.
-        - Nutzung von batik-rasterizer 1.1.1+ (ist zwar etwas langsam, 
-          funktioniert aber) siehe http://xml.apache.org/batik
-        - Batik-1.1.1 unterstützt PNG und JPEG als von jedem Browser 
+          der im Request steht, benutzt.
+        - Nutzung von batik-rasterizer 1.5beta5 oder höher (ist zwar etwas
+          langsam, funktioniert aber) siehe http://xml.apache.org/batik
+        - Batik-1.5beta5 unterstützt PNG und JPEG als von jedem Browser 
           darstellbare Pixel-Grafiken
         - SVGrafZ wird nur PNGs erzeugen, da diese bei gleicher Dateigröße viel
           besser als die JPEG-Grafiken aussehen.
+        - Um die Geschwindigkeit zu erhöhen (2-3faches) kann BatikServer
+          eingesetzt werden.
+          siehe: http://cvs.gocept.com/cgi-bin/viewcvs/viewcvs.cgi/BatikServer/
+
+Übersetzung zum Drucken als PDF:
+        - ähnlich wie Übersetzung nach Pixel-Grafik, nur folgende Unterschiede:
+           + SVGrafZ_PixelMode muss im Request oder in der Session den Wert
+             'pdf' haben.
+           + batik-1.5beta5 beinhaltet den PDF-Konverter, also sind keine
+             weiteren Pakete zu installieren.
