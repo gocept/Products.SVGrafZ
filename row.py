@@ -3,7 +3,7 @@
 ## 
 ## SVGrafZ: RowGraphs
 ##
-## $Id: row.py,v 1.7 2003/10/15 07:08:34 mac Exp $
+## $Id: row.py,v 1.8 2003/12/11 10:35:00 mac Exp $
 ################################################################################
 
 from interfaces import IDiagramKind
@@ -71,7 +71,7 @@ class Simple(RowDiagram):
 
 
     def drawGraph(self):
-        "Draw the Bars of the graph."
+        "Draw the rows of the graph."
         distX  = self.distValsX()
         lenDistX = len(distX)
         xBarFull = (self.gridboundx - self.gridbasex) / lenDistX
@@ -102,6 +102,59 @@ class Simple(RowDiagram):
         res += self.xAxis_verticalLabels(distX,
                                          self.gridbasex + xBarFull / 2,
                                          xBarFull)
+
+        return res + '</g>\n'
+
+
+
+class ABC_Analysis(Simple):
+    """Simple RowGraph with multiple DataRows,
+                       without negative values,
+                       y-axis always starting at zero,
+                       labels on x-axis written vertically,
+                       values on x-axis have no room inbetween
+    """
+
+    __implements__ = IDiagramKind
+
+    name = 'abc analysis diagram'
+
+
+    def description():
+        """see interfaces.IDiagamKind.description
+        """
+        return Simple.description() + [
+            "No Values on x-axis.",
+            "Multiple Datasets are handed as if there is only one which is parted to get differently colored sections.",
+            ]
+    description = staticmethod(description)
+
+    def drawGraph(self):
+        "Draw the rows of the graph."
+        allX  = self.allX()
+        lenAllX = len(allX)
+        xBarFull = (self.gridboundx - self.gridbasex) / lenAllX
+        xWidth   = 0.9 * xBarFull
+        xSpace   = 0.1 / 2 * xBarFull
+        res      = '<g id="data">\n'
+        c        = 0
+
+        for i in range(self.numgraphs()):
+            dataset = dict(self.data[i])
+            for j in range(lenAllX):
+                try:
+                    val = float(dataset[allX[j]])
+                    res += '<rect class="dataset%s" x="%s" y="%s" height="%s" width="%s" fill="%s"/>\n'\
+                       % (i,
+                          self.gridbasex + c * xBarFull + xSpace, #+ i * xWidth,
+                          self.gridbasey - val * self.yScale,
+                          val * self.yScale,
+                          xWidth,
+                          SVGrafZ_default_Color)
+                    c += 1
+                except KeyError:
+                    pass
+
 
         return res + '</g>\n'
 

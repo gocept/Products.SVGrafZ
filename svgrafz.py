@@ -3,7 +3,7 @@
 ## 
 ## SVGrafZ
 ##
-## $Id: svgrafz.py,v 1.33 2003/11/20 15:18:21 ctheune Exp $
+## $Id: svgrafz.py,v 1.34 2003/12/11 10:35:00 mac Exp $
 ################################################################################
 
 import os
@@ -466,16 +466,19 @@ class SVGrafZProduct(SimpleItem):
         inputConverter = ICRegistry.getConverter(current['convertername'])
         errortext      = legend = colnames = stylesheet = data = title = None
 
-        try:
-            data = self.getValue(current['data'])
+        if current['data'].getExpression() is None:
+            errortext = "You did not enter a DataSource, so can't display anything."
+        else:
             try:
-                data = inputConverter.convert(data, current['fixcolumn'])
+                data = self.getValue(current['data'])
+                try:
+                    data = inputConverter.convert(data, current['fixcolumn'])
+                except RuntimeError:
+                    errortext = str(exc_info()[1])
+                except (AttributeError, KeyError, CompilerError):
+                    errortext = 'DataSource "%s" is not existing.' % (current['data'])
             except RuntimeError:
                 errortext = str(exc_info()[1])
-        except (AttributeError, KeyError, CompilerError):
-            errortext = 'DataSource "%s" is not existing.' % (current['data'])
-        except RuntimeError:
-            errortext = str(exc_info()[1])
         try:
             legend = self.getValue(current['legend'])
         except (AttributeError, KeyError, CompilerError):

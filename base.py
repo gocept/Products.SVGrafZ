@@ -2,7 +2,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: Base
-## Version: $Id: base.py,v 1.25 2003/10/27 10:12:14 mac Exp $
+## Version: $Id: base.py,v 1.26 2003/12/11 10:35:00 mac Exp $
 ##
 ################################################################################
 
@@ -143,6 +143,13 @@ class BaseGraph:
     def distValsY(self):
         return self._computeMinMax('distValsY')
 
+    def allX(self):
+        return self._computeMinMax('allX')
+
+    def allY(self):
+        return self._computeMinMax('allY')
+
+
     def numgraphs(self):
         return len(self.data)
 
@@ -230,6 +237,8 @@ class BaseGraph:
             if self.fillgaps:
                 cr['distValsY'] = range(cr['realMinY'], cr['realMaxY'] + 1)
 
+        cr['allX'] = allX
+        cr['allY'] = allY
         if cr.get('distValsX') is None:
             cr['distValsX'] = self._getDistinctValues(allX)
         if cr.get('distValsY') is None:
