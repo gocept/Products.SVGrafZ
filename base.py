@@ -2,12 +2,12 @@
 ################################################################################
 ## 
 ## SVGrafZ: Base
-## Version: $Id: base.py,v 1.28 2005/02/16 09:06:52 mac Exp $
+## Version: $Id: base.py,v 1.29 2005/02/28 11:19:25 mac Exp $
 ##
 ################################################################################
 
 # python imports
-from math import log10,floor,ceil
+from math import log10, floor, ceil
 from types import *
 from string import split
 
@@ -77,7 +77,6 @@ class BaseGraph:
         return (type(self.legend) == type([])) and self.legend
 
     def getDom(self):
-#        import pdb2
         self.xmldoc = Document()
         # XXX minidom kann keine customisierte xml-processing instruction
         # XXX also mit umlauten testen, ob 'encoding="UTF-8"' nötig
@@ -470,9 +469,8 @@ class BaseGraph:
 
         step = 0
         print `self.errortext`
-        for errortext in split(self.confLT(config.SVGrafZ_error_name +
-                                           ': ' +
-                                           self.errortext), '\n'):
+        err_txt = u"%s: %s" % (config.SVGrafZ_error_name, self.errortext)
+        for errortext in split(self.confLT(err_txt), '\n'):
             res += '<text x="%s" y="%s" font-size="12pt" text-anchor="middle" fill="red">%s</text>' % (
                 self.width / 2,
                 (self.gridbasey - self.gridboundy) / 2 + step,
@@ -583,7 +581,7 @@ class BaseGraph:
                     self.result += action()
             except RuntimeError:
                 import sys
-                self.errortext = str(sys.exc_info()[1])
+                self.errortext = sys.exc_info()[1].args[0]
                 self.result = self.svgHeader() + self.printError()
 
         self.result += self.svgFooter()
@@ -619,8 +617,10 @@ class BaseGraph:
 
 
     def confLT(self, text):
-        """Convert the littler than symbols ('<') to &lt;."""
-        return str(text).replace('<', '&lt;')
+        """Convert the less than symbols in text ('<') to &lt;."""
+        if type(text) in StringTypes:
+            return text.replace("<", "&lt;")
+        return text
 
     def getDrawingActions(self):
         """Returns the methods which are used to draw the graph."""
