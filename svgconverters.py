@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: FormatConverters
-## Version: $Id: svgconverters.py,v 1.5 2003/06/17 12:46:32 mac Exp $
+## Version: $Id: svgconverters.py,v 1.6 2003/06/17 13:04:24 mac Exp $
 ##
 ################################################################################
 
@@ -255,11 +255,8 @@ class SVG2PDF (SVG2Batik):
           url: string containing the url (absolute or relative) to the result
           heigth: height of the image
           width:  width of the image
-          """
-
+        """
         return u'<object type="%s" width="%s" height="%s" data="%s">\
         <a href="%s">download PDF-Dokument</a></object>' % (
             SVG2PDF.getDestinationFormat(), width, height, url, url)
-
-        return u'<a href="%s">PDF-Dokument</a>' % (url)
     getHTML = staticmethod(getHTML)
