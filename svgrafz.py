@@ -2,10 +2,11 @@
 ## 
 ## SVGrafZ
 ##
-## $Id: svgrafz.py,v 1.26 2003/06/19 12:53:32 mac Exp $
+## $Id: svgrafz.py,v 1.27 2003/08/18 13:00:53 mac Exp $
 ################################################################################
 
 import os
+from sys import exc_info
 import random
 from OFS.SimpleItem import SimpleItem
 from AccessControl import ClassSecurityInfo
@@ -64,8 +65,7 @@ class SVGrafZProduct(SimpleItem):
             self.changeProperties(REQUEST)
             msg = 'Properties successfully saved.'
         except ValueError:
-            import sys
-            msg = 'ERROR: ' + str(sys.exc_info()[1])
+            msg = 'ERROR: ' + str(exc_info()[1])
         return self.manage_editForm(manage_tabs_message = msg)
 
 
@@ -122,7 +122,10 @@ class SVGrafZProduct(SimpleItem):
     security.declareProtected('View management screens', 'getSpecialAttribName')
     def getSpecialAttribName(self):
         "Get the name of the specialattrib of the currently selected diagram."
-        return Registry.getKind(self.graphname()).specialAttribName
+        try:
+            return Registry.getKind(self.graphname()).specialAttribName
+        except RuntimeError:
+            return ''
 
 
     def __init__(self, id):
@@ -311,7 +314,10 @@ class SVGrafZProduct(SimpleItem):
     security.declareProtected('View management screens','getPossibleConverters')
     def getPossibleConverters(self):
         """Get a Dictionary ot available Converters."""
-        diagramTypes = Registry.getKind(self.graphname()).registration()
+        try:
+            diagramTypes = Registry.getKind(self.graphname()).registration()
+        except RuntimeError:
+            diagramTypes = []
         ret = [{'name': ' ',
                 'sources': [{'name': ' ',
                              'converters': [{'name': _useDefaultConverter}]
@@ -392,7 +398,13 @@ class SVGrafZProduct(SimpleItem):
         return converter.getHTML(url,
                                  self.height(),
                                  self.width())
-    
+
+        security.declareProtected('View', 'html')
+    def html2(self, REQUEST=None):
+        """HTML-Text to embed Image + HTML-tags"""
+        return '<HTML><HEAD><TITLE>%s</TITLE></HEAD><BODY>%s</BODY></HTML>'%(
+            self.title(), self.html(REQUEST))
+
 
 
     security.declareProtected('View', 'index_html')
@@ -413,10 +425,11 @@ class SVGrafZProduct(SimpleItem):
             try:
                 data = inputConverter.convert(data, current['fixcolumn'])
             except RuntimeError:
-                import sys
-                errortext = str(sys.exc_info()[1])
+                errortext = str(exc_info()[1])
         except (AttributeError, KeyError, CompilerError):
             errortext = 'DataSource "%s" is not existing.' % (current['data'])
+        except RuntimeError:
+            errortext = str(exc_info()[1])
         try:
             legend = self.getValue(current['legend'])
         except (AttributeError, KeyError, CompilerError):
@@ -479,9 +492,13 @@ class SVGrafZProduct(SimpleItem):
         if not context:
             context = self
         root = self.getPhysicalRoot()
-        value = method.__of__(self)(here=context, 
-                                    request=getattr(root, 'REQUEST', None), 
-                                    root=root)
+        try:
+            value = method.__of__(self)(here=context, 
+                                        request=getattr(root, 'REQUEST', None), 
+                                        root=root)
+        except:
+            raise RuntimeError, \
+                  'DataSource-Method failed:\n%s'%str(exc_info()[1])
         if callable(value):
             value = value.__of__(self)
         return value
@@ -514,9 +531,13 @@ class SVGrafZProduct(SimpleItem):
         diagramTypesOfConverter = ICRegistry.getConverter(
             self.convertername()).registration().keys()
 
-        for diagramType in Registry.getKind(self.graphname()).registration():
-            if diagramType in diagramTypesOfConverter:
-                return False
+        try:
+            for diagramType in Registry.getKind(self.graphname()).registration():
+                if diagramType in diagramTypesOfConverter:
+                    return False
+        except RuntimeError:
+            return "DiagramKind does not exist any more.\
+            Please choose another."
         return "DiagramKind and Converter are incompatible. \
         Please choose another Converter."
 
@@ -531,8 +552,11 @@ class SVGrafZProduct(SimpleItem):
     security.declareProtected('View management screens',
                               'viewDiagramKindDesription')
     def viewDiagramKindDesription(self):
-        return self._list2dictlist(Registry.getKind(
-            self.graphname()).description())
+        try:
+            return self._list2dictlist(Registry.getKind(
+                self.graphname()).description())
+        except RuntimeError:
+            return self._list2dictlist(['WARNING: Not existing DiagramKind!'])
 
 
     def _list2dictlist(self, list):

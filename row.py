@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ: RowGraphs
 ##
-## $Id: row.py,v 1.2 2003/06/16 08:13:31 mac Exp $
+## $Id: row.py,v 1.3 2003/08/18 13:00:53 mac Exp $
 ################################################################################
 
 from interfaces import IDiagramKind
@@ -81,3 +81,51 @@ class Simple(RowDiagram):
 
         return res + '</g>\n'
 
+class FillingGaps(Simple):
+    """ColumnGraph like Simple but with integer values on x-axis,
+                                        filling gaps im x-axis (making data coninoous)."""
+
+    __implements__ = IDiagramKind
+
+    name = 'column diagram with int(x)'
+    
+    def description():
+        """see interfaces.IDiagamKind.description
+        """
+        return Simple.description() + [
+            'Values on x-axis are must be integer.',
+            'Missing values on x-Axis are added as zero-values (making data coninoous)'
+            'Values on y-axis are shown as integers.'
+            ]
+    description = staticmethod(description)
+
+    def getDrawingActions(self):
+        """Returns the methods which are used to draw the graph."""
+        return [self.makeXValsContinoous] + \
+               Simple.getDrawingActions(self)
+
+    def makeXValsContinoous(self):
+        "Fill gaps in x-Values so that they are continoous."
+        distX = range(self.realMinX(), self.realMaxX())
+        self._change_computed_result('distValsX', distX)
+        return ''
+
+
+    def _computeGridLines(self, minVal, maxVal, lines):
+        if ((maxVal - minVal) < lines):
+            lines = maxVal - minVal
+        ystep = (maxVal - minVal) / (abs(lines) + 1)
+        return [ int(minVal + (y * ystep)) for y in range(1, abs(lines) + 1) ]
+
+    def specialAttribHook(self):
+        """Handling of the specialAttrib.
+
+        Test datatype of specialAttrib & change data influenced by
+          specialAttrib.
+
+        Return: void
+        On error: raise RuntimeError
+        """
+        self._change_computed_result('realMinY', 0.0)
+        self._change_computed_result('minY',
+                                     self._compRoundedValMax(0.0))

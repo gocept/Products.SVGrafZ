@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ: BarGraphs
 ##
-## $Id: bar.py,v 1.17 2003/06/19 12:53:32 mac Exp $
+## $Id: bar.py,v 1.18 2003/08/18 13:00:53 mac Exp $
 ################################################################################
 
 from interfaces import IDiagramKind, IDefaultDiagramKind
@@ -129,3 +129,4 @@ class SimpleBarGraph(BaseGraph):
         return [self.computeXScale,
                 self.drawXGrindLines,] + \
                 BaseGraph.getDrawingActions(self)
+

@@ -1,13 +1,14 @@
 ################################################################################
 ## 
 ## SVGrafZ: Base
-## Version: $Id: base.py,v 1.17 2003/08/14 08:18:34 mac Exp $
+## Version: $Id: base.py,v 1.18 2003/08/18 13:00:53 mac Exp $
 ##
 ################################################################################
 
 from math import log10,floor,ceil
 from types import *
 from config import SVGrafZ_default_Color, SVGrafZ_legend_name
+from string import split
 
 # set this var to 1 to use the dom generation (not complete yet)
 usedom = 0
@@ -349,11 +350,15 @@ class BaseGraph:
   </g>
 </g>''' % (self.width / 2,
            (self.gridbasey - self.gridboundy) / 4)
-           
-        res += '<text x="%s" y="%s" font-size="12pt" text-anchor="middle" fill="red">%s</text>' % (
-            self.width / 2,
-            (self.gridbasey - self.gridboundy) / 2,
-            'Error: ' + self.confLT(self.errortext))
+
+        step = 0
+        print `self.errortext`
+        for errortext in split(self.confLT('Error: ' + self.errortext), '\n'):
+            res += '<text x="%s" y="%s" font-size="12pt" text-anchor="middle" fill="red">%s</text>' % (
+                self.width / 2,
+                (self.gridbasey - self.gridboundy) / 2 + step,
+                errortext)
+            step += 20
         return res
 
     def xAxis_verticalLabels(self, labels, firstWidth, xWidth):
