@@ -2,7 +2,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: FormatConverters
-## Version: $Id: svgconverters.py,v 1.15 2004/02/06 13:30:52 mac Exp $
+## Version: $Id: svgconverters.py,v 1.16 2004/03/09 15:10:37 ctheune Exp $
 ##
 ################################################################################
 
@@ -189,7 +189,7 @@ class SVG2Batik (SVG2xxx):
                 
         # read result
         if ret:
-            rfh = open(resultFile, 'r')
+            rfh = open(resultFile, 'rb')
             self.result = rfh.read()
             rfh.close()
 
@@ -204,7 +204,7 @@ class SVG2Batik (SVG2xxx):
         """Return data(in destination format) describing error, if conversion unsuccessful."""
         erp = path.join(path.join(path.dirname(__file__), 'www'),
                         self.error_file)
-        efh = open(erp, 'r')
+        efh = open(erp, 'rb')
         errorResult = efh.read()
         efh.close()
         return errorResult

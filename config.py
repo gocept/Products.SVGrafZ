@@ -3,7 +3,7 @@
 ## 
 ## SVGrafZ: Configure File
 ##
-## $Id: config.py,v 1.9 2003/12/03 10:11:49 mac Exp $
+## $Id: config.py,v 1.10 2004/03/09 15:10:37 ctheune Exp $
 ################################################################################
 
 
@@ -60,5 +60,5 @@ SVGrafZ_BatikServer_Invoke_Cmd = '/home/mac/bin/runBatikServer '\
 ## batikRasterizer - absolute Path to Java 1.3+ interpreter binary
 SVGrafZ_Java_Path = '/usr/bin/java'
 ## absolute Path to batik-rasterizer jar-file (version 1.5beta5 or higher)
-SVGrafZ_Batik_Path = '/home/mac/data/pkg/batik-1.5/batik-rasterizer.jar'
+SVGrafZ_Batik_Path = '/usr/share/java/batik.jar:/usr/share/java/xerces.jar:/usr/share/java/fop.jar'
 
