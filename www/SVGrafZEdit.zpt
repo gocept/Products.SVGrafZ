@@ -1,7 +1,7 @@
 <!--
 Copyright (c) 2003 gocept gmbh & co. kg. All rights reserved.
 See also LICENSE.txt
-$Id: SVGrafZEdit.zpt,v 1.10 2003/06/17 09:42:43 mac Exp $
+$Id: SVGrafZEdit.zpt,v 1.11 2003/10/07 10:21:10 mac Exp $
 -->
 
   <h1 tal:replace="structure here/manage_page_header">Header</h1>
@@ -15,21 +15,47 @@ $Id: SVGrafZEdit.zpt,v 1.10 2003/06/17 09:42:43 mac Exp $
                        cur here/getRealPropertyValues;
                        hasErrors here/having_errors;
                        converterError python:here.having_errors('converter');"
-           cellspacing="2">
+           cellspacing="2"
+           width="95%">
       <tr>
         <td colspan="2"></td>
-        <th>Default</th>
+        <td><b>Default</b></td>
         <td colspan="2"></td>
-        <th>Default</th>
+        <td><b>Default</b></td>
       </tr>
       <tr>
         <td class="form-text">Title:</td>
-        <td><input type="text" name="title" tal:attributes="value cur/title"></td>
+        <td colspan="4">
+          <input size="75" type="text" name="title" tal:attributes="value cur/title">
+        </td>
         <td class="form-mono" tal:content="def/title"></td>
       </tr>
       <tr>
+        <td class="form-text">Height: </td>
+        <td><input size="5"
+                   type="text"
+                   name="height"
+                   tal:attributes="value cur/height"></td>
+        <td class="form-mono" tal:content="def/height"></td>
+        <td class="form-text">Width: </td>
+        <td><input size="5"
+                   type="text"
+                   name="width"
+                   tal:attributes="value cur/width"></td>
+        <td class="form-mono" tal:content="def/width"></td>
+      </tr>
+      <tr>
+        <td class="form-text">Gridlines: </td>
+        <td><input size="5"
+                   type="text"
+                   name="gridlines"
+                   tal:attributes="value cur/gridlines"></td>
+        <td class="form-mono" tal:content="def/gridlines"></td>
+      </tr>
+      <tr>
         <td class="form-text">DiagramKind: </td>
-        <td><select name="graphname" size="1">
+        <td colspan="4">
+          <select name="graphname" size="1">
             <optgroup tal:repeat="graphtype here/getPossibleDiagrams"
               tal:attributes="label graphtype/name">
               <tal:block tal:repeat="graph graphtype/kinds">
@@ -48,20 +74,20 @@ $Id: SVGrafZEdit.zpt,v 1.10 2003/06/17 09:42:43 mac Exp $
           </select>
         </td>
         <td class="form-mono" tal:content="def/graphname"></td>
+      </tr>
+      <tr>
         <td class="form-text">DataSource (TALES): </td>
-        <td><input type="text"
-                   name="data"
-                   tal:attributes="value cur/data"></td>
+        <td colspan="4">
+          <input size="75"
+                 type="text"
+                 name="data"
+                 tal:attributes="value cur/data"></td>
         <td class="form-mono" tal:content="def/data"></td>
       </tr>
       <tr>
-        <td class="form-text">Gridlines: </td>
-        <td><input type="text"
-                   name="gridlines"
-                   tal:attributes="value cur/gridlines"></td>
-        <td class="form-mono" tal:content="def/gridlines"></td>
         <td class="form-text">DataConverter: </td>
-        <td><select name="convertername" size="1">
+        <td colspan="4">
+          <select name="convertername" size="1">
             <optgroup tal:repeat="diagramType here/getPossibleConverters"
                       tal:attributes="label diagramType/name">
               <optgroup tal:repeat="source diagramType/sources"
@@ -89,39 +115,39 @@ $Id: SVGrafZEdit.zpt,v 1.10 2003/06/17 09:42:43 mac Exp $
             tal:content="def/convertername"></td>
       </tr>
       <tr>
-        <td class="form-text">Height: </td>
-        <td><input type="text"
-                   name="height"
-                   tal:attributes="value cur/height"></td>
-        <td class="form-mono" tal:content="def/height"></td>
         <td class="form-text">ReferenceColumn(s): </td>
-        <td><input type="text"
-                   name="fixcolumn"
-                   tal:attributes="value cur/fixcolumn"></td>
+        <td colspan="4">
+          <input size="75"
+                 type="text"
+                 name="fixcolumn"
+                 tal:attributes="value cur/fixcolumn"></td>
         <td class="form-mono" tal:content="def/fixcolumn"></td>
       </tr>
       <tr>
-        <td class="form-text">Width: </td>
-        <td><input type="text"
-                   name="width"
-                   tal:attributes="value cur/width"></td>
-        <td class="form-mono" tal:content="def/width"></td>
         <td class="form-text">ColumnNames (TALES): </td>
-        <td><input type="text"
-                   name="colnames"
-                   tal:attributes="value cur/colnames"></td>
+        <td colspan="4">
+          <input size="75"
+                 type="text"
+                 name="colnames"
+                 tal:attributes="value cur/colnames"></td>
         <td class="form-mono" tal:content="def/colnames"></td>
       </tr>
       <tr>
         <td class="form-text">StyleSheet (Path): </td>
-        <td><input type="text"
-                   name="stylesheet"
-                   tal:attributes="value cur/stylesheet"></td>
+        <td colspan="4">
+          <input size="75"
+                 type="text"
+                 name="stylesheet"
+                 tal:attributes="value cur/stylesheet"></td>
         <td class="form-mono" tal:content="def/stylesheet"></td>
+      </tr>
+      <tr>
         <td class="form-text">Legend (TALES): </td>
-        <td><input type="text"
-                   name="legend"
-                   tal:attributes="value cur/legend"></td>
+        <td colspan="4">
+          <input size="75"
+                 type="text"
+                 name="legend"
+                 tal:attributes="value cur/legend"></td>
         <td class="form-mono" tal:content="def/legend"></td>
       </tr>
       <tr tal:define="specialAttrib here/getSpecialAttribName">
@@ -142,7 +168,7 @@ $Id: SVGrafZEdit.zpt,v 1.10 2003/06/17 09:42:43 mac Exp $
         <td align="left" valign="middle" style="background-color: #FFDDDD" colspan="4" tal:content="hasErrors"></td>
       </tr>
       <tr>
-        <td colspan="5">
+        <td colspan="6">
           <br />
           <b>DiagramKind Description:</b>
           <ul>
@@ -152,7 +178,7 @@ $Id: SVGrafZEdit.zpt,v 1.10 2003/06/17 09:42:43 mac Exp $
         </td>
       </tr>
       <tr>
-        <td colspan="5">
+        <td colspan="6">
           <br />
           <b>DataConverter Description:</b>
           <ul>
