@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: Interfaces
-## Version: $Id: interfaces.py,v 1.7 2003/05/28 11:29:01 mac Exp $
+## Version: $Id: interfaces.py,v 1.8 2003/05/30 11:42:24 mac Exp $
 ##
 ################################################################################
 
@@ -52,12 +52,21 @@ class IDiagramKind(Interface):
 
     def compute():
         """Compute the Diagram."""
+
+    def registration():
+        """Tells which DiagramTypes this DiagramKind is assigned to.
+
+        This method must be a class method using following code inside class:
+        registration = staticmethod(registration)
+
+        Returns: [DiagrammKind1, DiagrammKind2, ...]
+          (The names are references to classes!)
+        """
+
     
 
-
-
-class IDiagramKindDefault(IDiagramKind):
-    """MarkerInterface for DefaultDiagramKinds."""
+##class IDiagramKindDefault(IDiagramKind):
+##    """MarkerInterface for DefaultDiagramKinds."""
 
 
     
@@ -130,17 +139,20 @@ class IInputConverter(Interface):
     name = Attribute ("Name of the InputConverter.")
 
     def registration():
-        """Tells which DiagrammTypes and DataSources this Converter serves.
+        """Tells which DiagramTypes and DataSources this Converter serves.
 
         Returns: {DiagrammKind1:[DataSource1, DataSource2, ...],
                   DiagrammKind2:[DataSource3, ...]}
           (The names are references to classes!)
         """
 
-    def convert(data):
+    def convert(data, fixColumn):
         """Converts data to SVGrafZ input format.
 
-        Parameter: data ... type depending on converter
+        data ... data to convert, type depending on converter
+        fixColumn ... string or None: column on which are the other values
+           depending
         Return:    list fitting to SVGrafZ input format.
+        Exception RuntimeError with error-text if an error occured
         """
 

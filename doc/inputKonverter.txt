@@ -2,7 +2,7 @@
 ##
 ## Specification für InputDaten-Konverter (in von SVGrafZ erwartetes Format)
 ##
-## $Id: inputKonverter.txt,v 1.1 2003/05/28 11:29:01 mac Exp $
+## $Id: inputKonverter.txt,v 1.2 2003/05/30 11:42:30 mac Exp $
 ################################################################################
 
 allgemein:
@@ -30,6 +30,8 @@ Registry:
 
 Erweiterung von SVGrafZ:
   - neues vererbares Attribut mit dem der Konverter eingestellt wird
+  - neues vererbares Attribut, welches die Column enthält, auf die anderen Daten
+      bezogen werden (Default: None)
   - Problem: Es kann vorkommen, dass durch die Vererbung der Konverter und der
-     Diagrammtyp nicht mehr zusammen passen. Das ist bei jedem Aufruf von
-     Properties und View eines SVGrafZ zu testen (aber nicht zu speichern!)
+      Diagrammtyp nicht mehr zusammen passen. Das ist bei jedem Aufruf von
+      Properties und View eines SVGrafZ zu testen (aber nicht zu speichern!)

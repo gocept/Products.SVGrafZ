@@ -2,7 +2,7 @@
 ##
 ## SVGrafZ: Update Instructions
 ##
-## $Id: update.txt,v 1.1 2003/05/30 09:31:20 mac Exp $
+## $Id: update.txt,v 1.2 2003/05/30 11:42:30 mac Exp $
 ################################################################################
 
 
@@ -20,3 +20,6 @@ Follow these steps:
      + Function Name: update_all
   - Click on the test-tab.
   - A long list of updated directories will be shown.
+
+This update has only be done once (until you install a higher version of 
+SVGrafZ).

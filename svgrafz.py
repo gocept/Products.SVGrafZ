@@ -1,13 +1,14 @@
 ################################################################################
 ## 
 ## SVGrafZ
-## Version: $Id: svgrafz.py,v 1.11 2003/05/27 11:11:38 mac Exp $
 ##
+## $Id: svgrafz.py,v 1.12 2003/05/30 11:42:24 mac Exp $
 ################################################################################
 
 import os
 from OFS.SimpleItem import SimpleItem
 from registry import Registry
+from icreg import ICRegistry
 from AccessControl import ClassSecurityInfo
 from Globals import InitializeClass
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
@@ -15,19 +16,20 @@ from helper import TALESMethod
 from ZODB.PersistentMapping import PersistentMapping
 from svgconverters import SVG2SVG, SVG2PNG
 
-_www = os.path.join(os.path.dirname(__file__), 'www')
-_defaultSVGrafZ = 'defaultSVGrafZ'
+_www                   = os.path.join(os.path.dirname(__file__), 'www')
+_defaultSVGrafZ        = 'defaultSVGrafZ'
 _useDefaultDiagramKind = 'default diagramkind'
+_useDefaultConverter   = 'default Converter'
+
 def pdb():
     import pdb
     pdb.set_trace()
-
 
 class SVGrafZProduct(SimpleItem):
     """ProductClass of SVGrafZ."""
 
     meta_type = 'SVGrafZ'
-    version = '0.1a'
+    version = '0.1a1'
 
     manage_options = (
         {'label':'Properties',
@@ -72,7 +74,15 @@ class SVGrafZProduct(SimpleItem):
         else:
             self.dat[d] = req
 
-        data = ['title', 'stylesheet']
+        d = 'convertername'
+        req = REQUEST.get(d, None)
+        if not req or req == _useDefaultConverter:
+            self.dat[d] = None
+        else:
+            self.dat[d] = req
+
+
+        data = ['title', 'stylesheet', 'fixcolumn']
         for d in data:
             req = REQUEST.get(d, None)
             if req:
@@ -112,9 +122,17 @@ class SVGrafZProduct(SimpleItem):
                          'legend':    TALESMethod(None),
                          'colnames':  TALESMethod(None),
                          'stylesheet':None,
+                         'convertername': None,
+                         'fixcolumn': None,
                          })
 
-
+    def _update(self):
+        """Update older versions."""
+        if self.dat.has_key('fixColumn'):
+            self.dat['fixcolumn'] = self.dat['fixColumn']
+            del self.dat['fixColumn']
+        
+        
     security.declareProtected('View management screens', 'equalsGraphName')
     def equalsGraphName(self, name):
         """Test if the given name is equal to real graphname."""
@@ -122,6 +140,16 @@ class SVGrafZProduct(SimpleItem):
            self.dat['graphname'] is None:
             return 1
         if name == self.dat['graphname']:
+            return 1
+        return 0
+
+    security.declareProtected('View management screens', 'equalsConverterName')
+    def equalsConverterName(self, name):
+        """Test if the given name is equal to real converterName."""
+        if name == _useDefaultConverter and \
+           self.dat['convertername'] is None:
+            return 1
+        if name == self.dat['convertername']:
             return 1
         return 0
 
@@ -152,6 +180,18 @@ class SVGrafZProduct(SimpleItem):
     def width(self, default=None):
         "get width."
         return self.getAttribute('width', 600, default)
+
+    security.declareProtected('View', 'convertername')
+    def convertername(self, default=None):
+        "get convertername."
+        return self.getAttribute('convertername',
+                                 ICRegistry.getDefaultConverterName(),
+                                 default)
+
+    security.declareProtected('View', 'fixcolumn')
+    def fixcolumn(self, default=None):
+        "get fixcolumn."
+        return self.getAttribute('fixcolumn', None, default)
 
     security.declareProtected('View', 'data')
     def data(self, default=None):
@@ -204,8 +244,6 @@ class SVGrafZProduct(SimpleItem):
             return defaultVal
         
         
-        
-
     security.declareProtected('View management screens', 'getPossibleDiagrams')
     def getPossibleDiagrams(self):
         """Get a Dictionary ot available Diagrams."""
@@ -219,6 +257,31 @@ class SVGrafZProduct(SimpleItem):
         res.append({'name':' ','kinds':[{'name':_useDefaultDiagramKind}]})
         res.sort(lambda x,y: cmp(x['name'],y['name']))
         return res
+
+
+    security.declareProtected('View management screens', 'getPossibleConverters')
+    def getPossibleConverters(self):
+        """Get a Dictionary ot available Converters."""
+        diagramTypes = Registry.getKind(self.graphname()).registration()
+        ret = [{'name': ' ',
+                'sources': [{'name': ' ',
+                             'converters': [{'name': _useDefaultConverter}]
+                             }
+                            ]
+                }
+               ]
+
+        for dt in diagramTypes:
+            sources = []
+            for source in ICRegistry.getSources(dt.name):
+                converters = [{'name': conv} for conv in ICRegistry.getConverters(dt.name, source)]
+                sources.append({'name':       source,
+                                'converters': converters})
+            ret.append({'name':    dt.name,
+                        'sources': sources})
+        return ret
+    
+
 
     security.declareProtected('View management screens',
                               'getDefaultPropertyValues')
@@ -254,21 +317,21 @@ class SVGrafZProduct(SimpleItem):
         return res
 
 
-    def _getConverterClass(self):
-        """Compute Converter-Class and value of SVGrafZ_PixelMode."""
+    def _getOutputConverter(self):
+        """Compute output converter and value of SVGrafZ_PixelMode."""
         mode = self.REQUEST.get('SVGrafZ_PixelMode', None)
         if mode is None:
             mode = self.REQUEST.SESSION.get('SVGrafZ_PixelMode', None)
         if mode in [None, 0, '0']:
-            return SVG2SVG, 0
+            return SVG2SVG(), 0
         else:
-            return SVG2PNG, 1
+            return SVG2PNG(), 1
 
 
     security.declareProtected('View', 'html')
     def html(self, REQUEST=None):
         """Get HTML-Text to embed Image."""
-        converter, value = self._getConverterClass()
+        converter, value = self._getOutputConverter()
         url = self.id + '?SVGrafZ_PixelMode=%s' % (value,)
         return converter.getHTML(url,
                                  self.height(),
@@ -285,16 +348,24 @@ class SVGrafZProduct(SimpleItem):
         """Render the diagram."""
         graphClass     = Registry.getKind(self.graphname())
         current        = self.getPropertyValues()
-        title          = current['title']
-        converterClass, dummy = self._getConverterClass()
-        converter      = converterClass()
+        title          = current['title'] or ''
+        outputConverter, dummy = self._getOutputConverter()
+        inputConverter = ICRegistry.getConverter(current['convertername'])
+        data           = [[[1,1]]] # default
 
+        import pdb2
         try:
             data = self.getValue(current['data'])
+            try:
+                data = inputConverter.convert(data, current['fixcolumn'])
+            except RuntimeError:
+                import sys
+                dummy, title, dummy = sys.exc_info()
+                title = str(title)
+                data = None # default
         except KeyError:
             title = 'Error: Given DataSource "%s" is not existing.' % (
                 self.getDataMethodExpression())
-            data = [[[1,1]]]
         try:
             legend = self.getValue(current['legend'])
         except KeyError:
@@ -310,7 +381,7 @@ class SVGrafZProduct(SimpleItem):
         if current['stylesheet']:
             try:
                 stylesheet = getattr(self, current['stylesheet'])
-                stylesheet = converter.getStyleSheetURL(stylesheet)
+                stylesheet = outputConverter.getStyleSheetURL(stylesheet)
             except AttributeError:
                 title = 'AttributeError: stylesheet not existing'
 
@@ -324,12 +395,12 @@ class SVGrafZProduct(SimpleItem):
                            stylesheet= stylesheet)
         if REQUEST.RESPONSE:
             REQUEST.RESPONSE.setHeader('Content-Type',
-                                       converterClass.getDestinationFormat())
-        converter.setSourceData(graph.compute().encode('UTF-8'))
-        if not converter.convert():
-            return converter.getErrorResult()
+                                       outputConverter.getDestinationFormat())
+        outputConverter.setSourceData(graph.compute().encode('UTF-8'))
+        if not outputConverter.convert():
+            return outputConverter.getErrorResult()
         else:
-            return converter.getResultData()
+            return outputConverter.getResultData()
         
 
     

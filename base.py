@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: Base
-## Version: $Id: base.py,v 1.6 2003/05/27 13:39:42 mac Exp $
+## Version: $Id: base.py,v 1.7 2003/05/30 11:42:24 mac Exp $
 ##
 ################################################################################
 
@@ -150,9 +150,12 @@ class BaseGraph:
 
     def _testFormatOfData(self):
         if self.data is None:
-            raise RuntimeError, 'No Data. (Data is None)'
+            if self.title[:7] == 'Error: ':
+                raise RuntimeError, self.title
+            else:
+                raise RuntimeError, 'No Data. (Data is None)'
         if type(self.data) != ListType:
-            raise RuntimeError, 'Data is not a list.'
+            raise RuntimeError, 'Data is not a list. Maybe wrong converter.'
         if len(self.data) == 0:
             raise RuntimeError, 'Data is empty.'
         i = 0

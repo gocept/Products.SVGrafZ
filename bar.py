@@ -1,12 +1,13 @@
 ################################################################################
 ## 
 ## SVGrafZ: SimpleBarGraph
-## Version: $Id: bar.py,v 1.8 2003/05/27 13:39:42 mac Exp $
 ##
+## $Id: bar.py,v 1.9 2003/05/30 11:42:24 mac Exp $
 ################################################################################
 
 from interfaces import IDiagramKind
 from base import BaseGraph
+from dtypes import *
 
 class SimpleBarGraph(BaseGraph):
     """Simple BarGraph with multiple DataRows,
@@ -17,6 +18,11 @@ class SimpleBarGraph(BaseGraph):
 
     name = 'Einfaches Balkendiagramm'
 
+    def registration():
+        """See IDiagramKind.registration()."""
+        return [BarGraphs]
+    registration = staticmethod(registration)
+
     def __init__(self,
                  data=None,
                  width=0,
@@ -26,7 +32,7 @@ class SimpleBarGraph(BaseGraph):
                  colnames=None,
                  title=None,
                  stylesheet=None):
-        "see IDiagramKind.__init__"
+        "See IDiagramKind.__init__"
         self.data     = data
         self.width    = width
         self.height   = height
@@ -155,6 +161,10 @@ class SimpleBarGraph2(BaseGraph):
     def compute(self):
         """Compute the Diagram."""
         return self.svgHeader() + \
-               '<text x="1" y="30">leer</text>' + \
+               '<text x="1" y="30">dummy diagram</text>' + \
                self.svgFooter()
 
+    def registration():
+        """See IDiagramKind.registration()."""
+        return [BarGraphs,RowGraphs]
+    registration = staticmethod(registration)

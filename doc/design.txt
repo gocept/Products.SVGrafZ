@@ -1,7 +1,7 @@
 DESIGN:
 -------
 
-$Id: design.txt,v 1.1 2003/05/27 13:38:32 mac Exp $
+$Id: design.txt,v 1.2 2003/05/30 11:42:30 mac Exp $
 
 Klassen:
         - Registry
@@ -9,6 +9,12 @@ Klassen:
         - SVGrafZDefault (extends SVGrafZ)
         - IDiagramType + Klassen, die das Interface implementieren
         - IDiagramKind + Klassen, die das Interface implementieren
+
+Anforderungen:
+        - Es darf keine zwei DiagrammArten (diagramKind) mit gleichem Namen
+          (Wert des Attributes name) geben (auch wenn sie unterschiedlichen
+          DiagrammTypen zugeordnet sind). Namensdopplungen führen zu 
+          RuntimeError bei der Registrierung.
 
 Übersetzung nach Pixel-Grafik:
         - entweder Anzeige der SVG-Grafik oder der Pixel-Grafik, da sonst
