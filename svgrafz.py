@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ
 ##
-## $Id: svgrafz.py,v 1.19 2003/06/10 10:11:06 mac Exp $
+## $Id: svgrafz.py,v 1.20 2003/06/10 11:16:09 mac Exp $
 ################################################################################
 
 import os
@@ -394,8 +394,6 @@ class SVGrafZProduct(SimpleItem):
         inputConverter = ICRegistry.getConverter(current['convertername'])
         errortext      = legend = colnames = stylesheet = data = None
 
-        import pdb2
-
         try:
             data = self.getValue(current['data'])
             try:
@@ -410,8 +408,6 @@ class SVGrafZProduct(SimpleItem):
         except (AttributeError, KeyError, CompilerError):
             errortext = 'Legend "%s" is not existing.' % (current['legend'])
             
-        import pdb2
-        
         if legend == 'converter':
             if IInputConverterWithLegend.isImplementedBy(inputConverter):
                 legend = inputConverter.legend() # cause convert is already done
