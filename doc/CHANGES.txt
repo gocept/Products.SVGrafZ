@@ -1,9 +1,12 @@
 ################################################################################
 ##
 ## SVGrafZ: CHANGES
-## Version: $Id: CHANGES.txt,v 1.4 2004/07/29 08:03:38 mac Exp $
+## Version: $Id: CHANGES.txt,v 1.5 2005/02/11 17:19:03 mac Exp $
 ##
 ################################################################################
+
+2005-02-11
+  - Added documentation.
 
 2004-07-29
   - generated PDFs now are no more displayed inline in InternetExplorer
