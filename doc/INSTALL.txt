@@ -2,9 +2,9 @@
 ###
 ### SVGrafZ: INSTALL
 ###
-### $Revision: 1.7 $
+### $Revision: 1.8 $
 ################################################################################
-$Id: INSTALL.txt,v 1.7 2003/08/28 09:49:20 mac Exp $
+$Id: INSTALL.txt,v 1.8 2003/08/28 11:50:47 mac Exp $
 
 
 REQUIREMENTS
@@ -42,7 +42,12 @@ CONFIGURE
 
 PROBLEMS
 --------
-  For using batikRasterizer or BatikServer you need Java version 1.4.x or later.
+- For using batikRasterizer or BatikServer you need Java version 1.4.x or later.
   Otherwise batikRasterizer needs a running and connectable XServer (correctly
   set DISPLAY environment variable). batikRasterizer does not use it, but
   earlier Java versions do not support the headless-option.
+
+- BatikServer can't run on on a different host than Zope, because they must
+  share the default temp directory. But this is quite impossible. Reason is a
+  limitation in pythons module tempfile (tempfile path is only setable
+  systemwide and python 2.3 is not supported by Zope.)
