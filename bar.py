@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ: SimpleBarGraph
 ##
-## $Id: bar.py,v 1.9 2003/05/30 11:42:24 mac Exp $
+## $Id: bar.py,v 1.10 2003/05/30 13:20:06 mac Exp $
 ################################################################################
 
 from interfaces import IDiagramKind
@@ -166,5 +166,5 @@ class SimpleBarGraph2(BaseGraph):
 
     def registration():
         """See IDiagramKind.registration()."""
-        return [BarGraphs,RowGraphs]
+        return [RowGraphs]
     registration = staticmethod(registration)

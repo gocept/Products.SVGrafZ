@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ
 ##
-## $Id: svgrafz.py,v 1.12 2003/05/30 11:42:24 mac Exp $
+## $Id: svgrafz.py,v 1.13 2003/05/30 13:20:06 mac Exp $
 ################################################################################
 
 import os
@@ -426,6 +426,30 @@ class SVGrafZProduct(SimpleItem):
         if callable(value):
             value = value.__of__(self)
         return value
+
+    def om_icons(self):
+        """Return a list of icon URLs to be displayed by an ObjectManager."""
+        icons = ({'path': 'misc_/SVGrafZ/icon.gif',
+                  'alt': self.meta_type, 'title': self.meta_type},)
+        if self.having_errors():
+            icons = icons + ({'path': 'misc_/PageTemplates/exclamation.gif',
+                              'alt': 'Error',
+                              'title': 'This SVGrafZ has an error!'},)
+        return icons
+
+    security.declareProtected('View management screens', 'having_errors')
+    def having_errors(self):
+        """Test if we have errors.
+
+        e.g. conflicts between diagramKind and converter
+        """
+        diagramTypesOfConverter = ICRegistry.getConverter(
+            self.convertername()).registration().keys()
+
+        for diagramType in Registry.getKind(self.graphname()).registration():
+            if diagramType in diagramTypesOfConverter:
+                return False
+        return "DiagramKind and Converter are incompatible. Please choose another Converter."
 
 InitializeClass(SVGrafZProduct)
 
