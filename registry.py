@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ_Registry
-## Version: $Id: registry.py,v 1.2 2003/04/09 13:28:04 mac Exp $
+## Version: $Id: registry.py,v 1.3 2003/04/11 14:06:54 mac Exp $
 ##
 ################################################################################
 
@@ -68,7 +68,7 @@ class Registry:
 
 
     def getKinds(self, typeName):
-        """Get the DiagrammKinds registered for a DiagrammType.
+        """Get the DiagramKinds registered for a DiagrammType.
 
         typeName ... Name of the DiagramType
 
@@ -76,6 +76,22 @@ class Registry:
                 None when typeName is not a registered Type
         """
         return self._diagrams.get(typeName, None)
+
+
+    def getAllKindNames(self):
+        """Get all Names of DiagramKinds.
+
+        returns unique list of strings of DiagramKind-Names ordered alphabetically
+                emptyList, when no kinds registered 
+        """
+        res = []
+
+        for typ in self._diagrams.values():
+            for kind in typ.keys():
+                if kind not in res:
+                    res.append(kind)
+        res.sort()
+        return res
 
 
 Registry = Registry() # make it Singleton-like

@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: Test of Registry
-## Version: $Id: testRegistry.py,v 1.3 2003/04/10 13:58:50 mac Exp $
+## Version: $Id: testRegistry.py,v 1.4 2003/04/11 14:06:54 mac Exp $
 ##
 ################################################################################
 
@@ -97,17 +97,28 @@ class RegistryTests(unittest.TestCase):
         self.assertRaises(RuntimeError, Registry.registerKind, t1, nk)
         self.assertRaises(RuntimeError, Registry.registerKind, nt, k1)
 
+        self.assertEqual(None, Registry.getKinds(t1.name), 'get 0')
+        self.assertEqual([],
+                         Registry.getAllKindNames(),
+                         'getall 0: %s' %(Registry.getAllKindNames()))
+        
+
         self.failUnless(Registry.registerKind(t1, k1), 'register t1,k1')
         self.failIf(Registry.registerKind(t1,k1), 'register t1,k1 second time')
         self.failIf(Registry.registerKind(t1,k11), 'register t1,k1 third time')
         
         self.assertEqual({k1.name:k1}, Registry.getKinds(t1.name), 'get 1')
         self.assertEqual(None, Registry.getKinds(t2.name), 'get 2')
+        self.assertEqual([k1.name], Registry.getAllKindNames(), 'getall 1')
+        
         
         self.failUnless(Registry.registerKind(t1,k2), 'register t1,k2')
         self.assertEqual({k1.name:k1, k2.name:k2},
                          Registry.getKinds(t1.name),
                          'get 3')
+        self.assertEqual([k1.name,k2.name],
+                         Registry.getAllKindNames(),
+                         'getall 2: %s' % Registry.getAllKindNames())
 
         self.failUnless(Registry.registerType(t2), 'register t2')
         self.failUnless(Registry.registerKind(t2,k1), 'register t2,k1')
@@ -115,7 +126,7 @@ class RegistryTests(unittest.TestCase):
         self.assertEqual({k1.name:k1},
                          Registry.getKinds(t2.name),
                          'get 4')
-
+        self.assertEqual([k1.name,k2.name], Registry.getAllKindNames(), 'getall 3')
         
 
 def test_suite():
