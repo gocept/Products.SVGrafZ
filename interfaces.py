@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: Interfaces
-## Version: $Id: interfaces.py,v 1.6 2003/05/23 12:43:18 mac Exp $
+## Version: $Id: interfaces.py,v 1.7 2003/05/28 11:29:01 mac Exp $
 ##
 ################################################################################
 
@@ -10,7 +10,7 @@ from Interface import Interface,Attribute
 class IDiagramType(Interface):
     """Interface for DiagramTypes."""
 
-    name = Attribute("Get the Name of the DiagramType.")
+    name = Attribute("Name of the DiagramType.")
         
 
 
@@ -18,7 +18,7 @@ class IDiagramType(Interface):
 class IDiagramKind(Interface):
     """Interface for DiagramKinds."""
 
-    name = Attribute ("Get the Name of the DiagramKind.")
+    name = Attribute ("Name of the DiagramKind.")
 
     def __init__(data=None,
                  width=None,
@@ -111,4 +111,36 @@ class ISVGConverter(Interface):
           heigth: height of the image
           width:  width of the image
           """
+
+
+class IDataSource(Interface):
+    """Interface for DataSources (Database, Python, ...)."""
+
+    name = Attribute("Name of the DataSource.")
+        
+
+
+
+class IInputConverter(Interface):
+    """Interface for InputConverters.
+    
+    InputConverters work as filters, they do not store data in itself.
+    """
+
+    name = Attribute ("Name of the InputConverter.")
+
+    def registration():
+        """Tells which DiagrammTypes and DataSources this Converter serves.
+
+        Returns: {DiagrammKind1:[DataSource1, DataSource2, ...],
+                  DiagrammKind2:[DataSource3, ...]}
+          (The names are references to classes!)
+        """
+
+    def convert(data):
+        """Converts data to SVGrafZ input format.
+
+        Parameter: data ... type depending on converter
+        Return:    list fitting to SVGrafZ input format.
+        """
 

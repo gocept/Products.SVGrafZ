@@ -1,8 +1,8 @@
 ################################################################################
 ## 
-## SVGrafZ_Registry
-## Version: $Id: registry.py,v 1.4 2003/04/16 14:14:38 mac Exp $
+## SVGrafZ_DiagramRegistry
 ##
+## Version: $Id: registry.py,v 1.5 2003/05/28 11:29:01 mac Exp $
 ################################################################################
 
 from interfaces import IDiagramType, IDiagramKind

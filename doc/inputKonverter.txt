@@ -1,0 +1,35 @@
+################################################################################
+##
+## Specification für InputDaten-Konverter (in von SVGrafZ erwartetes Format)
+##
+## $Id: inputKonverter.txt,v 1.1 2003/05/28 11:29:01 mac Exp $
+################################################################################
+
+allgemein:
+  - eigene Registry (s.dort)
+  - extern erweiterbar (wie auch Diagramme)
+  - expliziter None-Konverter (keine Veränderung der Daten in Konvertierung) als
+      DefaultKonverter
+  - kein eigenes Produkt, da keine Konfigurationsparameter
+  - eine eigene Klasse pro Konverter, die das InputKonverter-Interface
+      implementiert
+  - jeder Konverter benötigt einen eindeutigen Namen
+  - der Versuch einer doppelten Registrierung wird mit einem RuntimeError
+      bestraft
+
+  
+
+
+Registry:
+  - dreistufige Hierarchie:
+      1) DiagrammTyp (Bar- oder Column-Graph, ...) für den die konvertierten
+          Daten passen
+      2) Art der Inputdaten (Datenbank, Python, ...)
+      3) der Konverter selbst
+
+
+Erweiterung von SVGrafZ:
+  - neues vererbares Attribut mit dem der Konverter eingestellt wird
+  - Problem: Es kann vorkommen, dass durch die Vererbung der Konverter und der
+     Diagrammtyp nicht mehr zusammen passen. Das ist bei jedem Aufruf von
+     Properties und View eines SVGrafZ zu testen (aber nicht zu speichern!)
