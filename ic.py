@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ: InputConverters
 ##
-## $Id: ic.py,v 1.2 2003/06/03 12:41:32 mac Exp $
+## $Id: ic.py,v 1.3 2003/06/03 15:29:46 mac Exp $
 ################################################################################
 
 from interfaces import IInputConverter
@@ -39,10 +39,14 @@ class ConvertFrom_ZSQLMethod:
         Exception RuntimeError with error-text if an error occured.
         """
         try:
-            res = data.dictionaries()
+            res  = data.dictionaries()
+            cols = data.names()
         except AttributeError:
             raise RuntimeError, \
                   "Data does not come from a Z SQL Method, can't convert it."
+
+        print res
+        print cols
 
         if fixColumn is None:
             raise RuntimeError, \
@@ -56,16 +60,18 @@ class ConvertFrom_ZSQLMethod:
 
         for dict in res:
             i = 0
-            for val in dict.keys():
-                if val == fixColumn:
+            for col in cols:
+                if col == fixColumn:
                     continue
                 try:
-                    ret[i].append(self.getValList(dict[val], dict[fixColumn]))
+                    ret[i].append(self.getValList(dict[col], dict[fixColumn]))
                 except KeyError:
                     raise RuntimeError, \
                           'Reference Column is not in source data.' 
                 i += 1
         return ret
+
+    
     def getValList(self, value, colname):
         """Put value and colname into a list in the right order."""
         raise RuntimeError, \
