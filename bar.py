@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ: BarGraphs
 ##
-## $Id: bar.py,v 1.12 2003/06/04 08:56:17 mac Exp $
+## $Id: bar.py,v 1.13 2003/06/04 10:20:55 mac Exp $
 ################################################################################
 
 from interfaces import IDiagramKind
@@ -83,7 +83,7 @@ class SimpleBarGraph(BaseGraph):
                     self.xScale = 1.0
                     
                 self.result += self.drawXGrindLines()
-                self.result += self.drawBars()
+                self.result += self.drawGraph()
                 self.result += self.drawXYAxis()
                 self.result += self.drawLegend()
                 self.result += self.drawTitle()
@@ -96,43 +96,34 @@ class SimpleBarGraph(BaseGraph):
         return self.result
 
 
-    def drawBars(self):
+    def drawGraph(self):
         "Draw the Bars of the graph."
-        yBarFull = (self.gridbasey - self.gridboundy) / len(self.distValsY())
+        distY    = self.distValsY()
+        lenDistY = len(distY)
+        yBarFull = (self.gridbasey - self.gridboundy) / lenDistY
         yHeight  = 0.75  * yBarFull / self.numgraphs()
         ySpace   = 0.125 * yBarFull
         res      = '<g id="data">\n'
-        pos      = {} # storage for positions of y-values, so same y-values get
-        #               same position
-        
+
+        distY.sort()
         for i in range(self.numgraphs()):
-            dataset = self.data[i]
-            for j in range(len(dataset)):
-                item = dataset[j]
-                if pos.has_key(item[1]):
-                    onPos = pos[item[1]]
-                else:
-                    onPos = len(pos)
-                    pos[item[1]] = onPos
-                res += '<rect class="dataset%s" x="%s" y="%s" height="%s" width="%s" fill="%s"/>\n'\
+            dataset     = dict([[x[1],x[0]] for x in self.data[i]]) # switch x,y
+            for j in range(lenDistY):
+                try:
+                    val = float(dataset[distY[j]])
+                    res += '<rect class="dataset%s" x="%s" y="%s" height="%s" width="%s" fill="%s"/>\n'\
                        % (i,
                           self.gridbasex,
-                          self.gridbasey-(onPos*yBarFull)-ySpace-(i+1)*yHeight,
+                          self.gridbasey-(j*yBarFull)-ySpace-(i+1)*yHeight,
                           yHeight,
-                          self.xScale * item[0],
+                          self.xScale * val,
                           SVGrafZ_default_Color)
+                except KeyError:
+                    pass
+                   
 
-        if self.colnames:
-            for i in range(len(self.colnames)):
-                colname = self.colnames[i]
-                res += '<text x="5" y="%s" style="text-anchor:start;">%s</text>\n'\
-                   % (self.gridbasey - i * yBarFull - 3.5 * ySpace,
-                      self.confLT(colname))
-        else:
-            for colname, onPos in pos.items():
-                res += '<text x="5" y="%s" style="text-anchor:start;">%s</text>\n'\
-                       % (self.gridbasey - onPos * yBarFull - 3.5 * ySpace,
-                          self.confLT(colname))
-
+        res += self.yAxis_horizontalLabels(distY, 
+                                           self.gridboundy+yBarFull/2-ySpace,
+                                           yBarFull)
         return res + '</g>\n'
 

@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: Base
-## Version: $Id: base.py,v 1.11 2003/06/04 09:08:57 mac Exp $
+## Version: $Id: base.py,v 1.12 2003/06/04 10:20:55 mac Exp $
 ##
 ################################################################################
 
@@ -319,9 +319,10 @@ class BaseGraph:
         return res
 
     def xAxis_verticalLabels(self, labels, firstWidth, xWidth):
-        """Print the Labels on x-axis vertically.
+        """Print the labels on x-axis vertically.
 
-        colnames   ... list of strings with labelnames
+        labels     ... list of strings with labelnames, if self.colnames
+                         exists, then it is taken instead
         firstWidth ... float points from self.gridbasex to first label
         xWidth     ... float points between labels
         """
@@ -340,6 +341,24 @@ class BaseGraph:
                             i,
                             i,
                             self.confLT(label))
+        return res
+
+    def yAxis_horizontalLabels(self, labels, firstHeight, yHeight):
+        """Print horizontal Labels on yAxis.
+
+        labels      ... list: of strings with labelnames, if self.colnames
+                         exists, then it is taken instead
+        firstHeight ... float: points from self.gridbasey to first label
+        yHeight     ... float: points between labels
+        """
+        res = ''
+        if self.colnames: # use colnames, if given
+            labels = self.colnames
+        for i in range(len(labels)):
+            label = labels[i]
+            res += '<text x="5" y="%s" style="text-anchor:start;">%s</text>\n'\
+                   % (self.gridbasey - i * yHeight - firstHeight,
+                      self.confLT(label))
         return res
         
     def confLT(self, text):
