@@ -2,7 +2,7 @@
 ##
 ## SVGrafZ: Update Instructions
 ##
-## $Id: update.txt,v 1.2 2003/05/30 11:42:30 mac Exp $
+## $Id: update.txt,v 1.3 2003/06/17 09:42:43 mac Exp $
 ################################################################################
 
 
@@ -14,12 +14,13 @@ Follow these steps:
   - Go to the topmost directory from which on you want to convert
       SVGrafZ-instances.
   - Add a new 'external Method':
-     + Name: update_SVRafZ
+     + Name: update_SVGRafZ
      + Title: 
      + Module Name: SVGrafZ.update
      + Function Name: update_all
+  - Click on the Add-button
   - Click on the test-tab.
   - A long list of updated directories will be shown.
 
-This update has only be done once (until you install a higher version of 
+This update has only to be done once (until you install a higher version of 
 SVGrafZ).

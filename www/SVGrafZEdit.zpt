@@ -1,7 +1,7 @@
 <!--
 Copyright (c) 2003 gocept gmbh & co. kg. All rights reserved.
 See also LICENSE.txt
-$Id: SVGrafZEdit.zpt,v 1.9 2003/06/16 08:13:32 mac Exp $
+$Id: SVGrafZEdit.zpt,v 1.10 2003/06/17 09:42:43 mac Exp $
 -->
 
   <h1 tal:replace="structure here/manage_page_header">Header</h1>
@@ -13,7 +13,8 @@ $Id: SVGrafZEdit.zpt,v 1.9 2003/06/16 08:13:32 mac Exp $
   <form action="manage_edit">
     <table tal:define="def here/getDefaultPropertyValues;
                        cur here/getRealPropertyValues;
-                       hasErrors here/having_errors;"
+                       hasErrors here/having_errors;
+                       converterError python:here.having_errors('converter');"
            cellspacing="2">
       <tr>
         <td colspan="2"></td>
@@ -79,10 +80,10 @@ $Id: SVGrafZEdit.zpt,v 1.9 2003/06/16 08:13:32 mac Exp $
             </optgroup>
           </select>
         </td>
-        <td tal:condition="not:hasErrors"
+        <td tal:condition="not:converterError"
             class="form-mono"
             tal:content="def/convertername"></td>
-        <td tal:condition="hasErrors"
+        <td tal:condition="converterError"
             class="form-mono"
             style="color: #ff0000;"
             tal:content="def/convertername"></td>

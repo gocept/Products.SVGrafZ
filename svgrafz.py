@@ -2,10 +2,11 @@
 ## 
 ## SVGrafZ
 ##
-## $Id: svgrafz.py,v 1.22 2003/06/16 08:15:15 mac Exp $
+## $Id: svgrafz.py,v 1.23 2003/06/17 09:42:43 mac Exp $
 ################################################################################
 
 import os
+import random
 from OFS.SimpleItem import SimpleItem
 from AccessControl import ClassSecurityInfo
 from Globals import InitializeClass
@@ -28,7 +29,7 @@ class SVGrafZProduct(SimpleItem):
     """ProductClass of SVGrafZ."""
 
     meta_type = 'SVGrafZ'
-    version = '0.17'
+    version = '0.19'
 
     manage_options = (
         {'label':'Properties',
@@ -136,6 +137,7 @@ class SVGrafZProduct(SimpleItem):
                          'fixcolumn': None,
                          'specialattrib': None
                          })
+        self.rnd = random.Random()
         self.current_version = self.version # set at creation & update
 
     def _update(self):
@@ -163,7 +165,10 @@ class SVGrafZProduct(SimpleItem):
         if self.current_version == '0.15':
             self.current_version = '0.16'
             # nothing else to do
-        if self.current_version == '0.16':
+        if self.current_version < '0.19':
+            self.current_version = '0.19'
+            self.rnd = random.Random()
+        if self.current_version < '0.20':
             # set self.current_version to new version
             pass
 
@@ -374,7 +379,9 @@ class SVGrafZProduct(SimpleItem):
     def html(self, REQUEST=None):
         """Get HTML-Text to embed Image."""
         converter, value = self._getOutputConverter()
-        url = self.id + '?SVGrafZ_PixelMode=%s' % (value,)
+        url = self.id + '?SVGrafZ_PixelMode=%s&rnd=%s' % (value,
+                                                          self.rnd.random())
+        # rnd is to prevent reload
         return converter.getHTML(url,
                                  self.height(),
                                  self.width())
@@ -483,11 +490,16 @@ class SVGrafZProduct(SimpleItem):
         return icons
 
     security.declareProtected('View management screens', 'having_errors')
-    def having_errors(self):
+    def having_errors(self, whichTests='all'):
         """Test if we have errors.
 
         e.g. conflicts between diagramKind and converter
         """
+        if whichTests == 'all':
+            if self.version != self.current_version:
+                return "Diagram is older than SVGrafZ. \
+                Update it as described in doc/update.txt"
+        
         diagramTypesOfConverter = ICRegistry.getConverter(
             self.convertername()).registration().keys()
 
@@ -514,7 +526,6 @@ class SVGrafZProduct(SimpleItem):
 
     def _list2dictlist(self, list):
         return [{'item': x} for x in list]
-
 
 
 InitializeClass(SVGrafZProduct)

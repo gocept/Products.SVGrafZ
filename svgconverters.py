@@ -1,15 +1,19 @@
 ################################################################################
 ## 
 ## SVGrafZ: FormatConverters
-## Version: $Id: svgconverters.py,v 1.3 2003/06/13 08:43:22 mac Exp $
+## Version: $Id: svgconverters.py,v 1.4 2003/06/17 09:42:43 mac Exp $
 ##
 ################################################################################
 
 from os import popen, unlink, path
 from tempfile import mktemp
+from telnetlib import Telnet
+import socket
+from urllib import quote
 
 from interfaces import ISVGConverter
 from config import SVGrafZ_Java_Path, SVGrafZ_Batik_Path
+from config import SVGrafZ_BatikServer_Host, SVGrafZ_BatikServer_Port
 
 
 class SVG2SVG:
@@ -90,7 +94,9 @@ class SVG2SVG:
 
 
 class SVG2PNG:
-    """Convert SVG to PNG, using batik from http://xml.apache.org/batik/."""
+    """Convert SVG to PNG, using batik from http://xml.apache.org/batik/.
+       or batikServer from
+       http://cvs.gocept.com/cgi-bin/viewcvs/viewcvs.cgi/batikServer/"""
     
     __implements__ = ISVGConverter
 
@@ -99,10 +105,13 @@ class SVG2PNG:
     def __init__(self):
         """Init."""
         global SVGrafZ_Java_Path, SVGrafZ_Batik_Path
+        global SVGrafZ_BatikServer_Host, SVGrafZ_BatikServer_Port
 
         try:
             a = SVGrafZ_Java_Path
             a = SVGrafZ_Batik_Path
+            a = SVGrafZ_BatikServer_Host
+            a = SVGrafZ_BatikServer_Port
         except (NameError):
             self.error_text = 'Java or Batik-Path not set in config.py. \
             Please talk to your Administrator.'
@@ -157,6 +166,7 @@ class SVG2PNG:
             return ret
 
         global SVGrafZ_Java_Path, SVGrafZ_Batik_Path
+        global SVGrafZ_BatikServer_Host, SVGrafZ_BatikServer_Port
         
         # write source data to tmp-file
         sourceFile = mktemp('SVGrafZ')
@@ -170,21 +180,37 @@ class SVG2PNG:
         rfh.write('ResultFile of SVGrafZ.')
         rfh.close()
 
-        cmd = SVGrafZ_Java_Path + \
-              ' -jar ' + \
-              SVGrafZ_Batik_Path + \
-              ' -d ' + resultFile + \
-              ' -m ' + SVG2PNG.getDestinationFormat() + \
-              ' ' + sourceFile
-        pfh = popen(cmd)
-        res = pfh.read()
-        if res[-8:-1] == 'success':
-            # read result
+        # try connection to batikServer
+        try:
+            conn = Telnet(SVGrafZ_BatikServer_Host, SVGrafZ_BatikServer_Port)
+            cmd = 'CONF %s TO %s AS %s BSP 1.0\n\n' % (
+                quote(sourceFile),
+                quote(resultFile),
+                self.getDestinationFormat()
+                )
+            conn.write(cmd)
+            if conn.read_all():
+                ret = True
+            conn.close()
+        except (socket.error): # no batikServer, use batikRenderer
+            cmd = SVGrafZ_Java_Path + \
+                  ' -jar ' + \
+                  SVGrafZ_Batik_Path + \
+                  ' -d ' + resultFile + \
+                  ' -m ' + self.getDestinationFormat() + \
+                  ' ' + sourceFile
+            pfh = popen(cmd)
+            res = pfh.read()
+            if res[-8:-1] == 'success':
+                ret = True
+                
+        # read result
+        if ret:
             rfh = open(resultFile, 'r')
             self.result = rfh.read()
             rfh.close()
-            ret = True
 
+        # cleaning up
         unlink(self.stylesheetPath)
         unlink(sourceFile)
         unlink(resultFile)
