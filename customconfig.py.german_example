@@ -1,0 +1,68 @@
+# -*- coding: latin1 -*-
+################################################################################
+## 
+## Konfiguration von SVGrafZ
+##
+################################################################################
+
+
+### globale SVGrafZ Optionen ###
+
+## Default Farbe für die Balken, Säulen und Linien im Diagramm.
+## (Wird benutzt, wenn kein Stylesheet angegeben ist.)
+SVGrafZ_default_Color = u"lightgreen"
+
+## Bezeichnung für die Legende
+SVGrafZ_legend_name = u"Legende:"
+
+## Fehlertext, der angezeigt wird, wenn die Liste, der Daten, die
+## Dargestellt werden sollen Leer ist.
+SVGrafZ_empty_dataset = u"Keine Daten! Also kann nichts dargestellt "\
+                        u"werden."
+
+## Fehlertext, der angezeigt wird, wenn der Browser keine SVG-Grafiken
+## darstellen kann
+SVGrafZ_SVG_not_supported = u"Ihr Browser unterstützt leider nicht die Anzeige "\
+                            u"von SVG-Grafiken."
+
+## Wort "Fehler" auf deutsch.
+SVGrafZ_error_name = u"Fehler"
+
+## Text der für einen Link zum Herunterladen der PDF-Version angezeigt
+## wird.
+SVGrafZ_download_PDF = u"PDF-Dokument herunterladen"
+
+
+
+### Einstellungen für BatikServer ###
+# Anmerkung: batikRasterizer sollte außerdem konfiguriert werden, wenn
+# BatikServer nicht läuft
+
+## Hostname der Maschine auf der BatikServer läuft (Muss identisch mit
+## Maschine sein, auf der Zope läuft!)
+SVGrafZ_BatikServer_Host = u"localhost"
+
+## Portnummer mit dem BatikServer verbunden ist (Standard: 54822)
+SVGrafZ_BatikServer_Port = 54822
+
+## Wenn BatikServer von Zope aus gestartet wird (über
+## Products.SVGrafZ.startBatikServer) ist der Pfad zu
+## batikServer.class hier einzutragen.
+SVGrafZ_BatikServer = u"/usr/lib/BatikServer/" # Linux Beispiel
+#SVGrafZ_BatikServer = ur"c:\Programme\BatikServer" # Windows Beispiel
+
+
+
+
+### Einstellungen für batikRasterizer ###
+
+## absoluter Pfad zu Java-Interpreter (mindestends Java 1.3)
+SVGrafZ_Java_Path = u"/usr/bin/java" # Linux
+#SVGrafZ_Java_Path = ur"c:\Programme\Java\j2re1.4.2\bin\java.exe" # Windows Beispiel
+
+## absoluter Pfad zu batik-rasterizer.jar (mindestens Version 1.5beta5)
+SVGrafZ_Batik_Path = u"/usr/share/batik/batik-rasterizer.jar" # Linux Beispiel
+#SVGrafZ_Batik_Path = u"/usr/share/java/batik.jar:/usr/share/java/xerces.jar:/usr/share/java/fop.jar" # Linux unter Benutzung von Debian Paketen
+#SVGrafZ_Batik_Path = ur"c:\Programme\Batik\batik-rasterizer.jar" # Windows Beispiel
+
+

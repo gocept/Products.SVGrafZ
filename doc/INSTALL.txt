@@ -2,9 +2,9 @@
 ###
 ### SVGrafZ: INSTALL
 ###
-### $Revision: 1.14 $
+### $Revision: 1.15 $
 ################################################################################
-$Id: INSTALL.txt,v 1.14 2005/02/11 17:17:49 mac Exp $
+$Id: INSTALL.txt,v 1.15 2005/02/28 11:18:57 mac Exp $
 
 
 REQUIREMENTS
@@ -27,11 +27,7 @@ RECOMANDATIONS
         batik-1.5beta5 or higher from http://xml.apache.org/batik/
         (Binary distribution is fine.)
 
-TESTED BATIK versions:
-----------------------
- 1.5beta5
- 1.5
- 1.5.1
+ * Tested Batik versions: 1.5beta5, 1.5, 1.5.1
 
 TESTED ZOPE versions:
 ---------------------
@@ -39,24 +35,38 @@ TESTED ZOPE versions:
  2.7rc2
  2.7.3
 
-INSTALL
--------
-  As usual for a Zope Product: Copy to Products directory of your Zope Instance.
+INSTALLATION
+------------
+
+  - As usual for a Zope Product: Copy SVGrafZ directory to Products
+    directory of your Zope Instance.
+
 
 CONFIGURE
 ---------
-  Change the settings in config.py to reflect your preferences and settings.
+
+  - Copy either customconfig.py.english_example or
+    customconfig.py.german_example to customconfig.py.
+
+  - Edit customconfig.py.
+
+  - Restart Zope.
+
 
 
 DOCUMENTATION
 -------------
 
 - Get your first SVGrafZ-Diagram by reading doc/USING.txt.
+
 - Some documentation can be found under Zope-Help.
+
 - When you choose a diagramkind or a converter you get information about its
   capabilities.
+
 - Some docs are also in the doc directory and some (maybe old) german ones are
   in doc/german.
+
 - For all other documentation needs: Use the source, luke. (sorry for that)
 
 
