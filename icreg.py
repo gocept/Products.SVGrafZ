@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ: Registry of InputConverters
 ##
-## $Id: icreg.py,v 1.3 2003/06/13 08:43:22 mac Exp $
+## $Id: icreg.py,v 1.4 2003/06/13 12:03:30 mac Exp $
 ################################################################################
 
 from interfaces import IDiagramType, IInputConverter, IDefaultInputConverter, \
@@ -23,7 +23,7 @@ class ICRegistry:
         """
 
         if not IInputConverter.isImplementedByInstancesOf(converter):
-            raise RuntimeError, 'Not implementing IInputConverter.'
+            raise RuntimeError, 'SVGrafZ-Error: InputConverter "%s" is not implementing IInputConverter.' % repr(converter)
 
         converterInstance = converter()
         capabilities = converterInstance.registration()
@@ -32,13 +32,12 @@ class ICRegistry:
             if IDefaultInputConverter.isImplementedBy(converterInstance):
                 if not self._defaultConverterName is None:
                     raise RuntimeError, \
-                          'DoubleRegistration of DefaultConverter %s' \
-                          % converter.name
+                          'SVGrafZ-Error: DoubleRegistration of DefaultInputConverter "%s"' % converter.name
                 else:
                     self._defaultConverterName = converter.name
 
             if self._inputConverters.get(converter.name):
-                raise RuntimeError, 'DoubleRegistration of %s' % converter.name
+                raise RuntimeError, 'SVGrafZ-Error: DoubleRegistration of InputConverter "%s"' % converter.name
             
             self._inputConverters[converter.name] = converterInstance
 
@@ -121,7 +120,7 @@ class ICRegistry:
         exception RuntimeError, if type not implementing Interface
         """
         if not IDiagramType.isImplementedByInstancesOf(type):
-            raise RuntimeError, 'Not implementing IDiagramType.'
+            raise RuntimeError, 'SVGrafZ-Error: DiagramType "%s" is not implementing IDiagramType.' % repr(type)
                      
         if type.name in self._diagramTypes.keys():
             return 0
@@ -143,7 +142,7 @@ class ICRegistry:
         exception RuntimeError, if Interfaces not implemented
         """
         if not IDataSource.isImplementedByInstancesOf(dataSource):
-            raise RuntimeError, 'Not implementing IDataSource.'
+            raise RuntimeError, 'SVGrafZ-Error: DataSource "%s" is not implementing IDataSource.' % repr(dataSource)
 
         self._registerType(diagramType)
                              
@@ -167,7 +166,7 @@ class ICRegistry:
         exception RuntimeError, if Interfaces not implemented
         """
         if not IInputConverter.isImplementedByInstancesOf(converter):
-            raise RuntimeError, 'Not implementing IInputConverter.'
+            raise RuntimeError, 'SVGrafZ-Error: InputConverter "%s" is not implementing IInputConverter.' % repr(converter)
 
         self._registerSource(diagramType, dataSource)
                      

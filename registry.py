@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ_DiagramRegistry
 ##
-## Version: $Id: registry.py,v 1.7 2003/06/13 10:23:57 mac Exp $
+## Version: $Id: registry.py,v 1.8 2003/06/13 12:03:30 mac Exp $
 ################################################################################
 
 from interfaces import IDiagramType, IDiagramKind, IDefaultDiagramKind
@@ -21,7 +21,7 @@ class Registry:
         exception RuntimeError if not implementing necessary Interfaces.
         """
         if not IDiagramKind.isImplementedByInstancesOf(diagramKind):
-            raise RuntimeError, 'Not implementing IDiagramKind.'
+            raise RuntimeError, 'SVGrafZ-Error: DiagramKind "%s" is not implementing IDiagramKind.' % repr(diagramKind)
 
 
         capabilities = diagramKind.registration()
@@ -31,12 +31,10 @@ class Registry:
                 if self._defaultDiagramKindName is None:
                     self._defaultDiagramKindName = diagramKind.name
                 else:
-                    raise RuntimeError,  'DoubleRegistration of Default %s' % (
-                    diagramKind.name)
+                    raise RuntimeError,  'SVGrafZ-Error: DoubleRegistration of Default DiagramKind "%s"' % (diagramKind.name)
 
             if self._diagramKinds.get(diagramKind.name):
-                raise RuntimeError, 'DoubleRegistration of %s' % (
-                    diagramKind.name)
+                raise RuntimeError, 'SVGrafZ-Error: DoubleRegistration of DiagramKind "%s"' % (diagramKind.name)
             
             self._diagramKinds[diagramKind.name] = diagramKind
 
@@ -64,7 +62,7 @@ class Registry:
         """
 
         if name not in self._diagramKinds:
-            raise RuntimeError, 'DiagramKind %s does not exist.' % (name)
+            raise RuntimeError, 'SVGrafZ-Error: DiagramKind "%s" does not exist.' % (name)
 
         return self._diagramKinds[name]
 
@@ -115,7 +113,7 @@ class Registry:
         exception RuntimeError, if type not implementing Interface
         """
         if not IDiagramType.isImplementedByInstancesOf(type):
-            raise RuntimeError, 'Not implementing IDiagramType.'
+            raise RuntimeError, 'SVGrafZ-Error: DiagramType "%s" is not implementing IDiagramType.' % repr(type)
                      
         if type.name in self._diagramTypes.keys():
             return 0
@@ -138,7 +136,7 @@ class Registry:
         """
 
         if not IDiagramKind.isImplementedByInstancesOf(kind):
-            raise RuntimeError, 'Not implementing IDiagramKind.'
+            raise RuntimeError, 'SVGrafZ-Error: DiagramKind "%s" is not implementing IDiagramKind.' % repr(kind)
 
         self._registerType(type)
         

@@ -1,11 +1,11 @@
 ################################################################################
 ## 
 ## SVGrafZ: do all tests
-## $Id: all_tests.py,v 1.6 2003/05/28 07:15:01 mac Exp $
+## $Id: all_tests.py,v 1.7 2003/06/13 12:03:30 mac Exp $
 ##
 ################################################################################
 
-import config
+import config4test
 import unittest
 import testRegistry
 import testBase

@@ -1,11 +1,11 @@
 ################################################################################
 ## 
 ## SVGrafZ: Test of Class SimpleBarGraph
-## Version: $Id: testBar.py,v 1.4 2003/05/27 15:24:09 mac Exp $
+## Version: $Id: testBar.py,v 1.5 2003/06/13 12:03:30 mac Exp $
 ##
 ################################################################################
 
-import config
+import config4test
 import unittest
 from bar import SimpleBarGraph
 

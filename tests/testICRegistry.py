@@ -1,11 +1,11 @@
 ################################################################################
 ## 
 ## SVGrafZ: Test of ICRegistry
-## $Id: testICRegistry.py,v 1.3 2003/06/13 08:43:23 mac Exp $
+## $Id: testICRegistry.py,v 1.4 2003/06/13 12:03:30 mac Exp $
 ##
 ################################################################################
 
-import config
+import config4test
 import unittest
 from icreg import ICRegistry
 from interfaces import IDiagramType, IInputConverter, IDefaultInputConverter,\

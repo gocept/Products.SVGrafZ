@@ -1,11 +1,11 @@
 ################################################################################
 ## 
 ## SVGrafZ: Test of Class BaseGraph
-## Version: $Id: testBase.py,v 1.3 2003/05/27 15:24:09 mac Exp $
+## Version: $Id: testBase.py,v 1.4 2003/06/13 12:03:30 mac Exp $
 ##
 ################################################################################
 
-import config
+import config4test
 import unittest
 from base import BaseGraph
 
@@ -218,39 +218,58 @@ class BaseGraphTests(unittest.TestCase):
                                                  str(self.to_test[i])))
 
 
-    def test_countDistX(self):
-        "Test countDistX."
-        res = [5,1,1,1,1,1,1,2,2]
+    def test_distValsX(self):
+        "Test distValsX."
+        res = [[1,2,3,4,5],
+               [323493],
+               [1],
+               [222],
+               [-1234],
+               [0],
+               [1000],
+               ['Jugendamt', 'Jugendlicher'],
+               [2.3, 4.2],
+               ]
 
         for j in self.errors:
             g = BaseGraphData(j)
             self.assertRaises(RuntimeError,
-                              g.countDistX)
+                              g.distValsX)
 
         for i in range(len(self.to_test)):
-            g = BaseGraphData(self.to_test[i])
+            g = BaseGraphData(self.to_test[i]).distValsX()
+            g.sort()
             self.assertEqual(res[i],
-                             g.countDistX(),
+                             g,
                              '%s != %s (%s)1' % (res[i],
-                                                 g.countDistX(),
+                                                 g,
                                                  str(self.to_test[i])))
 
 
-    def test_countDistY(self):
-        "Test countDistY."
-        res = [4,1,2,1,1,1,1,2,2]
-
+    def test_distValsY(self):
+        "Test distValsY."
+        res = [[1,3,4,5],
+               [34534],
+               [1,2],
+               [233],
+               [-2234],
+               [0],
+               [1000],
+               [1.4, 2.6],
+               ['Eltern', 'andere'],
+               ]
         for j in self.errors:
             g = BaseGraphData(j)
             self.assertRaises(RuntimeError,
-                              g.countDistY)
+                              g.distValsY)
 
         for i in range(len(self.to_test)):
-            g = BaseGraphData(self.to_test[i])
+            g = BaseGraphData(self.to_test[i]).distValsY()
+            g.sort()
             self.assertEqual(res[i],
-                             g.countDistY(),
+                             g,
                              '%s != %s (%s)1' % (res[i],
-                                                 g.countDistY(),
+                                                 g,
                                                  str(self.to_test[i])))
 
 

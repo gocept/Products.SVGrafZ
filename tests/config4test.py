@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ: configuration of tests
 ##
-## $Id: config.py,v 1.1 2003/05/27 15:24:09 mac Exp $
+## $Id: config4test.py,v 1.1 2003/06/13 12:03:30 mac Exp $
 ################################################################################
 
 import sys
@@ -17,4 +17,4 @@ import sys
 sys.path.insert(1, '/home/zagy/zope/servers/Zope-HEAD/lib/python')
 
 # path to SVGrafZ-Directory
-sys.path.append('/home/mac/SVGrafZ')
+sys.path.insert(0,'/home/mac/SVGrafZ')

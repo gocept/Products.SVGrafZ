@@ -2,10 +2,10 @@
 ## 
 ## SVGrafZ: BarGraphs
 ##
-## $Id: bar.py,v 1.14 2003/06/10 11:02:45 mac Exp $
+## $Id: bar.py,v 1.15 2003/06/13 12:03:30 mac Exp $
 ################################################################################
 
-from interfaces import IDiagramKind
+from interfaces import IDiagramKind, IDefaultDiagramKind
 from base import BaseGraph
 from dtypes import *
 from config import SVGrafZ_default_Color
@@ -16,7 +16,7 @@ class SimpleBarGraph(BaseGraph):
                        without negative values,
                        x-axis always starting at zero."""
 
-    __implements__ = IDiagramKind
+    __implements__ = IDefaultDiagramKind
 
     name = 'simple bar diagram'
 

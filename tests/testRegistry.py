@@ -1,11 +1,11 @@
 ################################################################################
 ## 
 ## SVGrafZ: Test of Registry
-## Version: $Id: testRegistry.py,v 1.8 2003/06/13 10:23:57 mac Exp $
+## Version: $Id: testRegistry.py,v 1.9 2003/06/13 12:03:30 mac Exp $
 ##
 ################################################################################
 
-import config
+import config4test
 import unittest
 from registry import Registry
 from interfaces import IDiagramType, IDiagramKind, IDefaultDiagramKind
