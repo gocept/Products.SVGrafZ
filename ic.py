@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ: InputConverters
 ##
-## $Id: ic.py,v 1.6 2003/06/10 10:11:06 mac Exp $
+## $Id: ic.py,v 1.7 2003/06/10 14:18:26 mac Exp $
 ################################################################################
 
 from interfaces import IInputConverter, IInputConverterWithLegend
@@ -32,6 +32,9 @@ class NoneConverter:
 
 class ConvertFrom_ZSQLMethod:
     """Abstract class for conversion from Z SQL Method."""
+
+    def __init__(self):
+        self._legend = []
 
     def legend(self):
         """Returns the legend extracted out of the input data using
@@ -69,7 +72,6 @@ class ConvertFrom_ZSQLMethod_DataInColumns (ConvertFrom_ZSQLMethod):
         if fixColumn is None:
             raise RuntimeError, \
                   "Reference Column not set, but it's required by converter."
-        print res
         ret = []
 
         params = len(res[0])
@@ -91,7 +93,6 @@ class ConvertFrom_ZSQLMethod_DataInColumns (ConvertFrom_ZSQLMethod):
         del cols[cols.index(fixColumn)]
         self._legend = cols
         
-        print ret
         return ret
 
 
@@ -164,12 +165,13 @@ class ConvertFrom_ZSQLMethod_DataInRows (ConvertFrom_ZSQLMethod):
             raise RuntimeError, \
                   "Reference Columns not set, but it's required by converter."
         
+        if len(res)  == 0: # no result
+            return None
+
         if len(cols) != 3:
             raise RuntimeError, \
                   "Z SQL Method must return exactly 3 columns."
 
-        if len(res) == 0:
-            return None
         
         refColNames = [x.strip() for x in str(refCols).split(';')]
         if len(refColNames) != 2:
@@ -181,9 +183,6 @@ class ConvertFrom_ZSQLMethod_DataInRows (ConvertFrom_ZSQLMethod):
             raise RuntimeError, \
                   "Column names from 'Reference Columns' must be in input data."
         
-        print res
-        print discColumn
-        print datasetID
         ret = []
         self._legend = []
         
@@ -202,7 +201,6 @@ class ConvertFrom_ZSQLMethod_DataInRows (ConvertFrom_ZSQLMethod):
                 self._legend.append(curDatasetID)
             ret[curDataset].append(self._getValList(dict[contColumn],
                                                    dict[discColumn]))
-        print ret
         return ret
 
     
