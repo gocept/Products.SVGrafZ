@@ -2,35 +2,33 @@
 ## 
 ## SVGrafZ
 ##
-## $Id: svgrafz.py,v 1.18 2003/06/06 13:36:56 mac Exp $
+## $Id: svgrafz.py,v 1.19 2003/06/10 10:11:06 mac Exp $
 ################################################################################
 
 import os
 from OFS.SimpleItem import SimpleItem
-from registry import Registry
-from icreg import ICRegistry
 from AccessControl import ClassSecurityInfo
 from Globals import InitializeClass
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from Products.PageTemplates.TALES import CompilerError
-from helper import TALESMethod
 from ZODB.PersistentMapping import PersistentMapping
+
+from interfaces import IInputConverterWithLegend
+from registry import Registry
+from icreg import ICRegistry
 from svgconverters import SVG2SVG, SVG2PNG
+from helper import TALESMethod
 
 _www                   = os.path.join(os.path.dirname(__file__), 'www')
 _defaultSVGrafZ        = 'defaultSVGrafZ'
 _useDefaultDiagramKind = 'default diagramkind'
 _useDefaultConverter   = 'default Converter'
 
-def pdb():
-    import pdb
-    pdb.set_trace()
-
 class SVGrafZProduct(SimpleItem):
     """ProductClass of SVGrafZ."""
 
     meta_type = 'SVGrafZ'
-    version = '0.15'
+    version = '0.16'
 
     manage_options = (
         {'label':'Properties',
@@ -163,6 +161,9 @@ class SVGrafZProduct(SimpleItem):
             elif self.dat['convertername'] == 'Z SQL Method to Graph':
                 self.dat['convertername'] = 'ZSQL (Data in Columns) to x-Axis'
         if self.current_version == '0.15':
+            self.current_version = '0.16'
+            # nothing else to do
+        if self.current_version == '0.16':
             # set self.current_version to new version
             pass
 
@@ -393,6 +394,8 @@ class SVGrafZProduct(SimpleItem):
         inputConverter = ICRegistry.getConverter(current['convertername'])
         errortext      = legend = colnames = stylesheet = data = None
 
+        import pdb2
+
         try:
             data = self.getValue(current['data'])
             try:
@@ -406,6 +409,16 @@ class SVGrafZProduct(SimpleItem):
             legend = self.getValue(current['legend'])
         except (AttributeError, KeyError, CompilerError):
             errortext = 'Legend "%s" is not existing.' % (current['legend'])
+            
+        import pdb2
+        
+        if legend == 'converter':
+            if IInputConverterWithLegend.isImplementedBy(inputConverter):
+                legend = inputConverter.legend() # cause convert is already done
+            else:
+                errortext = "DataConverter '%s' can't be used with '%s'." % (
+                    current['convertername'],
+                    'string:converter')
         try:
             colnames = self.getValue(current['colnames'])
         except (AttributeError, KeyError, CompilerError):

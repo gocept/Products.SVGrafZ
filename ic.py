@@ -2,10 +2,10 @@
 ## 
 ## SVGrafZ: InputConverters
 ##
-## $Id: ic.py,v 1.5 2003/06/06 13:36:56 mac Exp $
+## $Id: ic.py,v 1.6 2003/06/10 10:11:06 mac Exp $
 ################################################################################
 
-from interfaces import IInputConverter
+from interfaces import IInputConverter, IInputConverterWithLegend
 from dtypes import *
 
 
@@ -29,7 +29,22 @@ class NoneConverter:
         """
         return data
 
-class ConvertFrom_ZSQLMethod_DataInColumns:
+
+class ConvertFrom_ZSQLMethod:
+    """Abstract class for conversion from Z SQL Method."""
+
+    def legend(self):
+        """Returns the legend extracted out of the input data using
+           self.convert."""
+        return self._legend
+
+    
+    def _getValList(self, value, colname):
+        """Put value and colname into a list in the right order."""
+        raise RuntimeError, \
+              'ConvertFrom_ZSQLMethod is abstract class'
+
+class ConvertFrom_ZSQLMethod_DataInColumns (ConvertFrom_ZSQLMethod):
     """Abstract class for conversion from Z SQL Method.
 
     The sql result data has one column for each dataset (graph) in the
@@ -67,33 +82,32 @@ class ConvertFrom_ZSQLMethod_DataInColumns:
                 if col == fixColumn:
                     continue
                 try:
-                    ret[i].append(self.getValList(dict[col], dict[fixColumn]))
+                    ret[i].append(self._getValList(dict[col], dict[fixColumn]))
                 except KeyError:
                     raise RuntimeError, \
                           'Reference Column is not in source data.' 
                 i += 1
+
+        del cols[cols.index(fixColumn)]
+        self._legend = cols
+        
         print ret
         return ret
 
-    
-    def getValList(self, value, colname):
-        """Put value and colname into a list in the right order."""
-        raise RuntimeError, \
-              'ConvertFrom_ZSQLMethod_DataInColumns is abstract class'
 
 
 class yGraph_ZSQLMethod_DataInColumns(ConvertFrom_ZSQLMethod_DataInColumns):
     """Convert data from Z SQL Method with data in separate columns to y-axis.
     """
    
-    __implements__ = IInputConverter
+    __implements__ = IInputConverterWithLegend
     
     name = 'ZSQL (Data in Columns) to y-Axis'
 
     def registration(self):
         return {BarGraphs: [DS_ZSQLMethod]}
 
-    def getValList(self, value, colname):
+    def _getValList(self, value, colname):
         """Put value and colname into a list in the right order."""
         return [float(value), colname]
 
@@ -101,7 +115,7 @@ class xGraph_ZSQLMethod_DataInColumns(ConvertFrom_ZSQLMethod_DataInColumns):
     """Convert data from Z SQL Method with data in separate columns to x-axis.
     """
     
-    __implements__ = IInputConverter
+    __implements__ = IInputConverterWithLegend
     
     name = 'ZSQL (Data in Columns) to x-Axis'
 
@@ -109,14 +123,14 @@ class xGraph_ZSQLMethod_DataInColumns(ConvertFrom_ZSQLMethod_DataInColumns):
         return {LineGraphs: [DS_ZSQLMethod],
                 RowGraphs:  [DS_ZSQLMethod]}
 
-    def getValList(self, value, colname):
+    def _getValList(self, value, colname):
         """Put value and colname into a list in the right order."""
         return [colname, float(value)]
 
 
 
 
-class ConvertFrom_ZSQLMethod_DataInRows:
+class ConvertFrom_ZSQLMethod_DataInRows (ConvertFrom_ZSQLMethod):
     """Abstract class for conversion from Z SQL Method.
 
     The result data of the Z SQL Method has to have 3 Columns:
@@ -171,7 +185,8 @@ class ConvertFrom_ZSQLMethod_DataInRows:
         print discColumn
         print datasetID
         ret = []
-
+        self._legend = []
+        
         curDatasetID = False
         dummy = res[0].copy()
         del dummy[datasetID]
@@ -184,30 +199,26 @@ class ConvertFrom_ZSQLMethod_DataInRows:
                 ret.append([])
                 curDatasetID = dict[datasetID]
                 curDataset += 1
-            ret[curDataset].append(self.getValList(dict[contColumn],
+                self._legend.append(curDatasetID)
+            ret[curDataset].append(self._getValList(dict[contColumn],
                                                    dict[discColumn]))
         print ret
         return ret
 
     
-    def getValList(self, contVal, discVal):
-        """Put continuous and discrete value into a list in the right order."""
-        raise RuntimeError, \
-              'ConvertFrom_ZSQLMethod_DataInRows is abstract class.'
-
 
 class yGraph_ZSQLMethod_DataInRows(ConvertFrom_ZSQLMethod_DataInRows):
     """Convert data from Z SQL Method with data in rows to y-axis.
     """
     
-    __implements__ = IInputConverter
+    __implements__ = IInputConverterWithLegend
     
     name = 'ZSQL (Data in Rows) to y-Axis'
 
     def registration(self):
         return {BarGraphs: [DS_ZSQLMethod]}
 
-    def getValList(self, contVal, discVal):
+    def _getValList(self, contVal, discVal):
         """Put continuous and discrete value into a list in the right order."""
         return [float(contVal), discVal]
 
@@ -215,7 +226,7 @@ class xGraph_ZSQLMethod_DataInRows(ConvertFrom_ZSQLMethod_DataInRows):
     """Convert data from Z SQL Method with data in rows to x-axis.
     """
     
-    __implements__ = IInputConverter
+    __implements__ = IInputConverterWithLegend
     
     name = 'ZSQL (Data in Rows) to x-Axis'
 
@@ -223,6 +234,6 @@ class xGraph_ZSQLMethod_DataInRows(ConvertFrom_ZSQLMethod_DataInRows):
         return {LineGraphs: [DS_ZSQLMethod],
                 RowGraphs:  [DS_ZSQLMethod]}
 
-    def getValList(self, contVal, discVal):
+    def _getValList(self, contVal, discVal):
         """Put continuous and discrete value into a list in the right order."""
         return [discVal, float(contVal)]

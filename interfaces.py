@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ: Interfaces
 ##
-## $Id: interfaces.py,v 1.10 2003/06/03 15:03:13 mac Exp $
+## $Id: interfaces.py,v 1.11 2003/06/10 10:11:06 mac Exp $
 ################################################################################
 
 from Interface import Interface,Attribute
@@ -161,3 +161,13 @@ class IInputConverter(Interface):
         Exception RuntimeError with error-text if an error occured
         """
 
+
+class IInputConverterWithLegend(IInputConverter):
+    """InputConverter which is able to generate the legend from its input
+       data.
+    """
+
+    def legend():
+        """Returns the legend extracted out of the input data using
+           self.convert."""
+        

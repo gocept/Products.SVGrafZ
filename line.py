@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ: LineGraphs
 ##
-## $Id: line.py,v 1.4 2003/06/06 13:36:56 mac Exp $
+## $Id: line.py,v 1.5 2003/06/10 10:11:06 mac Exp $
 ################################################################################
 
 from interfaces import IDiagramKind
@@ -86,6 +86,9 @@ class Mirrored(LineDiagram):
 
     def specialAttribHook(self):
         "Do the checking of specialAttrib things."
+        self._change_computed_result('realMinY', 0.0)
+        self._change_computed_result('minY', self._compRoundedValMax(0.0))
+        
         if self.specialAttrib is None:
             return
         try:
@@ -97,10 +100,9 @@ class Mirrored(LineDiagram):
                                          max(self.maxY(),
                                              self._compRoundedValMax(
                 self.specialAttrib)))
-            
-            
         except (ValueError, TypeError):
             raise RuntimeError, "'%s' must be a number." % (self.specialAttribName)
+
             
     def drawGraph(self):
         "Draw the Lines of the graph and name the columns."
