@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ: BarGraphs
 ##
-## $Id: bar.py,v 1.11 2003/06/03 12:41:32 mac Exp $
+## $Id: bar.py,v 1.12 2003/06/04 08:56:17 mac Exp $
 ################################################################################
 
 from interfaces import IDiagramKind
@@ -18,7 +18,7 @@ class SimpleBarGraph(BaseGraph):
 
     __implements__ = IDiagramKind
 
-    name = 'Einfaches Balkendiagramm'
+    name = 'simple bar diagram'
 
     def registration():
         """See IDiagramKind.registration()."""
@@ -135,39 +135,4 @@ class SimpleBarGraph(BaseGraph):
                           self.confLT(colname))
 
         return res + '</g>\n'
-            
-                
-        
-class SimpleBarGraph2(BaseGraph):
-    """Simple BarGraph testclass."""
 
-    __implements__ = IDiagramKind
-
-    name = 'Zweifaches Balkendiagramm'
-
-    def __init__(self,
-                 data=None,
-                 width=0,
-                 height=0,
-                 gridlines=0,
-                 legend=None,
-                 colnames=None,
-                 title=None,
-                 stylesheet=None,
-                 errortext=None):
-        "see IDiagramKind.__init__"
-        self.width    = width
-        self.height   = height
-        self.stylesheet=stylesheet
-
-
-    def compute(self):
-        """Compute the Diagram."""
-        return self.svgHeader() + \
-               '<text x="1" y="30">dummy diagram</text>' + \
-               self.svgFooter()
-
-    def registration():
-        """See IDiagramKind.registration()."""
-        return [RowGraphs]
-    registration = staticmethod(registration)

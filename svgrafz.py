@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ
 ##
-## $Id: svgrafz.py,v 1.16 2003/06/03 15:03:13 mac Exp $
+## $Id: svgrafz.py,v 1.17 2003/06/04 08:56:17 mac Exp $
 ################################################################################
 
 import os
@@ -30,7 +30,7 @@ class SVGrafZProduct(SimpleItem):
     """ProductClass of SVGrafZ."""
 
     meta_type = 'SVGrafZ'
-    version = '0.1a3'
+    version = '0.1a4'
 
     manage_options = (
         {'label':'Properties',
@@ -141,12 +141,20 @@ class SVGrafZProduct(SimpleItem):
 
     def _update(self):
         """Update older versions."""
-        if self.dat.has_key('fixColumn'):
-            self.dat['fixcolumn'] = self.dat['fixColumn']
-            del self.dat['fixColumn']
-        if not self.dat.has_key('specialattrib'):
-            self.dat['specialattrib'] = None
-        
+        if self.dat['graphname'] == 'Einfaches Balkendiagramm' or \
+               self.dat['graphname'] == 'Zweifaches Balkendiagramm':
+           self.dat['graphname'] =  'simple bar diagram'
+        elif self.dat['graphname'] == 'Einfaches Liniendiagramm':
+            self.dat['graphname'] = 'simple line diagram'
+        elif self.dat['graphname'] == 'Gespiegeltes Liniendiagramm':
+            self.dat['graphname'] = 'mirrored line diagram'
+        elif self.dat['graphname'] == 'Einfaches Säulendiagramm':
+            self.dat['graphname'] = 'simple column diagram'
+        else:
+            print self.dat['graphname']
+
+
+
         
     security.declareProtected('View management screens', 'equalsGraphName')
     def equalsGraphName(self, name):

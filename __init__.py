@@ -1,13 +1,13 @@
 ################################################################################
 ## 
 ## SVGrafZ
-## Version: $Id: __init__.py,v 1.6 2003/06/03 12:41:32 mac Exp $
+## Version: $Id: __init__.py,v 1.7 2003/06/04 08:56:17 mac Exp $
 ##
 ################################################################################
 
 from registry import Registry
 from icreg import ICRegistry
-import bar, line
+import bar, line, row
 import ic
 from svgrafz import SVGrafZProduct
 from interfaces import IInputConverter, IDiagramKind
@@ -19,6 +19,7 @@ def initialize(registrar):
     # register diagramkinds
     registerDiagramKinds(bar)
     registerDiagramKinds(line)
+    registerDiagramKinds(row)
 
     # register InputConverters
     registerConverters(ic)

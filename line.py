@@ -2,98 +2,24 @@
 ## 
 ## SVGrafZ: LineGraphs
 ##
-## $Id: line.py,v 1.2 2003/06/03 15:03:13 mac Exp $
+## $Id: line.py,v 1.3 2003/06/04 08:56:17 mac Exp $
 ################################################################################
 
 from interfaces import IDiagramKind
-from base import BaseGraph
+from base import DataOnYAxis
 from dtypes import *
 from config import SVGrafZ_default_Color
 
-class AbstractClass(BaseGraph):
-    """Abstract class for LineGraphs.
-    """
+class LineDiagram(DataOnYAxis):
+    """Abstract superclass for concrete LineDiagram classes."""
 
-    def __init__(self,
-                 data=None,
-                 width=0,
-                 height=0,
-                 gridlines=0,
-                 legend=None,
-                 colnames=None,
-                 title=None,
-                 stylesheet=None,
-                 errortext=None):
-        "See IDiagramKind.__init__"
-        self.data       = data
-        self.width      = width
-        self.height     = height
-        self.legend     = legend
-        self.colnames   = colnames
-        self.gridlines  = gridlines
-        self.title      = title
-        self.stylesheet = stylesheet
-        self.errortext  = errortext
+    def registration():
+        """See IDiagramKind.registration()."""
+        return [LineGraphs]
+    registration = staticmethod(registration)
+    
 
-        self.result   = ''
-
-##      Achtung: die Koordinaten 0,0 sind im SVG links oben!
-##        gridbasey   unteres Ende in y-Richtung
-##        gridboundy  oberes  Ende in y-Richtung
-##        gridbasey groesser gridboundy!
-##        gridbasex   unteres (linkes) Ende in x-Richtung
-##        gridboundx  oberes (rechtes) Ende in x-Richtung
-##        gridbasex kleiner gridboundx!
-
-        self.gridbasey  = self.height * 0.9333
-        self.gridboundy = self.height * 0.0333
-        self.gridbasex  = self.width  * 0.0666
-        if self.hasLegend():
-            self.gridboundx = self.width * 0.8
-        else:
-            self.gridboundx = self.width * 0.98
-
-
-    def compute(self):
-        """Compute the Diagram."""
-        if self.result:
-            return self.result
-
-        self.specialAttribHook()
-        self.result = self.svgHeader()
-        if self.errortext:
-            self.result += self.printError()
-        else:
-            try:
-                if self.maxY() is None:
-                    raise RuntimeError, 'All values on y-axis must be numbers!'
-                difY = float(self.maxY() - self.minY())
-                if difY:
-                    self.yScale = float((self.gridbasey-self.gridboundy) / difY)
-                else:
-                    self.yScale = 1.0
-                    
-                self.result += self.drawYGrindLines()
-                self.result += self.drawLines()
-                self.result += self.drawXYAxis()
-                self.result += self.drawLegend()
-                self.result += self.drawTitle()
-            except RuntimeError:
-                import sys
-                self.errortext = str(sys.exc_info()[1])
-                self.result = self.svgHeader() + self.printError()
-
-        self.result += self.svgFooter()
-        return self.result
-
-
-    def drawLines(self):
-        "Abstract Method: Draw the Lines of the graph and name the columns."
-        raise RuntimeError, "Can't use the abstract class, inherit from it!"
-
-
-
-class Simple(AbstractClass):
+class Simple(LineDiagram):
     """Simple LineGraph with multiple DataRows,
                         without negative values,
                         y-axis always starting at zero,
@@ -104,17 +30,10 @@ class Simple(AbstractClass):
     """
 
     __implements__ = IDiagramKind
-    name = 'Einfaches Liniendiagramm'
+    name = 'simple line diagram'
 
-    def registration():
-        """See IDiagramKind.registration()."""
-        return [LineGraphs]
-    registration = staticmethod(registration)
 
-    def specialAttribHook(self):
-        pass # no specialAttrib things
-    
-    def drawLines(self):
+    def drawGraph(self):
         "Draw the Lines of the graph and name the columns."
         distX  = self.distValsX()
         lenDistX = len(distX)
@@ -143,30 +62,13 @@ class Simple(AbstractClass):
             res += '"/>\n'
             start = 1
 
-        if self.colnames:
-            colnamesCount = len(self.colnames)
-            colnames      = self.colnames
-        else:
-            colnamesCount = lenDistX
-            colnames      = distX
-
-        
-        for i in range(colnamesCount):
-            colname = colnames[i]
-            res +='''<defs>
-            <path d="M %s %s V 15" id="colname%s"/>
-            </defs>\n''' % (base + i * xWidth + 2,
-                            self.height - 2,
-                            i)
-            res+='''<text>
-            <textPath xlink:href="#colname%s">%s</textPath>
-            </text>''' % (i, self.confLT(colname))
+        res += self.xAxis_verticalLabels(distX, base, xWidth)
 
         return res + '</g>\n'
 
 
 
-class Mirrored(AbstractClass):
+class Mirrored(LineDiagram):
     """LineGraph with multiple DataRows,
                       without negative values, smallest y-value is always 0,
                       y-axis is mirrored, so the biggest values are on bottom,
@@ -178,14 +80,8 @@ class Mirrored(AbstractClass):
     """
 
     __implements__ = IDiagramKind
-    name              = 'Gespiegeltes Liniendiagramm'
+    name              = 'mirrored line diagram'
     specialAttribName = 'minimum of shown units on y-axis'
-
-    def registration():
-        """See IDiagramKind.registration()."""
-        return [LineGraphs]
-    registration = staticmethod(registration)
-
 
     def specialAttribHook(self):
         "Do the checking of specialAttrib things."
@@ -205,14 +101,14 @@ class Mirrored(AbstractClass):
         except (ValueError, TypeError):
             self.errortext = "'%s' must be a number." % self.specialAttribName
             
-    def drawLines(self):
+    def drawGraph(self):
         "Draw the Lines of the graph and name the columns."
-        distX  = self.distValsX()
+        distX    = self.distValsX()
         lenDistX = len(distX)
-        xWidth = float(self.gridboundx - self.gridbasex) / (lenDistX + 1)
-        base   = self.gridbasex + xWidth
-        res    = '<g id="data">\n'
-        start  = 1
+        xWidth   = float(self.gridboundx - self.gridbasex) / (lenDistX + 1)
+        base     = self.gridbasex + xWidth
+        res      = '<g id="data">\n'
+        start    = 1
         
         distX.sort()
         for i in range(self.numgraphs()):
@@ -234,25 +130,8 @@ class Mirrored(AbstractClass):
             res += '"/>\n'
             start = 1
 
-        if self.colnames:
-            colnamesCount = len(self.colnames)
-            colnames      = self.colnames
-        else:
-            colnamesCount = lenDistX
-            colnames      = distX
-
+        res += self.xAxis_verticalLabels(distX, base, xWidth)
         
-        for i in range(colnamesCount):
-            colname = colnames[i]
-            res +='''<defs>
-            <path d="M %s %s V 15" id="colname%s"/>
-            </defs>\n''' % (base + i * xWidth + 2,
-                            self.height - 2,
-                            i)
-            res+='''<text>
-            <textPath xlink:href="#colname%s">%s</textPath>
-            </text>''' % (i, self.confLT(colname))
-
         return res + '</g>\n'
 
 

@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ: InputConverters
 ##
-## $Id: ic.py,v 1.3 2003/06/03 15:29:46 mac Exp $
+## $Id: ic.py,v 1.4 2003/06/04 08:56:17 mac Exp $
 ################################################################################
 
 from interfaces import IInputConverter
@@ -30,7 +30,7 @@ class NoneConverter:
         return data
 
 class ConvertFrom_ZSQLMethod:
-    """Abstract Class for conversion from Z SQL Method."""
+    """Abstract class for conversion from Z SQL Method."""
     def convert(self, data, fixColumn):
         """Converts data to SVGrafZ input format.
 
@@ -44,9 +44,6 @@ class ConvertFrom_ZSQLMethod:
         except AttributeError:
             raise RuntimeError, \
                   "Data does not come from a Z SQL Method, can't convert it."
-
-        print res
-        print cols
 
         if fixColumn is None:
             raise RuntimeError, \

@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: Base
-## Version: $Id: base.py,v 1.9 2003/06/03 15:03:13 mac Exp $
+## Version: $Id: base.py,v 1.10 2003/06/04 08:56:17 mac Exp $
 ##
 ################################################################################
 
@@ -10,7 +10,8 @@ from types import *
 from config import SVGrafZ_default_Color
 
 class BaseGraph:
-    """BaseClass for graphs providing base functionallity for all graphs."""
+    """Abstract base class for all diagramKinds providing base functionallity.
+    """
 
     __computed_results__ = None
     specialAttribName    = None
@@ -316,12 +317,123 @@ class BaseGraph:
             'Error: ' + self.errortext)
         return res
 
+    def xAxis_verticalLabels(self, labels, firstWidth, xWidth):
+        """Print the Labels on x-axis vertically.
 
-    
-
+        colnames   ... list of strings with labelnames
+        firstWidth ... float points from self.gridbasex to first label
+        xWidth     ... float points between labels
+        """
+        if self.colnames: # use colnames, if given
+            labels = self.colnames
+        res = ''
+        for i in range(len(labels)):
+            label = labels[i]
+            res +='''<defs>
+            <path d="M %s %s V 15" id="xAxisLabel%s"/>
+            </defs>\n
+            <text>
+            <textPath xlink:href="#xAxisLabel%s">%s</textPath>
+            </text>\n''' % (firstWidth + i * xWidth + 2,
+                            self.height - 2,
+                            i,
+                            i,
+                            self.confLT(label))
+        return res
         
     def confLT(self, text):
         """Convert the littler than symbols ('<') to &lt;."""
         return str(text).replace('<', '&lt;')
 
     
+class DataOnYAxis(BaseGraph):
+    """Abstract class for DiagramKinds which have their data on y-axis.
+    """
+
+    def __init__(self,
+                 data=None,
+                 width=0,
+                 height=0,
+                 gridlines=0,
+                 legend=None,
+                 colnames=None,
+                 title=None,
+                 stylesheet=None,
+                 errortext=None):
+        "See IDiagramKind.__init__"
+        self.data       = data
+        self.width      = width
+        self.height     = height
+        self.legend     = legend
+        self.colnames   = colnames
+        self.gridlines  = gridlines
+        self.title      = title
+        self.stylesheet = stylesheet
+        self.errortext  = errortext
+
+        self.result   = ''
+
+##      Achtung: die Koordinaten 0,0 sind im SVG links oben!
+##        gridbasey   unteres Ende in y-Richtung
+##        gridboundy  oberes  Ende in y-Richtung
+##        gridbasey groesser gridboundy!
+##        gridbasex   unteres (linkes) Ende in x-Richtung
+##        gridboundx  oberes (rechtes) Ende in x-Richtung
+##        gridbasex kleiner gridboundx!
+
+        self.gridbasey  = self.height * 0.9333
+        self.gridboundy = self.height * 0.0333
+        self.gridbasex  = self.width  * 0.0666
+        if self.hasLegend():
+            self.gridboundx = self.width * 0.8
+        else:
+            self.gridboundx = self.width * 0.98
+
+
+    def compute(self):
+        """Compute the Diagram."""
+        if self.result:
+            return self.result
+
+        self.specialAttribHook()
+        self.result = self.svgHeader()
+        if self.errortext:
+            self.result += self.printError()
+        else:
+            try:
+                if self.maxY() is None:
+                    raise RuntimeError, 'All values on y-axis must be numbers!'
+                difY = float(self.maxY() - self.minY())
+                if difY:
+                    self.yScale = float((self.gridbasey-self.gridboundy) / difY)
+                else:
+                    self.yScale = 1.0
+                    
+                self.result += self.drawYGrindLines()
+                self.result += self.drawGraph()
+                self.result += self.drawXYAxis()
+                self.result += self.drawLegend()
+                self.result += self.drawTitle()
+            except RuntimeError:
+                import sys
+                self.errortext = str(sys.exc_info()[1])
+                self.result = self.svgHeader() + self.printError()
+
+        self.result += self.svgFooter()
+        return self.result
+
+
+    def specialAttribHook(self):
+        """Handling of the specialAttrib.
+
+        Test datatype of specialAttrib & change data influenced by
+          specialAttrib.
+
+        Return: void
+        On error put textual description in self.errortext
+        """
+        pass # no specialAttrib things by default
+
+    def drawGraph(self):
+        "Abstract Method: Draw the Lines of the graph and name the columns."
+        raise RuntimeError, "Can't use the abstract methon drawGraph!"

@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ: DataTypes ... Classes which do not get instanced
 ##
-## $Id: dtypes.py,v 1.3 2003/06/03 12:41:32 mac Exp $
+## $Id: dtypes.py,v 1.4 2003/06/04 08:56:17 mac Exp $
 ################################################################################
 
 from interfaces import IDiagramType, IDataSource
@@ -14,7 +14,7 @@ class BarGraphs:
 
     __implements__ = IDiagramType
 
-    name = 'Balkendiagramme'
+    name = 'bar diagrams'
 
 
 class RowGraphs:
@@ -22,14 +22,14 @@ class RowGraphs:
 
     __implements__ = IDiagramType
 
-    name = 'Säulendiagramme'
+    name = 'column diagrams'
 
 class LineGraphs:
     """DiagramType of line graphs."""
 
     __implements__ = IDiagramType
 
-    name = 'Liniendiagramme'
+    name = 'line diagrams'
 
 
 
