@@ -2,7 +2,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: FormatConverters
-## Version: $Id: svgconverters.py,v 1.14 2003/11/20 15:22:41 ctheune Exp $
+## Version: $Id: svgconverters.py,v 1.15 2004/02/06 13:30:52 mac Exp $
 ##
 ################################################################################
 
@@ -137,7 +137,7 @@ class SVG2Batik (SVG2xxx):
         sfh.write(str(obj))
         sfh.close()
         
-        return self.stylesheetPath
+        return path.basename(self.stylesheetPath)
 
     def convert(self):
         """Do the conversion from source to destination format.
