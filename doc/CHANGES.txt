@@ -1,10 +1,9 @@
 ################################################################################
-## 
-## SVGrafZ: TODO
-## Version: $Id: TODO.txt,v 1.2 2003/05/27 13:39:42 mac Exp $
+##
+## SVGrafZ: CHANGES
+## Version: $Id: CHANGES.txt,v 1.1 2004/02/16 10:43:50 mac Exp $
 ##
 ################################################################################
 
-
-- more graph-types
-- real data tests
+2004-02-16
+  - initial release version 0.22

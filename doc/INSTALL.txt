@@ -2,9 +2,9 @@
 ###
 ### SVGrafZ: INSTALL
 ###
-### $Revision: 1.9 $
+### $Revision: 1.10 $
 ################################################################################
-$Id: INSTALL.txt,v 1.9 2003/10/15 08:17:46 mac Exp $
+$Id: INSTALL.txt,v 1.10 2004/02/16 10:43:50 mac Exp $
 
 
 REQUIREMENTS
@@ -20,7 +20,7 @@ RECOMANDATIONS
      resp. printers:
      + batikServer (which needs also batikRasterizer) -- batikServer is about
        3 times faster than batikRasterizer
-       http://cvs.gocept.com/cgi-bin/viewcvs/viewcvs.cgi/BatikServer/
+       http://www.gocept.com/angebot/opensource/BatikServer
 
      + or only batikRasterizer from
         batik-1.5beta5 or higher from http://xml.apache.org/batik/
@@ -34,7 +34,7 @@ TESTED BATIK versions:
 TESTED ZOPE versions:
 ---------------------
  2.6-HEAD
- 2.7
+ 2.7rc2
 
 INSTALL
 -------
@@ -45,14 +45,17 @@ CONFIGURE
   Change the settings in config.py to reflect your preferences and settings.
 
 
-PROBLEMS
---------
-- For using batikRasterizer or BatikServer you need Java version 1.4.x or later.
-  Otherwise batikRasterizer needs a running and connectable XServer (correctly
-  set DISPLAY environment variable). batikRasterizer does not use it, but
-  earlier Java versions do not support the headless-option.
+DOCUMENTATION
+-------------
 
-- BatikServer can't run on on a different host than Zope, because they must
-  share the default temp directory. But this is quite impossible. Reason is a
-  limitation in pythons module tempfile (tempfile path is only setable
-  systemwide and BatikServer is not yet using python 2.3 features)
+- Some documentation can be found under Zope-Help.
+- When you choose a diagramkind or a converter you get information about its
+  capabilities.
+- Some docs are also in the doc directory and some (maybe old) german ones are
+  in doc/german.
+- For all other documentation needs: Use the source, luke.
+
+BUGS
+----
+
+- Put them into http://bugs.gocept.com (Product: SVGrafZ)

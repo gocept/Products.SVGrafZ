@@ -1,0 +1,48 @@
+#! /bin/bash
+
+DIR=SVGrafZ_0.22
+
+##
+DOC=$DIR/doc
+GDOC=$DOC/german
+TGZ=$DIR.tgz
+MD5=$TGZ.md5
+
+mkdir -p $DIR
+mkdir -p $DOC
+mkdir -p $GDOC
+
+
+cp *.py version.txt $DIR
+
+mkdir -p $DIR/Extensions
+cp Extensions/*.py $DIR/Extensions
+
+mkdir -p $DIR/help
+cp help/*.html $DIR/help
+
+mkdir -p $DIR/tests
+cp tests/*.py $DIR/tests
+
+mkdir -p $DIR/www
+cp www/*.zpt www/*.png www/*.gif $DIR/www
+
+cp doc/CHANGES.txt $DOC
+cp doc/INSTALL.txt $DOC
+cp doc/LICENSE.txt $DOC
+cp doc/update.txt $DOC
+cp doc/README.txt $DIR
+
+
+cp doc/analyse.txt $GDOC
+cp doc/design.txt $GDOC
+cp doc/inputKonverter.txt $GDOC
+
+
+tar -czf $TGZ $DIR
+rm -rf $DIR
+md5sum $TGZ >$MD5
+
+scp $TGZ $MD5 mac@amy.gocept.com:/usr/local/ftp/SVGrafZ
+
+rm $TGZ $MD5
