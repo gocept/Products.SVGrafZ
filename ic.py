@@ -2,12 +2,12 @@
 ## 
 ## SVGrafZ: InputConverters
 ##
-## $Id: ic.py,v 1.7 2003/06/10 14:18:26 mac Exp $
+## $Id: ic.py,v 1.8 2003/06/11 13:16:30 mac Exp $
 ################################################################################
 
 from interfaces import IInputConverter, IInputConverterWithLegend
 from dtypes import *
-
+from DateTime import DateTime
 
 class NoneConverter:
     """DefaultConverter which does no conversion."""
@@ -235,3 +235,34 @@ class xGraph_ZSQLMethod_DataInRows(ConvertFrom_ZSQLMethod_DataInRows):
     def _getValList(self, contVal, discVal):
         """Put continuous and discrete value into a list in the right order."""
         return [discVal, float(contVal)]
+
+
+
+class xGraph_ZSQLMethod_DataInRows_Date(ConvertFrom_ZSQLMethod_DataInRows):
+    """Convert data from Z SQL Method with data in rows to x-axis.
+    discrete value must be a german date (DD.MM.YYYY)
+    """
+    
+    __implements__ = IInputConverterWithLegend
+    
+    name = 'ZSQL (Data in Rows) to x-Axis (discrete = Date)'
+
+    def registration(self):
+        return {LineGraphs: [DS_ZSQLMethod],
+                RowGraphs:  [DS_ZSQLMethod]}
+
+    def _getValList(self, contVal, discVal):
+        """Put continuous and discrete value into a list in the right order."""
+        return [DateTime_GermanStr(discVal, datefmt = "international"),
+                float(contVal)]
+
+
+class DateTime_GermanStr (DateTime):
+    """DateTime with German string representation."""
+    def __str__(self):
+        return self.strftime('%d.%m.%Y')
+
+    def __float__(self):
+        """Nevessary because SVGrafZ tries to cast everything to float."""
+        raise ValueError
+

@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: Base
-## Version: $Id: base.py,v 1.13 2003/06/06 13:36:56 mac Exp $
+## Version: $Id: base.py,v 1.14 2003/06/11 13:16:30 mac Exp $
 ##
 ################################################################################
 
@@ -95,7 +95,18 @@ class BaseGraph:
 
     def _getDistinctValues(self, list):
         """Make a list having only distinct values."""
-        return dict([(x, 1) for x in list]).keys()
+        if not len(list):
+            return []
+        if type(list[0]) == type(self): # objects in list
+            tmp = list[:]
+            res = []
+            while (tmp):
+                if not tmp[0] in tmp[1:]:
+                    res.append(tmp[0])
+                del tmp[0]
+            return res
+        else:
+            return dict([(x, 1) for x in list]).keys()
 
 
     def _computeMinMax(self, key):
@@ -194,6 +205,7 @@ class BaseGraph:
                                          FloatType,
                                          StringType,
                                          UnicodeType,
+                                         InstanceType,
                                          ]:
                         raise RuntimeError,\
                               'Dimension %i of DataItem %i in Dataset %i: \
@@ -340,7 +352,7 @@ class BaseGraph:
                             self.height - 2,
                             i,
                             i,
-                            self.confLT(label))
+                            self.confLT(str(label)))
         return res
 
     def yAxis_horizontalLabels(self, labels, firstHeight, yHeight):
