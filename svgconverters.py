@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: FormatConverters
-## Version: $Id: svgconverters.py,v 1.8 2003/08/28 09:49:20 mac Exp $
+## Version: $Id: svgconverters.py,v 1.9 2003/08/28 11:51:38 mac Exp $
 ##
 ################################################################################
 
@@ -180,7 +180,6 @@ class SVG2Batik (SVG2xxx):
                   ' -d ' + resultFile + \
                   ' -m ' + self.getDestinationFormat() + \
                   ' ' + sourceFile
-            print cmd
             pfh = popen(cmd)
             res = pfh.read()
             if res[-8:-1] == 'success':
