@@ -3,7 +3,7 @@
 ## 
 ## SVGrafZ
 ##
-## $Id: svgrafz.py,v 1.31 2003/10/15 08:17:46 mac Exp $
+## $Id: svgrafz.py,v 1.32 2003/10/20 09:59:04 ctheune Exp $
 ################################################################################
 
 import os
@@ -15,12 +15,14 @@ from Globals import InitializeClass
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from Products.PageTemplates.TALES import CompilerError
 from ZODB.PersistentMapping import PersistentMapping
+from ComputedAttribute import ComputedAttribute
 
 from interfaces import IInputConverterWithLegend
 from registry import Registry
 from icreg import ICRegistry
 from svgconverters import SVG2SVG, SVG2PNG, SVG2PDF
 from helper import TALESMethod
+
 
 _www                   = os.path.join(os.path.dirname(__file__), 'www')
 _defaultSVGrafZ        = 'defaultSVGrafZ'
@@ -31,7 +33,7 @@ class SVGrafZProduct(SimpleItem):
     """ProductClass of SVGrafZ."""
 
     meta_type = 'SVGrafZ'
-    version = '0.21' # update also version.txt!
+    version = '0.22' # update also version.txt!
 
     manage_options = (
         {'label':'Properties',
@@ -58,6 +60,10 @@ class SVGrafZProduct(SimpleItem):
     security.declareProtected('View management screens', 'manage_viewPDF')
     manage_viewPDF = PageTemplateFile('SVGrafZViewPDF', _www)
 
+    def _v_rnd(self):
+        self._v_rnd = random.Random()
+        return self._v_rnd
+    _v_rnd = ComputedAttribute(_v_rnd)
 
     security.declareProtected('View management screens', 'manage_edit')
     def manage_edit(self, REQUEST=None):
@@ -160,7 +166,6 @@ class SVGrafZProduct(SimpleItem):
                          'fillgaps':      None,
                          'taltitle':      TALESMethod(None),
                          })
-        self.rnd = random.Random()
         self.current_version = self.version # set at creation & update
 
     def _update(self):
@@ -199,9 +204,12 @@ class SVGrafZProduct(SimpleItem):
             self.dat['taltitle'] = TALESMethod(None)
             self.current_version = '0.21'
         if self.current_version < '0.22':
+            print "deleting rnd"
+            del self.rnd
+            self.current_version = '0.22'
+        if self.current_version < '0.23':
             # set self.current_version to new version
             pass
-
 
     security.declareProtected('View management screens', 'equalsGraphName')
     def equalsGraphName(self, name):
@@ -431,7 +439,7 @@ class SVGrafZProduct(SimpleItem):
         converter, value = self._getOutputConverter()
         url = self.absolute_url() + '?SVGrafZ_PixelMode=%s&rnd=%s' % (
             value,
-            self.rnd.random())
+            self._v_rnd.random())
         # rnd is to prevent caching of browser
         return converter.getHTML(url,
                                  self.height(),
