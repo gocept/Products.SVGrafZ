@@ -1,7 +1,7 @@
 <!--
 Copyright (c) 2003 gocept gmbh & co. kg. All rights reserved.
 See also LICENSE.txt
-$Id: SVGrafZEdit.zpt,v 1.12 2003/10/08 07:47:26 mac Exp $
+$Id: SVGrafZEdit.zpt,v 1.13 2003/10/14 10:41:10 mac Exp $
 -->
 
   <h1 tal:replace="structure here/manage_page_header">Header</h1>
@@ -32,6 +32,13 @@ $Id: SVGrafZEdit.zpt,v 1.12 2003/10/08 07:47:26 mac Exp $
           <input size="75" type="text" name="title" tal:attributes="value cur/title">
         </td>
         <td class="form-mono" tal:content="defs/title"></td>
+      </tr>
+      <tr>
+        <td class="form-text">Title with TALES:</td>
+        <td colspan="4">
+          <input size="75" type="text" name="taltitle" tal:attributes="value cur/taltitle">
+        </td>
+        <td class="form-mono" tal:content="defs/taltitle"></td>
       </tr>
       <tr>
         <td class="form-text">Height: </td>

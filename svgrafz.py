@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ
 ##
-## $Id: svgrafz.py,v 1.28 2003/10/08 07:47:26 mac Exp $
+## $Id: svgrafz.py,v 1.29 2003/10/14 10:41:10 mac Exp $
 ################################################################################
 
 import os
@@ -30,7 +30,7 @@ class SVGrafZProduct(SimpleItem):
     """ProductClass of SVGrafZ."""
 
     meta_type = 'SVGrafZ'
-    version = '0.20'
+    version = '0.21'
 
     manage_options = (
         {'label':'Properties',
@@ -122,7 +122,7 @@ class SVGrafZProduct(SimpleItem):
             raise ValueError, '%s must be an integer number' % (dd)
 
         # Update TALES Methods
-        tales = ["data", "legend", "colnames", ]
+        tales = ["data", "legend", "colnames", "taltitle", ]
         for x in tales:
             expression = REQUEST.get(x)
             if expression is None:
@@ -157,6 +157,7 @@ class SVGrafZProduct(SimpleItem):
                          'specialattrib': None,
                          'intcaption':    None,
                          'fillgaps':      None,
+                         'taltitle':      TALESMethod(None),
                          })
         self.rnd = random.Random()
         self.current_version = self.version # set at creation & update
@@ -194,6 +195,9 @@ class SVGrafZProduct(SimpleItem):
             self.dat['fillgaps'] = None
             self.current_version = '0.20'
         if self.current_version < '0.21':
+            self.dat['taltitle'] = TALESMethod(None)
+            self.current_version = '0.21'
+        if self.current_version < '0.22':
             # set self.current_version to new version
             pass
 
@@ -223,6 +227,11 @@ class SVGrafZProduct(SimpleItem):
     def title(self, default=None):
         "get title."
         return self.getAttribute('title', None, default)
+
+    security.declareProtected('View', 'taltitle')
+    def taltitle(self, default=None):
+        "get taltitle."
+        return self.getAttribute('taltitle', TALESMethod(None), default)
 
     security.declareProtected('View', 'graphname')
     def graphname(self, default=None):
@@ -446,7 +455,7 @@ class SVGrafZProduct(SimpleItem):
         current        = self.getPropertyValues()
         outputConverter, dummy = self._getOutputConverter()
         inputConverter = ICRegistry.getConverter(current['convertername'])
-        errortext      = legend = colnames = stylesheet = data = None
+        errortext      = legend = colnames = stylesheet = data = title = None
 
         try:
             data = self.getValue(current['data'])
@@ -462,7 +471,7 @@ class SVGrafZProduct(SimpleItem):
             legend = self.getValue(current['legend'])
         except (AttributeError, KeyError, CompilerError):
             errortext = 'Legend "%s" is not existing.' % (current['legend'])
-            
+
         if legend == 'converter':
             if IInputConverterWithLegend.isImplementedBy(inputConverter):
                 legend = inputConverter.legend() # cause convert is already done
@@ -482,6 +491,12 @@ class SVGrafZProduct(SimpleItem):
             except AttributeError:
                 errortext = 'Stylesheet "%s" is not existing.' % (
                     current['stylesheet'])
+        try:
+            title = self.getValue(current['taltitle'])
+        except (AttributeError, KeyError, CompilerError, RuntimeError):
+            errortext = '"Title with TALES" has Errors.'
+        if title is None:
+            title = current['title'] or ''
                 
         otherParams = {'gridlines':  current['gridlines'],
                        'height':     current['height'],
@@ -492,7 +507,7 @@ class SVGrafZProduct(SimpleItem):
         graph = graphClass(data       = data,
                            legend     = legend,
                            colnames   = colnames,
-                           title      = current['title'] or '',
+                           title      = title,
                            stylesheet = stylesheet,
                            otherParams= otherParams,
                            errortext  = errortext)
