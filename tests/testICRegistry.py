@@ -1,13 +1,13 @@
 ################################################################################
 ## 
-## SVGrafZ: Test of InputConverterRegistry
-## $Id: testInputConverterRegistry.py,v 1.1 2003/05/28 07:06:00 mac Exp $
+## SVGrafZ: Test of ICRegistry
+## $Id: testICRegistry.py,v 1.1 2003/05/28 07:15:01 mac Exp $
 ##
 ################################################################################
 
 import config
 import unittest
-from inputconverterreg import InputConverterRegistry
+from icreg import ICRegistry
 from interfaces import IDiagramType, IInputConverter, IDataSource
 
 def pdb():
@@ -60,21 +60,21 @@ class Converter4:
 
 
 
-class InputConverterRegistryTests(unittest.TestCase):
-    """Tests for the InputConverterRegistry.
+class ICRegistryTests(unittest.TestCase):
+    """Tests for the ICRegistry.
     """
 
     def test_1singleton(self):
-        """Test if InputConverterRegistry is a singleton."""
-        from inputconverterreg import InputConverterRegistry
-        a = InputConverterRegistry
-        b = InputConverterRegistry
+        """Test if ICRegistry is a singleton."""
+        from icreg import ICRegistry
+        a = ICRegistry
+        b = ICRegistry
 
         self.assertEqual(str(a.__class__),
-                         'inputconverterreg.InputConverterRegistry',
+                         'icreg.ICRegistry',
                          'classtest')
         self.assertRaises(AttributeError,
-                          InputConverterRegistry) # failing of instanciation
+                          ICRegistry) # failing of instanciation
         self.assertEqual(a, b, 'a==b')
         a.testAttributeWhichRegistryNeverHas = 'test'
         self.assertEqual(a.testAttributeWhichRegistryNeverHas,
@@ -89,35 +89,35 @@ class InputConverterRegistryTests(unittest.TestCase):
         b = DiagramType1
         c = DiagramType2
         
-        self.assertRaises(RuntimeError, InputConverterRegistry._registerType, n)
-        self.failUnless(InputConverterRegistry._registerType(a),
+        self.assertRaises(RuntimeError, ICRegistry._registerType, n)
+        self.failUnless(ICRegistry._registerType(a),
                         'register type1')
-        self.failIf(InputConverterRegistry._registerType(a),
+        self.failIf(ICRegistry._registerType(a),
                     'register type1 second time')
-        self.failIf(InputConverterRegistry._registerType(b),
+        self.failIf(ICRegistry._registerType(b),
                     'register type1 third time')
         
-        self.assertEqual(['Type1'], InputConverterRegistry.getTypes())
-        self.failUnless(InputConverterRegistry._registerType(c),
+        self.assertEqual(['Type1'], ICRegistry.getTypes())
+        self.failUnless(ICRegistry._registerType(c),
                         'register type2')
-        self.assertEqual(['Type1', 'Type2'], InputConverterRegistry.getTypes())
+        self.assertEqual(['Type1', 'Type2'], ICRegistry.getTypes())
         
     def test_3_clear(self):
         """Test of _clear()."""
         a = DiagramType1
 
-        self.failIf(InputConverterRegistry._clear(), '1st clear')
-        self.failIf(InputConverterRegistry.getTypes(), '1st get')
-        self.failUnless(InputConverterRegistry._registerType(a),
+        self.failIf(ICRegistry._clear(), '1st clear')
+        self.failIf(ICRegistry.getTypes(), '1st get')
+        self.failUnless(ICRegistry._registerType(a),
                         'register type1')
-        self.failUnless(InputConverterRegistry.getTypes(), '2nd get')
-        self.failIf(InputConverterRegistry._clear(), '2nd clear')
-        self.failIf(InputConverterRegistry.getTypes(), '3rd get')
+        self.failUnless(ICRegistry.getTypes(), '2nd get')
+        self.failIf(ICRegistry._clear(), '2nd clear')
+        self.failIf(ICRegistry.getTypes(), '3rd get')
 
 
 def test_suite():
     suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(InputConverterRegistryTests,
+    suite.addTest(unittest.makeSuite(ICRegistryTests,
                                      sortUsing  = cmp))
     return suite
 
