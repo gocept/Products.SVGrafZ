@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: SimpleBarGraph
-## Version: $Id: bar.py,v 1.6 2003/04/17 12:07:09 mac Exp $
+## Version: $Id: bar.py,v 1.7 2003/04/17 13:24:32 mac Exp $
 ##
 ################################################################################
 
@@ -132,11 +132,29 @@ class SimpleBarGraph2(BaseGraph):
 
     name = 'Zweifaches Balkendiagramm'
 
-    def __init__(self, data, width=600, height=300, gridlines=10, legend=None, colnames=None):
+    def __init__(self,
+                 data=None,
+                 width=0,
+                 height=0,
+                 gridlines=0,
+                 legend=None,
+                 colnames=None,
+                 title=None,
+                 stylesheet=None):
         "see IDiagramKind.__init__"
-        
-        
+        self.data     = data
+        self.width    = width
+        self.height   = height
+        self.legend   = legend
+        self.colnames = colnames
+        self.gridlines= gridlines
+        self.title    = title
+        self.stylesheet=stylesheet
+
+
     def compute(self):
         """Compute the Diagram."""
-        return 'leer'
+        return self.svgHeader() + \
+               '<text x="1" y="30">leer</text>' + \
+               self.svgFooter()
 

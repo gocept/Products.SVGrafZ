@@ -1,7 +1,7 @@
 <!--
 Copyright (c) 2003 gocept gmbh & co. kg. All rights reserved.
 See also LICENSE.txt
-$Id: SVGrafZEdit.zpt,v 1.2 2003/04/17 10:43:20 mac Exp $
+$Id: SVGrafZEdit.zpt,v 1.3 2003/04/17 13:24:32 mac Exp $
 -->
 
   <h1 tal:replace="structure here/manage_page_header">Header</h1>
@@ -26,17 +26,17 @@ $Id: SVGrafZEdit.zpt,v 1.2 2003/04/17 10:43:20 mac Exp $
       </tr>
       <tr>
         <td class="form-text">DiagramKind: </td>
-        <td><select name="graph" size="1">
+        <td><select name="graphname" size="1">
             <optgroup tal:repeat="graphtype here/getPossibleDiagrams"
               tal:attributes="label graphtype/name">
               <tal:block tal:repeat="graph graphtype/kinds">
                 <option
-                  tal:condition="python: graph.get('name') != cur['graphname']"
+                  tal:condition="python: not here.equalsGraphName(graph.get('name'))"
                   tal:attributes="value graph/name"
                   tal:content="graph/name">DiagramKind not selected
                 </option>
                 <option
-                  tal:condition="python: graph.get('name') == cur['graphname']"
+                  tal:condition="python: here.equalsGraphName(graph.get('name'))"
                   tal:attributes="value graph/name"
                   tal:content="graph/name" selected="1">selected DiagramKind
                 </option>

@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ
-## Version: $Id: svgrafz.py,v 1.6 2003/04/17 12:07:09 mac Exp $
+## Version: $Id: svgrafz.py,v 1.7 2003/04/17 13:24:32 mac Exp $
 ##
 ################################################################################
 
@@ -16,7 +16,7 @@ from ZODB.PersistentMapping import PersistentMapping
 
 _www = os.path.join(os.path.dirname(__file__), 'www')
 _defaultSVGrafZ = 'defaultSVGrafZ'
-
+_useDefaultDiagramKind = 'default diagramkind'
 def pdb():
     import pdb
     pdb.set_trace()
@@ -43,7 +43,7 @@ class SVGrafZProduct(SimpleItem):
 
 
     security.declareProtected('View management screens', 'manage_edit')
-    def manage_edit(self, REQUEST=None):# title, graph, gridlines, height, width, REQUEST=None):
+    def manage_edit(self, REQUEST=None):
         """Save the new property values."""
         self.changeProperties(REQUEST)
         return self.manage_editForm(manage_tabs_message = 'Properties saved.')
@@ -56,7 +56,14 @@ class SVGrafZProduct(SimpleItem):
         if REQUEST == {}:
             return
 
-        data = ['title', 'graphname', 'stylesheet']
+        d = 'graphname'
+        req = REQUEST.get(d, None)
+        if not req or req == _useDefaultDiagramKind:
+            self.dat[d] = None
+        else:
+            self.dat[d] = req
+
+        data = ['title', 'stylesheet']
         for d in data:
             req = REQUEST.get(d, None)
             if req:
@@ -97,6 +104,18 @@ class SVGrafZProduct(SimpleItem):
                          'colnames':  TALESMethod(None),
                          'stylesheet':None,
                          })
+
+
+    security.declareProtected('View management screens', 'equalsGraphName')
+    def equalsGraphName(self, name):
+        """Test if the given name is equal to real graphname."""
+        if name == _useDefaultDiagramKind and \
+           self.dat['graphname'] is None:
+            return 1
+        if name == self.dat['graphname']:
+            return 1
+        return 0
+
 
     security.declareProtected('View', 'title')
     def title(self, default=None):
@@ -182,14 +201,14 @@ class SVGrafZProduct(SimpleItem):
     def getPossibleDiagrams(self):
         """Get a Dictionary ot available Diagrams."""
         types = Registry.getTypes()
-        print types
         res = []
         for typ in types:
             kinds = []
             for kind in Registry.getKindNames(typ):
                 kinds.append({'name':kind})
-                res.append({'name':typ, 'kinds':kinds})
-        res.sort()
+            res.append({'name':typ, 'kinds':kinds})
+        res.append({'name':' ','kinds':[{'name':_useDefaultDiagramKind}]})
+        res.sort(lambda x,y: cmp(x['name'],y['name']))
         return res
 
     security.declareProtected('View management screens',
@@ -241,6 +260,7 @@ class SVGrafZProduct(SimpleItem):
     def __call__(self, client=None, REQUEST={}):
         """Render the diagram."""
         graphClass = Registry.getKind(self.graphname())
+        print graphClass
         current    = self.getPropertyValues()
         title      = current['title']
         try:
