@@ -1,8 +1,9 @@
+# -*- coding: latin1 -*-
 ################################################################################
 ## 
 ## SVGrafZ_DiagramRegistry
 ##
-## Version: $Id: registry.py,v 1.9 2003/06/16 08:13:31 mac Exp $
+## Version: $Id: registry.py,v 1.10 2003/10/15 07:08:34 mac Exp $
 ################################################################################
 
 from interfaces import IDiagramType, IDiagramKind, IDefaultDiagramKind

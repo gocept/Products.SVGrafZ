@@ -1,8 +1,9 @@
+# -*- coding: latin1 -*-
 ################################################################################
 ## 
 ## SVGrafZ: DataTypes ... Classes which do not get instanced
 ##
-## $Id: dtypes.py,v 1.4 2003/06/04 08:56:17 mac Exp $
+## $Id: dtypes.py,v 1.5 2003/10/15 07:08:34 mac Exp $
 ################################################################################
 
 from interfaces import IDiagramType, IDataSource

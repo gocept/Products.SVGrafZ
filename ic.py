@@ -1,8 +1,9 @@
+# -*- coding: latin1 -*-
 ################################################################################
 ## 
 ## SVGrafZ: InputConverters
 ##
-## $Id: ic.py,v 1.13 2003/10/08 11:02:24 mac Exp $
+## $Id: ic.py,v 1.14 2003/10/15 07:08:34 mac Exp $
 ################################################################################
 
 from interfaces import IInputConverter, IInputConverterWithLegend, \

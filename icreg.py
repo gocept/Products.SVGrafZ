@@ -1,8 +1,9 @@
+# -*- coding: latin1 -*-
 ################################################################################
 ## 
 ## SVGrafZ: Registry of InputConverters
 ##
-## $Id: icreg.py,v 1.4 2003/06/13 12:03:30 mac Exp $
+## $Id: icreg.py,v 1.5 2003/10/15 07:08:34 mac Exp $
 ################################################################################
 
 from interfaces import IDiagramType, IInputConverter, IDefaultInputConverter, \

@@ -1,7 +1,8 @@
+# -*- coding: latin1 -*-
 ################################################################################
 ## 
 ## SVGrafZ: FormatConverters
-## Version: $Id: svgconverters.py,v 1.9 2003/08/28 11:51:38 mac Exp $
+## Version: $Id: svgconverters.py,v 1.10 2003/10/15 07:08:34 mac Exp $
 ##
 ################################################################################
 
@@ -74,7 +75,7 @@ class SVG2SVG (SVG2xxx):
     def getErrorResult(self):
         """Return data(in destination format) describing error, if conversion unsuccessful."""
         return 'There will be no error!' # there will be no error
-
+    
     def getHTML(url, height, width):
         """Returns a string to integrate result into HTML.
 
@@ -86,9 +87,9 @@ class SVG2SVG (SVG2xxx):
           width:  width of the image
           """
         return u'<object type="%s" width="%s" height="%s" data="%s">\
-        Ihr Browser unterstützt keine SVG-Grafiken. \
-        Wenden Sie sich an Ihren Administor, um Unterstützung für SVG-Grafiken \
-        zu bekommen bzw. auf PNG-Grafiken umzustellen.</object>' % (
+        Ihr Browser unterst&#xFC;tzt keine SVG-Grafiken. \
+        Wenden Sie sich an Ihren Administor, um Unterst&#xFC;tzung von\
+        SVG-Grafiken zu bekommen bzw. auf PNG-Grafiken umzustellen.</object>'%(
             SVG2SVG.getDestinationFormat(), width, height, url)
     getHTML = staticmethod(getHTML)
 
