@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: FormatConverters
-## Version: $Id: svgconverters.py,v 1.7 2003/07/28 11:29:29 mac Exp $
+## Version: $Id: svgconverters.py,v 1.8 2003/08/28 09:49:20 mac Exp $
 ##
 ################################################################################
 
@@ -175,11 +175,12 @@ class SVG2Batik (SVG2xxx):
             conn.close()
         except (socket.error): # no batikServer, use batikRenderer
             cmd = SVGrafZ_Java_Path + \
-                  ' -jar ' + \
+                  ' -Djava.awt.headless=true -jar ' + \
                   SVGrafZ_Batik_Path + \
                   ' -d ' + resultFile + \
                   ' -m ' + self.getDestinationFormat() + \
                   ' ' + sourceFile
+            print cmd
             pfh = popen(cmd)
             res = pfh.read()
             if res[-8:-1] == 'success':
@@ -192,10 +193,11 @@ class SVG2Batik (SVG2xxx):
             rfh.close()
 
         # cleaning up
-        if self.stylesheetPath:
-            unlink(self.stylesheetPath)
-        unlink(sourceFile)
-        unlink(resultFile)
+        if ret: # XXX wieder ändern auf immer clean-up
+            if self.stylesheetPath:
+                unlink(self.stylesheetPath)
+                unlink(sourceFile)
+                unlink(resultFile)
         return ret
 
     def getErrorResult(self):
