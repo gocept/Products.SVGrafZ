@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ: BarGraphs
 ##
-## $Id: bar.py,v 1.13 2003/06/04 10:20:55 mac Exp $
+## $Id: bar.py,v 1.14 2003/06/10 11:02:45 mac Exp $
 ################################################################################
 
 from interfaces import IDiagramKind
@@ -76,9 +76,12 @@ class SimpleBarGraph(BaseGraph):
             try:
                 if self.maxX() is None:
                     raise RuntimeError, 'All values on x-axis must be numbers!'
-                difX = float(self.maxX() - self.minX())
+                self._change_computed_result('realMinX', 0.0)
+                self._change_computed_result('minX',
+                                             self._compRoundedValMax(0.0))
+                difX = float(self.maxX())
                 if difX:
-                    self.xScale = float((self.gridboundx-self.gridbasex)/difX)
+                    self.xScale = float((self.gridboundx-self.gridbasex) / difX)
                 else:
                     self.xScale = 1.0
                     
@@ -126,4 +129,5 @@ class SimpleBarGraph(BaseGraph):
                                            self.gridboundy+yBarFull/2-ySpace,
                                            yBarFull)
         return res + '</g>\n'
+
 
