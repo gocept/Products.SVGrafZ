@@ -2,7 +2,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: FormatConverters
-## Version: $Id: svgconverters.py,v 1.17 2004/03/12 11:05:52 ctheune Exp $
+## Version: $Id: svgconverters.py,v 1.18 2004/03/12 11:45:02 ctheune Exp $
 ##
 ################################################################################
 
@@ -23,21 +23,15 @@ import os
 unlink_queue = Queue.Queue(0)
 
 def unlinker(queue):
-    print "unlinker started"
     while 1:
-        print "round"
         try:
             x, times = queue.get()
         except Exception, m:
-            print "exception on pop", m
             sleep(1)
             continue
         try:
-            print "trying to unlink", x,
             os.unlink(x)
-            print "done"
         except Exception, m:
-            print "requeing", x, m
             if times < 20:
                 queue.put((x, times+1))
         sleep(1)
@@ -183,7 +177,6 @@ class SVG2Batik (SVG2xxx):
         rfh.close()
 
         # try connection to batikServer
-        import pdb; pdb.set_trace() 
         try:
             conn = Telnet(config.SVGrafZ_BatikServer_Host, config.SVGrafZ_BatikServer_Port)
             cmd = 'CONF %s TO %s AS %s BSP 1.0\n\n' % (
@@ -214,7 +207,6 @@ class SVG2Batik (SVG2xxx):
             rfh.close()
 
         # cleaning up
-        print "putting in unlinker"
         if self.stylesheetPath:     # XXX this can fail badly on windows
             unlink_queue.put((self.stylesheetPath, 0))
         unlink_queue.put((sourceFile, 0))
