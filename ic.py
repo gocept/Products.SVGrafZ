@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ: InputConverters
 ##
-## $Id: ic.py,v 1.12 2003/08/18 13:00:53 mac Exp $
+## $Id: ic.py,v 1.13 2003/10/08 11:02:24 mac Exp $
 ################################################################################
 
 from interfaces import IInputConverter, IInputConverterWithLegend, \
@@ -272,7 +272,12 @@ class yGraph_ZSQLMethod_DataInRows(ConvertFrom_ZSQLMethod_DataInRows):
 
     def _getValList(self, contVal, discVal):
         """Put continuous and discrete value into a list in the right order."""
-        return [float(contVal), discVal]
+        try:
+            return [float(contVal), discVal]
+        except (ValueError):
+            raise RuntimeError, \
+                  'Continuous data column contains "%s" which is no number.' % \
+                  contVal
 
 class xGraph_ZSQLMethod_DataInRows(ConvertFrom_ZSQLMethod_DataInRows):
     """Convert data from Z SQL Method with data in rows to x-axis.
@@ -298,7 +303,7 @@ class xGraph_ZSQLMethod_DataInRows(ConvertFrom_ZSQLMethod_DataInRows):
             return [discVal, float(contVal)]
         except ValueError:
             raise RuntimeError, \
-                  'Continuous data column contains "%s" which is no number.'%\
+                  'Continuous data column contains "%s" which is no number.' % \
                   contVal
         
 

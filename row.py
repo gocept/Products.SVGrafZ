@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ: RowGraphs
 ##
-## $Id: row.py,v 1.5 2003/10/08 07:47:26 mac Exp $
+## $Id: row.py,v 1.6 2003/10/08 11:02:24 mac Exp $
 ################################################################################
 
 from interfaces import IDiagramKind
@@ -74,8 +74,12 @@ class Simple(RowDiagram):
         distX  = self.distValsX()
         lenDistX = len(distX)
         xBarFull = (self.gridboundx - self.gridbasex) / lenDistX
-        xWidth   = 0.75  * xBarFull / self.numgraphs()
-        xSpace   = 0.125 * xBarFull
+        if self.numgraphs() <= 5:
+            factor   = 0.75
+        else:
+            factor   = 0.90
+        xWidth   = factor  * xBarFull / self.numgraphs()
+        xSpace   = (1-factor)/2 * xBarFull
         res      = '<g id="data">\n'
 
         distX.sort()

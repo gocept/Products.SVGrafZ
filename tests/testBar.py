@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: Test of Class SimpleBarGraph
-## Version: $Id: testBar.py,v 1.7 2003/10/08 07:47:26 mac Exp $
+## Version: $Id: testBar.py,v 1.8 2003/10/08 11:02:24 mac Exp $
 ##
 ################################################################################
 
@@ -45,7 +45,7 @@ class SimpleBarGraphTests(unittest.TestCase):
                    legend = ['test'])
 
         self.failUnless(a.gridbasey == b.gridbasey, 'a,b gridbasey')
-        self.failUnless(a.gridbasex >  b.gridbasex, 'a,b gridbasex')
+        self.failUnless(a.gridbasex ==  b.gridbasex, 'a,b gridbasex')
         self.failUnless(a.gridbasey <  c.gridbasey, 'a,c gridbasey')
         self.failUnless(a.gridbasex == c.gridbasex, 'a,c gridbasex')
         self.failUnless(a.gridboundx > d.gridboundx, 'a,d gridboundx')
