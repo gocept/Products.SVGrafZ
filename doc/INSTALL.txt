@@ -2,16 +2,17 @@
 ###
 ### SVGrafZ: INSTALL
 ###
-### $Revision: 1.10 $
+### $Revision: 1.11 $
 ################################################################################
-$Id: INSTALL.txt,v 1.10 2004/02/16 10:43:50 mac Exp $
+$Id: INSTALL.txt,v 1.11 2004/02/23 07:51:18 mac Exp $
 
 
 REQUIREMENTS
 ------------
   - Zope-Version: tested 2.6+ should do fine
-  - installed Products:
+  - installed Zope-Products:
       + PageTemplates
+  - Python 2.2 or newer
 
 
 RECOMANDATIONS
