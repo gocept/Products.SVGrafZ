@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ
 ##
-## $Id: svgrafz.py,v 1.13 2003/05/30 13:20:06 mac Exp $
+## $Id: svgrafz.py,v 1.14 2003/06/02 08:04:54 mac Exp $
 ################################################################################
 
 import os
@@ -353,7 +353,6 @@ class SVGrafZProduct(SimpleItem):
         inputConverter = ICRegistry.getConverter(current['convertername'])
         data           = [[[1,1]]] # default
 
-        import pdb2
         try:
             data = self.getValue(current['data'])
             try:
