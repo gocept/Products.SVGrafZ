@@ -1,28 +1,27 @@
 ################################################################################
 ## 
 ## SVGrafZ
-## Version: $Id: __init__.py,v 1.5 2003/05/30 08:19:04 mac Exp $
+## Version: $Id: __init__.py,v 1.6 2003/06/03 12:41:32 mac Exp $
 ##
 ################################################################################
 
 from registry import Registry
 from icreg import ICRegistry
-from dtypes import BarGraphs, RowGraphs
-from bar import SimpleBarGraph,SimpleBarGraph2
+import bar, line
+import ic
 from svgrafz import SVGrafZProduct
-from ic import NoneConverter, RowGraph_ZSQLMethod
+from interfaces import IInputConverter, IDiagramKind
 
 from svgrafz import SVGrafZProduct, manage_addDiagramForm, \
      manage_addDiagramFunction, manage_defaultPossible
 
 def initialize(registrar):
     # register diagramkinds
-    Registry.register(SimpleBarGraph)
-    Registry.register(SimpleBarGraph2)
+    registerDiagramKinds(bar)
+    registerDiagramKinds(line)
 
     # register InputConverters
-    ICRegistry.register(NoneConverter)
-    ICRegistry.register(RowGraph_ZSQLMethod)
+    registerConverters(ic)
     
     registrar.registerClass(
         SVGrafZProduct, 
@@ -33,3 +32,25 @@ def initialize(registrar):
         icon = 'www/icon.gif'
         )
     registrar.registerHelp()
+
+def registerConverters(module):
+    """Registers all input converters found in the given module."""
+    for attrib in dir(module):
+        try:
+            potentialCoverter = getattr(module, attrib)
+            if IInputConverter.isImplementedByInstancesOf(potentialCoverter):
+                ICRegistry.register(potentialCoverter)
+        except TypeError:
+            pass
+
+
+def registerDiagramKinds(module):
+    """Registers all diagramKinds found in the given module."""
+    for attrib in dir(module):
+        try:
+            potentialDiagramK = getattr(module, attrib)
+            if IDiagramKind.isImplementedByInstancesOf(potentialDiagramK):
+                Registry.register(potentialDiagramK)
+        except TypeError:
+            pass
+    

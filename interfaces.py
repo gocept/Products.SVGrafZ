@@ -1,8 +1,8 @@
 ################################################################################
 ## 
 ## SVGrafZ: Interfaces
-## Version: $Id: interfaces.py,v 1.8 2003/05/30 11:42:24 mac Exp $
 ##
+## $Id: interfaces.py,v 1.9 2003/06/03 12:41:32 mac Exp $
 ################################################################################
 
 from Interface import Interface,Attribute
@@ -27,7 +27,8 @@ class IDiagramKind(Interface):
                  legend=None,
                  colnames=None,
                  title=None,
-                 stylesheet=None):
+                 stylesheet=None,
+                 errortext=None):
         """Initialize and set the parameters for the graph.
 
         Format of data:
@@ -48,6 +49,8 @@ class IDiagramKind(Interface):
         colnames      ... names of the Datacolumns
                     sould be defined as:
                     colnames = ['Name_Column_1', 'Name_Column_2', ...] || None
+        errortext     ... textual description of occured error during getting
+                           data or None if no error
         """
 
     def compute():

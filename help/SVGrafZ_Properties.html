@@ -1,20 +1,63 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
   <head>
-    <title>Edit SVGrafZ</title>
+    <title>SVGrafZ Properties</title>
   </head>
 
   <body>
-    <h1>Edit SVGrafZ</h1>
-
-    blabla
-
+    <h1>SVGrafZ Properties</h1>
+    
+    
+    <h3>Tipps:</h3>
+    <h5>Values</h5>
+    <ul>
+      <li>StyleSheet:<ul>
+          <li>The value can be a relative path. If the stylesheet is not found
+            in the place the path directes to, the stylesheet gets aquired.
+          </li>
+          <li>The stylesheet should look like this:
+<pre>.dataset0 {fill: blanchedalmond; stroke:blanchedalmond;} 
+.dataset1 {fill: lightgreen; stroke:lightgreen;}</pre>
+            <ul>
+              <li>
+                The number after <code>dataset</code> is the number of the
+                graph. You need at least as many dataset-entries as you have
+                datasets.
+              </li>
+              <li>
+                The colors of the attributes <code>fill</code> and 
+                <code>stroke</code> should always be the same. Otherwise the
+                legend will have different colors than the curves.
+              </li>
+              <li>
+                The <code>fill</code> attribute must not be set for LineGraphs
+                otherwise the curves will get filled.
+              </li>
+            </ul>
+          </li>
+          <li>
+            If no StyleSheet is selected or no CSS-definition if found for a
+            dataset. Then the default color is used. It is configurable in
+            <code>config.py</code> and defaultes to lightgreen.
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <h5>Inheritence</h5>
+    <ul>
+      <li>To reset the value of an inherited TALES-Expression (e.g. ColumnNames
+        or Legend) to no value use <code>string:</code> as TALES-Expression.
+      </li>
+      <li>To remove the display of an inherited title attribute use a space as
+        new title.</li>
+      <li>You can't reset the value of the stylesheet-path, instead create an empty file for the stylesheet.</li>
+    </ul>
 
     <hr>
-    <address><a href="mailto:mh@gocept.com">Michael Howitz</a></address>
+    <address><a href="mailto:mh+svgrafz@gocept.com">Michael Howitz</a></address>
 <!-- Created: Thu Apr 17 15:33:32 CEST 2003 -->
 <!-- hhmts start -->
-Last modified: Thu Apr 17 15:35:16 CEST 2003
+Last modified: Tue Jun  3 14:26:08 CEST 2003
 <!-- hhmts end -->
   </body>
 </html>

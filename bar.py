@@ -1,18 +1,20 @@
 ################################################################################
 ## 
-## SVGrafZ: SimpleBarGraph
+## SVGrafZ: BarGraphs
 ##
-## $Id: bar.py,v 1.10 2003/05/30 13:20:06 mac Exp $
+## $Id: bar.py,v 1.11 2003/06/03 12:41:32 mac Exp $
 ################################################################################
 
 from interfaces import IDiagramKind
 from base import BaseGraph
 from dtypes import *
+from config import SVGrafZ_default_Color
+
 
 class SimpleBarGraph(BaseGraph):
     """Simple BarGraph with multiple DataRows,
                        without negative values,
-                       y-axix starting always at zero."""
+                       x-axis always starting at zero."""
 
     __implements__ = IDiagramKind
 
@@ -31,18 +33,20 @@ class SimpleBarGraph(BaseGraph):
                  legend=None,
                  colnames=None,
                  title=None,
-                 stylesheet=None):
+                 stylesheet=None,
+                 errortext=None):
         "See IDiagramKind.__init__"
-        self.data     = data
-        self.width    = width
-        self.height   = height
-        self.legend   = legend
-        self.colnames = colnames
-        self.gridlines= gridlines
-        self.title    = title
-        self.stylesheet=stylesheet
-
-        self.result   = ''
+        self.data       = data
+        self.width      = width
+        self.height     = height
+        self.legend     = legend
+        self.colnames   = colnames
+        self.gridlines  = gridlines
+        self.title      = title
+        self.stylesheet = stylesheet
+        self.errortext  = errortext
+        
+        self.result     = ''
 
 ##      Achtung: die Koordinaten 0,0 sind im SVG links oben!
 ##        gridbasey   unteres Ende in y-Richtung
@@ -65,8 +69,10 @@ class SimpleBarGraph(BaseGraph):
         """Compute the Diagram."""
         if self.result:
             return self.result
+        self.result  = self.svgHeader()
+        if self.errortext:
+            self.result += self.printError()
         else:
-            self.result  = self.svgHeader()
             try:
                 if self.maxX() is None:
                     raise RuntimeError, 'All values on x-axis must be numbers!'
@@ -80,19 +86,19 @@ class SimpleBarGraph(BaseGraph):
                 self.result += self.drawBars()
                 self.result += self.drawXYAxis()
                 self.result += self.drawLegend()
+                self.result += self.drawTitle()
             except RuntimeError:
                 import sys
-                ev,en,et = sys.exc_info()
-                self.title=str(en)
-            
-            self.result += self.drawTitle()
+                self.errortext = str(sys.exc_info()[1])
+                self.result = self.svgHeader() + self.printError()
+
             self.result += self.svgFooter()
-            return self.result
+        return self.result
 
 
     def drawBars(self):
         "Draw the Bars of the graph."
-        yBarFull = (self.gridbasey - self.gridboundy) / self.countDistY()
+        yBarFull = (self.gridbasey - self.gridboundy) / len(self.distValsY())
         yHeight  = 0.75  * yBarFull / self.numgraphs()
         ySpace   = 0.125 * yBarFull
         res      = '<g id="data">\n'
@@ -108,12 +114,13 @@ class SimpleBarGraph(BaseGraph):
                 else:
                     onPos = len(pos)
                     pos[item[1]] = onPos
-                res += '<rect class="dataset%s" x="%s" y="%s" height="%s" width="%s"/>\n'\
+                res += '<rect class="dataset%s" x="%s" y="%s" height="%s" width="%s" fill="%s"/>\n'\
                        % (i,
                           self.gridbasex,
                           self.gridbasey-(onPos*yBarFull)-ySpace-(i+1)*yHeight,
                           yHeight,
-                          self.xScale * item[0])
+                          self.xScale * item[0],
+                          SVGrafZ_default_Color)
 
         if self.colnames:
             for i in range(len(self.colnames)):
@@ -146,15 +153,11 @@ class SimpleBarGraph2(BaseGraph):
                  legend=None,
                  colnames=None,
                  title=None,
-                 stylesheet=None):
+                 stylesheet=None,
+                 errortext=None):
         "see IDiagramKind.__init__"
-        self.data     = data
         self.width    = width
         self.height   = height
-        self.legend   = legend
-        self.colnames = colnames
-        self.gridlines= gridlines
-        self.title    = title
         self.stylesheet=stylesheet
 
 

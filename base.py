@@ -1,12 +1,13 @@
 ################################################################################
 ## 
 ## SVGrafZ: Base
-## Version: $Id: base.py,v 1.7 2003/05/30 11:42:24 mac Exp $
+## Version: $Id: base.py,v 1.8 2003/06/03 12:41:32 mac Exp $
 ##
 ################################################################################
 
 from math import log10,floor,ceil
 from types import *
+from config import SVGrafZ_default_Color
 
 class BaseGraph:
     """BaseClass for graphs providing base functionallity for all graphs."""
@@ -60,11 +61,11 @@ class BaseGraph:
         return self._computeMinMax('realMaxY')
 
 
-    def countDistX(self):
-        return self._computeMinMax('countDistX')
+    def distValsX(self):
+        return self._computeMinMax('distValsX')
 
-    def countDistY(self):
-        return self._computeMinMax('countDistY')
+    def distValsY(self):
+        return self._computeMinMax('distValsY')
 
     def numgraphs(self):
         return len(self.data)
@@ -89,17 +90,8 @@ class BaseGraph:
             valBase = 10 ** (int(log10(abs(val))))
             return valBase * floor((float(val) / valBase)-1)
 
-        def countDistinctValues(list):
-            vals = 0
-            while (len(list)):
-                cval = list.pop()
-                vals += 1
-                try:
-                    while 1:
-                        list.pop(list.index(cval))
-                except ValueError:
-                    pass
-            return vals
+        def getDistinctValues(list):
+            return dict([(x, 1) for x in list]).keys()
 
         allX = []
         allY = []
@@ -121,39 +113,36 @@ class BaseGraph:
                 allY.append(valy)
 
         if stringInX:
-            cr['realMaxX'] = None
-            cr['maxX']     = None
-            cr['realMinX'] = None
-            cr['minX']     = None
+            cr['realMaxX']  = None
+            cr['maxX']      = None
+            cr['realMinX']  = None
+            cr['minX']      = None
         else:
-            cr['realMaxX'] = max(allX)
-            cr['maxX']     = compRoundedValMax(cr['realMaxX'])
-            cr['realMinX'] = min(allX)
-            cr['minX']     = compRoundedValMin(cr['realMinX'])
+            cr['realMaxX']  = max(allX)
+            cr['maxX']      = compRoundedValMax(cr['realMaxX'])
+            cr['realMinX']  = min(allX)
+            cr['minX']      = compRoundedValMin(cr['realMinX'])
+
 
         if stringInY:
-            cr['realMaxY'] = None
-            cr['maxY']     = None
-            cr['realMinY'] = None
-            cr['minY']     = None
+            cr['realMaxY']  = None
+            cr['maxY']      = None
+            cr['realMinY']  = None
+            cr['minY']      = None
         else:
-            cr['realMaxY'] = max(allY)
-            cr['maxY']     = compRoundedValMax(cr['realMaxY'])
-            cr['realMinY'] = min(allY)
-            cr['minY']     = compRoundedValMin(cr['realMinY'])
+            cr['realMaxY']  = max(allY)
+            cr['maxY']      = compRoundedValMax(cr['realMaxY'])
+            cr['realMinY']  = min(allY)
+            cr['minY']      = compRoundedValMin(cr['realMinY'])
 
-        cr['countDistX'] = countDistinctValues(allX)
-        cr['countDistY'] = countDistinctValues(allY)
-        
+        cr['distValsX'] = getDistinctValues(allX)
+        cr['distValsY'] = getDistinctValues(allY)
         return cr[key]
 
 
     def _testFormatOfData(self):
         if self.data is None:
-            if self.title[:7] == 'Error: ':
-                raise RuntimeError, self.title
-            else:
-                raise RuntimeError, 'No Data. (Data is None)'
+            raise RuntimeError, 'No Data. (Data is None)'
         if type(self.data) != ListType:
             raise RuntimeError, 'Data is not a list. Maybe wrong converter.'
         if len(self.data) == 0:
@@ -199,6 +188,8 @@ class BaseGraph:
 
     def drawXGrindLines(self):
         """Draw gridlines in parallel to the y-axis."""
+        if not self.gridlines:
+            return ''
         res  = '<g id="xGrid">\n'
         grid = self._computeGridLines(self.minX(), self.maxX(), self.gridlines)
         for xval in grid:
@@ -211,6 +202,24 @@ class BaseGraph:
                    % (self.gridbasex + xval * self.xScale,
                       self.gridbasey + 15,
                       self.confLT(xval))
+            res += '\n'
+        return res + '</g>\n'
+
+    def drawYGrindLines(self):
+        """Draw gridlines in parallel to the x-axis."""
+        if not self.gridlines:
+            return ''
+        res  = '<g id="yGrid">\n'
+        grid = self._computeGridLines(self.minY(), self.maxY(), self.gridlines)
+        for yval in grid:
+            res +='<line x1="%s" x2="%s" y1="%s" y2="%s"/>\n' % (
+                self.gridbasex,
+                self.gridboundx,
+                self.gridbasey - yval * self.yScale,
+                self.gridbasey - yval * self.yScale)
+            res += '<text x="3" y="%s" style="text-anchor: start;">%s</text>'\
+                   % (self.gridbasey - yval * self.yScale + 5,
+                      self.confLT(yval))
             res += '\n'
         return res + '</g>\n'
 
@@ -230,10 +239,12 @@ class BaseGraph:
         return res + '</g>\n'
 
     def drawTitle(self):
+        if not self.title:
+            return ''
         res = '<g id="title">\n'
         res += '<text x="%s" y="%s" style="text-anchor: middle;">%s</text>'\
                    % ((self.gridboundx + self.gridbasex) /2,
-                      self.gridboundy,
+                      self.gridboundy + 1,
                       self.confLT(self.title))
         return res + '\n</g>\n'
 
@@ -247,12 +258,13 @@ class BaseGraph:
                self.gridboundy + 10,
                'text-anchor: middle; font-weight: bold;')
         for i in range(len(self.legend)):
-            res += """<line class="%s" x1="%s" x2="%s" y1="%s" y2="%s" stroke-width="10" stroke-linecap="round"/>
+            res += """<line class="%s" x1="%s" x2="%s" y1="%s" y2="%s" stroke-width="10" stroke-linecap="round" stroke="%s" />
             """ % ('dataset%s' % (i),
                    self.width - 5,
                    self.width - 15,
                    self.gridboundy + 26 + (15 * i),
                    self.gridboundy + 26 + (15 * i),
+                   SVGrafZ_default_Color
                    )
             res += """<text x="%s" y="%s" style="text-anchor:end;">%s</text>"""\
                    % (self.width - 25,
@@ -261,6 +273,35 @@ class BaseGraph:
                       )
         return res+"\n</g>"
 
+    def printError(self):
+        """Print the textual description of an error."""
+        res = '''
+<g id="SVGrafZicon" transform="translate(%s,%s) scale(2)">
+  <g id="icondata">
+    <rect style="fill: #ef2715;" x="1" y="11.332" height="2.7" width="8.76864"/>
+    <rect style="fill: #ef2715;" x="1" y="4.8" height="2.7" width="4.38432"/>
+    <rect style="fill: #131ef4;" x="1" y="8.6328" height="2.7" width="11.6915"/>
+    <rect style="fill: #131ef4;" x="1" y="2" height="2.7" width="8.76864"/>
+  </g>
+  <g id="iconxyaxis" style="stroke:#000000; stroke-opacity:1;">
+    <line x1="0" x2="15.68" y1="16" y2="16"/>
+    <line x1="1" x2="1" y1="17" y2="0.5328"/>
+  </g>
+</g>''' % (self.width / 2,
+           (self.gridbasey - self.gridboundy) / 4)
+           
+        res += '<text x="%s" y="%s" font-size="12pt" text-anchor="middle" fill="red">%s</text>' % (
+            self.width / 2,
+            (self.gridbasey - self.gridboundy) / 2,
+            'Error: ' + self.errortext)
+        return res
+
+
+    
+
+        
     def confLT(self, text):
         """Convert the littler than symbols ('<') to &lt;."""
         return str(text).replace('<', '&lt;')
+
+    

@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ
 ##
-## $Id: svgrafz.py,v 1.14 2003/06/02 08:04:54 mac Exp $
+## $Id: svgrafz.py,v 1.15 2003/06/03 12:41:32 mac Exp $
 ################################################################################
 
 import os
@@ -12,6 +12,7 @@ from icreg import ICRegistry
 from AccessControl import ClassSecurityInfo
 from Globals import InitializeClass
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
+from Products.PageTemplates.TALES import CompilerError
 from helper import TALESMethod
 from ZODB.PersistentMapping import PersistentMapping
 from svgconverters import SVG2SVG, SVG2PNG
@@ -56,8 +57,13 @@ class SVGrafZProduct(SimpleItem):
     security.declareProtected('View management screens', 'manage_edit')
     def manage_edit(self, REQUEST=None):
         """Save the new property values."""
-        self.changeProperties(REQUEST)
-        return self.manage_editForm(manage_tabs_message = 'Properties saved.')
+        try:
+            self.changeProperties(REQUEST)
+            msg = 'Properties successfully saved.'
+        except ValueError:
+            import sys
+            msg = 'ERROR: ' + str(sys.exc_info()[1])
+        return self.manage_editForm(manage_tabs_message = msg)
 
 
     security.declareProtected('View management screens', 'changeProperties')
@@ -348,10 +354,9 @@ class SVGrafZProduct(SimpleItem):
         """Render the diagram."""
         graphClass     = Registry.getKind(self.graphname())
         current        = self.getPropertyValues()
-        title          = current['title'] or ''
         outputConverter, dummy = self._getOutputConverter()
         inputConverter = ICRegistry.getConverter(current['convertername'])
-        data           = [[[1,1]]] # default
+        errortext      = legend = colnames = stylesheet = data = None
 
         try:
             data = self.getValue(current['data'])
@@ -359,39 +364,36 @@ class SVGrafZProduct(SimpleItem):
                 data = inputConverter.convert(data, current['fixcolumn'])
             except RuntimeError:
                 import sys
-                dummy, title, dummy = sys.exc_info()
-                title = str(title)
-                data = None # default
-        except KeyError:
-            title = 'Error: Given DataSource "%s" is not existing.' % (
-                self.getDataMethodExpression())
+                errortext = str(sys.exc_info()[1])
+
+        except (AttributeError, KeyError, CompilerError):
+            errortext = 'DataSource "%s" is not existing.' % (current['data'])
         try:
             legend = self.getValue(current['legend'])
-        except KeyError:
-            title = 'KeyError: legend not existing'
-            legend = None
+        except (AttributeError, KeyError, CompilerError):
+            errortext = 'Legend "%s" is not existing.' % (current['legend'])
         try:
             colnames = self.getValue(current['colnames'])
-        except KeyError:
-            title = 'KeyError: column names not existing'
-            colnames = None
+        except (AttributeError, KeyError, CompilerError):
+            errortext = 'ColumnNames "%s" do not exist.' % (current['colnames'])
 
-        stylesheet = None
         if current['stylesheet']:
             try:
                 stylesheet = getattr(self, current['stylesheet'])
                 stylesheet = outputConverter.getStyleSheetURL(stylesheet)
             except AttributeError:
-                title = 'AttributeError: stylesheet not existing'
+                errortext = 'Stylesheet "%s" is not existing.' % (
+                    current['stylesheet'])
 
         graph = graphClass(data      = data,
                            legend    = legend,
                            colnames  = colnames,
-                           title     = title,
+                           title     = current['title'] or '',
                            gridlines = current['gridlines'],
                            height    = current['height'],
                            width     = current['width'],
-                           stylesheet= stylesheet)
+                           stylesheet= stylesheet,
+                           errortext = errortext)
         if REQUEST.RESPONSE:
             REQUEST.RESPONSE.setHeader('Content-Type',
                                        outputConverter.getDestinationFormat())
@@ -420,8 +422,8 @@ class SVGrafZProduct(SimpleItem):
             context = self
         root = self.getPhysicalRoot()
         value = method.__of__(self)(here=context, 
-            request=getattr(root, 'REQUEST', None), 
-            root=self.getPhysicalRoot())
+                                        request=getattr(root, 'REQUEST', None), 
+                                        root=root)
         if callable(value):
             value = value.__of__(self)
         return value
