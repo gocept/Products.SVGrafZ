@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ: Interfaces
 ##
-## $Id: interfaces.py,v 1.12 2003/06/13 08:43:22 mac Exp $
+## $Id: interfaces.py,v 1.13 2003/06/13 10:23:57 mac Exp $
 ################################################################################
 
 from Interface import Interface,Attribute
@@ -72,7 +72,9 @@ class IDiagramKind(Interface):
 
         No tests are done here, do them in compute.
         """
-    
+
+class IDefaultDiagramKind(IDiagramKind):
+    """MarkerInterface for default DiagramKind."""
 
 
 class ISVGConverter(Interface):

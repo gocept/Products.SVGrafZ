@@ -1,14 +1,14 @@
 ################################################################################
 ## 
 ## SVGrafZ: Test of Registry
-## Version: $Id: testRegistry.py,v 1.7 2003/05/30 08:19:04 mac Exp $
+## Version: $Id: testRegistry.py,v 1.8 2003/06/13 10:23:57 mac Exp $
 ##
 ################################################################################
 
 import config
 import unittest
 from registry import Registry
-from interfaces import IDiagramType, IDiagramKind
+from interfaces import IDiagramType, IDiagramKind, IDefaultDiagramKind
 
 def pdb():
     import pdb
@@ -39,7 +39,7 @@ class DiagramKind2:
     registration = staticmethod(registration)
     
 class DiagramKind3:
-    __implements__ = IDiagramKind
+    __implements__ = IDefaultDiagramKind
     name = 'Kind3'
     def registration():
         return [DiagramType1]
@@ -51,6 +51,21 @@ class DiagramKind4:
     def registration():
         return [DiagramType1, DiagramType2]
     registration = staticmethod(registration)
+
+class DiagramKind5:
+    __implements__ = IDefaultDiagramKind
+    name = 'Kind5'
+    def registration():
+        return [DiagramType2]
+    registration = staticmethod(registration)
+
+class DiagramKind6:
+    __implements__ = IDiagramKind
+    name = 'Kind6'
+    def registration():
+        return [DiagramType1, DiagramType2]
+    registration = staticmethod(registration)
+
 
 
 class RegistryTests(unittest.TestCase):
@@ -214,19 +229,25 @@ class RegistryTests(unittest.TestCase):
 
     def test_6getDefaultKindName(self):
         "Test getDefaultKindName."
-        Registry._clear() # remove previously registered Things
+        Registry._clear() # remove previously registered things
         
-        t1 = DiagramType1
-        k3 = DiagramKind3
+        k3 = DiagramKind3 # default
         k4 = DiagramKind4
+        k5 = DiagramKind5 # second default
+        k6 = DiagramKind6
         
         self.failIf(Registry.getDefaultKindName(), 'get 0')
+        self.failUnless(Registry.register(k4))
+        self.failIf(Registry.getDefaultKindName(), 'get 1')
         self.failUnless(Registry.register(k3))
         self.assertEqual(k3.name,
                          Registry.getDefaultKindName(),
                          'get 2 (%s!=%s)' % (k3.name,
                                              Registry.getDefaultKindName()))
-        self.failUnless(Registry.register(k4))
+        self.assertRaises(RuntimeError, Registry.register, k3) # double reg
+        self.assertRaises(RuntimeError, Registry.register, k5) # double reg 2
+        self.assertRaises(RuntimeError, Registry.getKind, k5.name) # get 2nd default
+        self.failUnless(Registry.register(k6))
         self.assertEqual(k3.name, Registry.getDefaultKindName(), 'get 3')
 
 def test_suite():

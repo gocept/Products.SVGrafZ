@@ -2,10 +2,10 @@
 ## 
 ## SVGrafZ_DiagramRegistry
 ##
-## Version: $Id: registry.py,v 1.6 2003/05/30 08:19:04 mac Exp $
+## Version: $Id: registry.py,v 1.7 2003/06/13 10:23:57 mac Exp $
 ################################################################################
 
-from interfaces import IDiagramType, IDiagramKind
+from interfaces import IDiagramType, IDiagramKind, IDefaultDiagramKind
 
 class Registry:
     """Registry for DiagramTypes and -Kinds.
@@ -23,17 +23,22 @@ class Registry:
         if not IDiagramKind.isImplementedByInstancesOf(diagramKind):
             raise RuntimeError, 'Not implementing IDiagramKind.'
 
+
         capabilities = diagramKind.registration()
 
         if capabilities: # only if diagramKind has diagramTypes
+            if IDefaultDiagramKind.isImplementedByInstancesOf(diagramKind):
+                if self._defaultDiagramKindName is None:
+                    self._defaultDiagramKindName = diagramKind.name
+                else:
+                    raise RuntimeError,  'DoubleRegistration of Default %s' % (
+                    diagramKind.name)
+
             if self._diagramKinds.get(diagramKind.name):
                 raise RuntimeError, 'DoubleRegistration of %s' % (
                     diagramKind.name)
             
             self._diagramKinds[diagramKind.name] = diagramKind
-
-            if self._defaultDiagramKindName is None:
-                self._defaultDiagramKindName = diagramKind.name
 
             for diagramType in capabilities:
                 self._registerKind(diagramType, diagramKind)
