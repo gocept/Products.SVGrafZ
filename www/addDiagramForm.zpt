@@ -1,7 +1,7 @@
 <!--
-Copyright (c) 2003 gocept gmbh & co. kg. All rights reserved.
+Copyright (c) 2003-2005 gocept gmbh & co. kg. All rights reserved.
 See also LICENSE.txt
-$Id: addDiagramForm.zpt,v 1.1 2003/04/16 14:14:39 mac Exp $
+$Id: addDiagramForm.zpt,v 1.2 2005/02/11 17:08:34 mac Exp $
 -->
 
   <h1 tal:replace="structure here/manage_page_header">Header</h1>

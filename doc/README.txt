@@ -1,5 +1,5 @@
 SVGrafZ - Zope Product to draw charts
-Copyright (C) 2003  Michael Howitz, gocept gmbh & co. kg
+Copyright (C) 2003-2005  Michael Howitz, gocept gmbh & co. kg
 
 LICENSE:
   see doc/LICENSE.txt
@@ -11,6 +11,9 @@ PURPOSE:
 
 INSTALLATION:
   see doc/INSTALL.txt
+
+USAGE:
+  see doc/USAGE.txt
 
 BUGS:
   Put your bugs into

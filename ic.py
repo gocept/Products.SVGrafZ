@@ -3,7 +3,7 @@
 ## 
 ## SVGrafZ: InputConverters
 ##
-## $Id: ic.py,v 1.15 2004/02/23 08:33:22 mac Exp $
+## $Id: ic.py,v 1.16 2005/02/11 17:08:34 mac Exp $
 ################################################################################
 
 from interfaces import IInputConverter, IInputConverterWithLegend, \
@@ -20,8 +20,20 @@ class NoneConverter:
 
     def description(self):
         "See interfaces.IInputConverter.description."
-        return ['''Converter which does no real conversion. It only returns its
-        input data, so input data must be in SVGrafZ-InputFormat.''']
+        return ["Converter which does no real conversion. It only returns its input "
+                "data, so input data must be in SVGrafZ-InputFormat.",
+                "SVGrafZ-InputFormat: [[[x11,y11],[x12,y12], ...], "
+                "[[x21, y21], ...]]",
+                "SVGrafZ expects the inputed data to be a three times "
+                "nested list.",
+                "The outer list is the list of the datasets. Each "
+                "dataset is displayed as a graph.",
+                "Each dataset is a list which contains list of a "
+                "lengh of two. These lists represent the pounts of the "
+                "displayed graph. The first value ist the x-coordinate "
+                "and the scecond one is the y-coordinate of the point in "
+                "the graph.",
+                ]
 
     def registration(self):
         return {BarGraphs:  [DS_PythonScript],
