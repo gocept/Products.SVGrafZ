@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: Base
-## Version: $Id: base.py,v 1.20 2003/10/08 07:47:26 mac Exp $
+## Version: $Id: base.py,v 1.21 2003/10/08 08:17:24 mac Exp $
 ##
 ################################################################################
 
@@ -54,13 +54,13 @@ class BaseGraph:
 ##        gridboundx  oberes (rechtes) Ende in x-Richtung
 ##        gridbasex kleiner gridboundx!
 
-        self.gridbasey  = self.height * 0.9333
-        self.gridboundy = self.height * 0.0666
-        self.gridbasex  = self.width  * 0.0666
+        self.gridbasey  = self.height - 20
+        self.gridboundy = 20
+        self.gridbasex  = 40
         if self.hasLegend():
-            self.gridboundx = self.width * 0.8
+            self.gridboundx = self.width - 120
         else:
-            self.gridboundx = self.width * 0.98
+            self.gridboundx = self.width - 12
 
 
     def setSpecialAttrib(self, value):
