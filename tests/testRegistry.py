@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: Test of Registry
-## Version: $Id: testRegistry.py,v 1.9 2003/06/13 12:03:30 mac Exp $
+## Version: $Id: testRegistry.py,v 1.10 2003/10/08 07:47:26 mac Exp $
 ##
 ################################################################################
 
@@ -9,10 +9,6 @@ import config4test
 import unittest
 from registry import Registry
 from interfaces import IDiagramType, IDiagramKind, IDefaultDiagramKind
-
-def pdb():
-    import pdb
-    pdb.set_trace()
 
 class NoDiagramType: pass
 class DiagramType1:

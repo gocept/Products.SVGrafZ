@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ: LineGraphs
 ##
-## $Id: line.py,v 1.8 2003/10/07 08:55:18 mac Exp $
+## $Id: line.py,v 1.9 2003/10/08 07:47:26 mac Exp $
 ################################################################################
 
 from interfaces import IDiagramKind
@@ -209,8 +209,15 @@ class Mirrored(LineDiagram):
         """
         if not self.gridlines:
             return ''
+        if self.intcaption:
+            rtype = int
+        else:
+            rtype = float
+        grid = self._computeGridLines(self.minY(),
+                                      self.maxY(),
+                                      self.gridlines,
+                                      rtype)
         res  = '<g id="yGrid">\n'
-        grid = self._computeGridLines(self.minY(), self.maxY(), self.gridlines)
         for yval in grid:
             y = self.gridboundy + yval * self.yScale
             res +='<line x1="%s" x2="%s" y1="%s" y2="%s"/>\n' % (

@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ
 ##
-## $Id: svgrafz.py,v 1.27 2003/08/18 13:00:53 mac Exp $
+## $Id: svgrafz.py,v 1.28 2003/10/08 07:47:26 mac Exp $
 ################################################################################
 
 import os
@@ -30,7 +30,7 @@ class SVGrafZProduct(SimpleItem):
     """ProductClass of SVGrafZ."""
 
     meta_type = 'SVGrafZ'
-    version = '0.19'
+    version = '0.20'
 
     manage_options = (
         {'label':'Properties',
@@ -94,7 +94,7 @@ class SVGrafZProduct(SimpleItem):
         data = ['title', 'stylesheet', 'fixcolumn', 'specialattrib']
         for d in data:
             req = REQUEST.get(d, None)
-            if req:
+            if req: # catch also empty strings
                 self.dat[d] = req
             else:
                 self.dat[d] = None
@@ -102,13 +102,25 @@ class SVGrafZProduct(SimpleItem):
         try:
             dataInt = ["gridlines", "height", "width"]
             for dd in dataInt:
-                if REQUEST.get(dd):
+                if REQUEST.get(dd): # catch also empty strings
                     self.dat[dd] = int(REQUEST.get(dd))
                 else:
                     self.dat[dd] = None
         except ValueError:
             raise ValueError, '%s must be an integer number' % (dd)
-        
+
+        try:
+            dataBool = ["intcaption", "fillgaps"]
+            for dd in dataBool:
+                if REQUEST.get(dd): # catch also empty strings
+                    self.dat[dd] = int(REQUEST.get(dd))
+                    if self.dat[dd] == 2:
+                        self.dat[dd] = None
+                else:
+                    self.dat[dd] = None
+        except ValueError:
+            raise ValueError, '%s must be an integer number' % (dd)
+
         # Update TALES Methods
         tales = ["data", "legend", "colnames", ]
         for x in tales:
@@ -131,18 +143,20 @@ class SVGrafZProduct(SimpleItem):
     def __init__(self, id):
         self.id        = id
         self.dat = PersistentMapping() # automatical Persictence of Dictionary
-        self.dat.update({'title':     None,
-                         'graphname': None,
-                         'gridlines': None,
-                         'height':    None,
-                         'width':     None,
-                         'data':      TALESMethod(None),
-                         'legend':    TALESMethod(None),
-                         'colnames':  TALESMethod(None),
-                         'stylesheet':None,
+        self.dat.update({'title':         None,
+                         'graphname':     None,
+                         'gridlines':     None,
+                         'height':        None,
+                         'width':         None,
+                         'data':          TALESMethod(None),
+                         'legend':        TALESMethod(None),
+                         'colnames':      TALESMethod(None),
+                         'stylesheet':    None,
                          'convertername': None,
-                         'fixcolumn': None,
-                         'specialattrib': None
+                         'fixcolumn':     None,
+                         'specialattrib': None,
+                         'intcaption':    None,
+                         'fillgaps':      None,
                          })
         self.rnd = random.Random()
         self.current_version = self.version # set at creation & update
@@ -173,9 +187,13 @@ class SVGrafZProduct(SimpleItem):
             self.current_version = '0.16'
             # nothing else to do
         if self.current_version < '0.19':
-            self.current_version = '0.19'
             self.rnd = random.Random()
+            self.current_version = '0.19'
         if self.current_version < '0.20':
+            self.dat['intcaption'] = None
+            self.dat['fillgaps'] = None
+            self.current_version = '0.20'
+        if self.current_version < '0.21':
             # set self.current_version to new version
             pass
 
@@ -264,6 +282,16 @@ class SVGrafZProduct(SimpleItem):
     def specialattrib(self, default=None):
         "get specialattrib."
         return self.getAttribute('specialattrib', None, default)
+
+    security.declareProtected('View', 'intcaption')
+    def intcaption(self, default=None):
+        "get intcaption."
+        return self.getAttribute('intcaption', 0, default)
+
+    security.declareProtected('View', 'fillgaps')
+    def fillgaps(self, default=None):
+        "get fillgaps."
+        return self.getAttribute('fillgaps', 0, default)
 
 
     def getAttribute(self, attrib, defaultVal, default=None):
@@ -454,16 +482,20 @@ class SVGrafZProduct(SimpleItem):
             except AttributeError:
                 errortext = 'Stylesheet "%s" is not existing.' % (
                     current['stylesheet'])
-
-        graph = graphClass(data      = data,
-                           legend    = legend,
-                           colnames  = colnames,
-                           title     = current['title'] or '',
-                           gridlines = current['gridlines'],
-                           height    = current['height'],
-                           width     = current['width'],
-                           stylesheet= stylesheet,
-                           errortext = errortext)
+                
+        otherParams = {'gridlines':  current['gridlines'],
+                       'height':     current['height'],
+                       'width':      current['width'],
+                       'intcaption': current['intcaption'],
+                       'fillgaps':   current['fillgaps'],
+                       }
+        graph = graphClass(data       = data,
+                           legend     = legend,
+                           colnames   = colnames,
+                           title      = current['title'] or '',
+                           stylesheet = stylesheet,
+                           otherParams= otherParams,
+                           errortext  = errortext)
         graph.setSpecialAttrib(current['specialattrib'])
         if REQUEST.RESPONSE:
             REQUEST.RESPONSE.setHeader('Content-Type',

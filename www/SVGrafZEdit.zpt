@@ -1,7 +1,7 @@
 <!--
 Copyright (c) 2003 gocept gmbh & co. kg. All rights reserved.
 See also LICENSE.txt
-$Id: SVGrafZEdit.zpt,v 1.11 2003/10/07 10:21:10 mac Exp $
+$Id: SVGrafZEdit.zpt,v 1.12 2003/10/08 07:47:26 mac Exp $
 -->
 
   <h1 tal:replace="structure here/manage_page_header">Header</h1>
@@ -11,10 +11,13 @@ $Id: SVGrafZEdit.zpt,v 1.11 2003/10/07 10:21:10 mac Exp $
   <h2 tal:define="form_title string:Edit SVGrafZ"
     tal:replace="structure here/manage_form_title">Form Title</h2>
   <form action="manage_edit">
-    <table tal:define="def here/getDefaultPropertyValues;
+    <table tal:define="defs here/getDefaultPropertyValues;
                        cur here/getRealPropertyValues;
                        hasErrors here/having_errors;
-                       converterError python:here.having_errors('converter');"
+                       converterError python:here.having_errors('converter');
+                       yesNoDefault python:[{'name': 'yes', 'dbvalue':1, 'wwwvalue':1},
+                                            {'name': 'no',  'dbvalue':0, 'wwwvalue':0},
+                                            {'name': 'default', 'dbvalue':None, 'wwwvalue':2}];"
            cellspacing="2"
            width="95%">
       <tr>
@@ -28,7 +31,7 @@ $Id: SVGrafZEdit.zpt,v 1.11 2003/10/07 10:21:10 mac Exp $
         <td colspan="4">
           <input size="75" type="text" name="title" tal:attributes="value cur/title">
         </td>
-        <td class="form-mono" tal:content="def/title"></td>
+        <td class="form-mono" tal:content="defs/title"></td>
       </tr>
       <tr>
         <td class="form-text">Height: </td>
@@ -36,13 +39,13 @@ $Id: SVGrafZEdit.zpt,v 1.11 2003/10/07 10:21:10 mac Exp $
                    type="text"
                    name="height"
                    tal:attributes="value cur/height"></td>
-        <td class="form-mono" tal:content="def/height"></td>
+        <td class="form-mono" tal:content="defs/height"></td>
         <td class="form-text">Width: </td>
         <td><input size="5"
                    type="text"
                    name="width"
                    tal:attributes="value cur/width"></td>
-        <td class="form-mono" tal:content="def/width"></td>
+        <td class="form-mono" tal:content="defs/width"></td>
       </tr>
       <tr>
         <td class="form-text">Gridlines: </td>
@@ -50,7 +53,52 @@ $Id: SVGrafZEdit.zpt,v 1.11 2003/10/07 10:21:10 mac Exp $
                    type="text"
                    name="gridlines"
                    tal:attributes="value cur/gridlines"></td>
-        <td class="form-mono" tal:content="def/gridlines"></td>
+        <td class="form-mono" tal:content="defs/gridlines"></td>
+        <td class="form-text">Axis Caption Rounded to Integer: </td>
+        <td>
+          <tal:block tal:repeat="ynd yesNoDefault">
+            <input type="radio"
+                   name="intcaption"
+                   tal:attributes="value ynd/wwwvalue"
+                   checked="checked"
+                   tal:condition="python: cur.get('intcaption') == ynd.get('dbvalue')">
+            <input type="radio"
+                   name="intcaption"
+                   tal:attributes="value ynd/wwwvalue"
+                   tal:condition="python: cur.get('intcaption') != ynd.get('dbvalue')">
+            <span tal:replace="ynd/name"></span>
+          </tal:block>
+        </td>
+        <td class="form-mono">
+          <tal:block tal:repeat="ynd yesNoDefault">
+            <span tal:condition="python: defs.get('intcaption')==ynd.get('dbvalue')"
+                  tal:replace="ynd/name"></span>
+          </tal:block>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="3"></td>
+        <td class="form-text">Add Missing Values to Source Axis:</td>
+        <td>
+          <tal:block tal:repeat="ynd yesNoDefault">
+            <input type="radio"
+                   name="fillgaps"
+                   tal:attributes="value ynd/wwwvalue"
+                   checked="checked"
+                   tal:condition="python: cur.get('fillgaps') == ynd.get('dbvalue')">
+            <input type="radio"
+                   name="fillgaps"
+                   tal:attributes="value ynd/wwwvalue"
+                   tal:condition="python: cur.get('fillgaps') != ynd.get('dbvalue')">
+            <span tal:replace="ynd/name"></span>
+          </tal:block>
+        </td>
+        <td class="form-mono">
+          <tal:block tal:repeat="ynd yesNoDefault">
+            <span tal:condition="python: defs.get('fillgaps')==ynd.get('dbvalue')"
+                  tal:replace="ynd/name"></span>
+          </tal:block>
+        </td>
       </tr>
       <tr>
         <td class="form-text">DiagramKind: </td>
@@ -73,7 +121,7 @@ $Id: SVGrafZEdit.zpt,v 1.11 2003/10/07 10:21:10 mac Exp $
             </optgroup>
           </select>
         </td>
-        <td class="form-mono" tal:content="def/graphname"></td>
+        <td class="form-mono" tal:content="defs/graphname"></td>
       </tr>
       <tr>
         <td class="form-text">DataSource (TALES): </td>
@@ -82,7 +130,7 @@ $Id: SVGrafZEdit.zpt,v 1.11 2003/10/07 10:21:10 mac Exp $
                  type="text"
                  name="data"
                  tal:attributes="value cur/data"></td>
-        <td class="form-mono" tal:content="def/data"></td>
+        <td class="form-mono" tal:content="defs/data"></td>
       </tr>
       <tr>
         <td class="form-text">DataConverter: </td>
@@ -108,11 +156,11 @@ $Id: SVGrafZEdit.zpt,v 1.11 2003/10/07 10:21:10 mac Exp $
         </td>
         <td tal:condition="not:converterError"
             class="form-mono"
-            tal:content="def/convertername"></td>
+            tal:content="defs/convertername"></td>
         <td tal:condition="converterError"
             class="form-mono"
             style="color: #ff0000;"
-            tal:content="def/convertername"></td>
+            tal:content="defs/convertername"></td>
       </tr>
       <tr>
         <td class="form-text">ReferenceColumn(s): </td>
@@ -121,7 +169,7 @@ $Id: SVGrafZEdit.zpt,v 1.11 2003/10/07 10:21:10 mac Exp $
                  type="text"
                  name="fixcolumn"
                  tal:attributes="value cur/fixcolumn"></td>
-        <td class="form-mono" tal:content="def/fixcolumn"></td>
+        <td class="form-mono" tal:content="defs/fixcolumn"></td>
       </tr>
       <tr>
         <td class="form-text">ColumnNames (TALES): </td>
@@ -130,7 +178,7 @@ $Id: SVGrafZEdit.zpt,v 1.11 2003/10/07 10:21:10 mac Exp $
                  type="text"
                  name="colnames"
                  tal:attributes="value cur/colnames"></td>
-        <td class="form-mono" tal:content="def/colnames"></td>
+        <td class="form-mono" tal:content="defs/colnames"></td>
       </tr>
       <tr>
         <td class="form-text">StyleSheet (Path): </td>
@@ -139,7 +187,7 @@ $Id: SVGrafZEdit.zpt,v 1.11 2003/10/07 10:21:10 mac Exp $
                  type="text"
                  name="stylesheet"
                  tal:attributes="value cur/stylesheet"></td>
-        <td class="form-mono" tal:content="def/stylesheet"></td>
+        <td class="form-mono" tal:content="defs/stylesheet"></td>
       </tr>
       <tr>
         <td class="form-text">Legend (TALES): </td>
@@ -148,7 +196,7 @@ $Id: SVGrafZEdit.zpt,v 1.11 2003/10/07 10:21:10 mac Exp $
                  type="text"
                  name="legend"
                  tal:attributes="value cur/legend"></td>
-        <td class="form-mono" tal:content="def/legend"></td>
+        <td class="form-mono" tal:content="defs/legend"></td>
       </tr>
       <tr tal:define="specialAttrib here/getSpecialAttribName">
         <td colspan="3">
@@ -159,7 +207,7 @@ $Id: SVGrafZEdit.zpt,v 1.11 2003/10/07 10:21:10 mac Exp $
           <td><input type="text"
                      name="specialattrib"
                      tal:attributes="value cur/specialattrib"></td>
-          <td class="form-mono" tal:content="def/specialattrib"></td>
+          <td class="form-mono" tal:content="defs/specialattrib"></td>
         </tal:block>
         <td tal:condition="not:specialAttrib" colspan="3"></td>
       </tr>

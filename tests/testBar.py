@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: Test of Class SimpleBarGraph
-## Version: $Id: testBar.py,v 1.6 2003/10/07 08:55:18 mac Exp $
+## Version: $Id: testBar.py,v 1.7 2003/10/08 07:47:26 mac Exp $
 ##
 ################################################################################
 
@@ -37,13 +37,12 @@ class SimpleBarGraphTests(unittest.TestCase):
 
     def test_instantiation2(self):
         "Parametertest for Instantiation."
-        a = Simple(data = [[[1,1]]], width=600, height=300)
-        b = Simple(data = [[[1,1]]], width=300, height=300)
-        c = Simple(data = [[[1,1]]], width=600, height=800)
+        a = Simple(data = [[[1,1]]], otherParams={'width':600, 'height':300})
+        b = Simple(data = [[[1,1]]], otherParams={'width':300, 'height':300})
+        c = Simple(data = [[[1,1]]], otherParams={'width':600, 'height':800})
         d = Simple(data = [[[1,1]]],
-                           width=600,
-                           height=300,
-                           legend=['test'])
+                   otherParams = {'width':600, 'height':300},
+                   legend = ['test'])
 
         self.failUnless(a.gridbasey == b.gridbasey, 'a,b gridbasey')
         self.failUnless(a.gridbasex >  b.gridbasex, 'a,b gridbasex')

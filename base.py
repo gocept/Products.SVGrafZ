@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: Base
-## Version: $Id: base.py,v 1.19 2003/10/07 08:55:18 mac Exp $
+## Version: $Id: base.py,v 1.20 2003/10/08 07:47:26 mac Exp $
 ##
 ################################################################################
 
@@ -25,22 +25,22 @@ class BaseGraph:
 
 
     def __init__(self,
-                 data=None,
-                 width=0,
-                 height=0,
-                 gridlines=0,
-                 legend=None,
-                 colnames=None,
-                 title=None,
-                 stylesheet=None,
-                 errortext=None):
+                 data        = None,
+                 legend      = None,
+                 colnames    = None,
+                 title       = None,
+                 stylesheet  = None,
+                 errortext   = None,
+                 otherParams = {}):
         "See IDiagramKind.__init__"
         self.data       = data
-        self.width      = width
-        self.height     = height
+        self.width      = otherParams.get('width', 0)
+        self.height     = otherParams.get('height', 0)
         self.legend     = legend
         self.colnames   = colnames
-        self.gridlines  = gridlines
+        self.gridlines  = otherParams.get('gridlines')
+        self.fillgaps   = otherParams.get('fillgaps')
+        self.intcaption = otherParams.get('intcaption')
         self.title      = title
         self.stylesheet = stylesheet
         self.errortext  = errortext
@@ -55,13 +55,12 @@ class BaseGraph:
 ##        gridbasex kleiner gridboundx!
 
         self.gridbasey  = self.height * 0.9333
-        self.gridboundy = self.height * 0.0333
+        self.gridboundy = self.height * 0.0666
         self.gridbasex  = self.width  * 0.0666
         if self.hasLegend():
             self.gridboundx = self.width * 0.8
         else:
             self.gridboundx = self.width * 0.98
-        print self.data
 
 
     def setSpecialAttrib(self, value):
@@ -74,7 +73,7 @@ class BaseGraph:
         return (type(self.legend) == type([])) and self.legend
 
     def getDom(self):
-        import pdb2
+#        import pdb2
         self.xmldoc = Document()
         # XXX minidom kann keine customisierte xml-processing instruction
         # XXX also mit umlauten testen, ob 'encoding="UTF-8"' nötig
@@ -213,7 +212,8 @@ class BaseGraph:
             cr['maxX']      = self._compRoundedValMax(cr['realMaxX'])
             cr['realMinX']  = min(allX)
             cr['minX']      = self._compRoundedValMin(cr['realMinX'])
-
+            if self.fillgaps:
+                cr['distValsX'] = range(cr['realMinX'], cr['realMaxX'] + 1)
 
         if stringInY:
             cr['realMaxY']  = None
@@ -225,10 +225,15 @@ class BaseGraph:
             cr['maxY']      = self._compRoundedValMax(cr['realMaxY'])
             cr['realMinY']  = min(allY)
             cr['minY']      = self._compRoundedValMin(cr['realMinY'])
+            if self.fillgaps:
+                cr['distValsY'] = range(cr['realMinY'], cr['realMaxY'] + 1)
 
-        cr['distValsX'] = self._getDistinctValues(allX)
-        cr['distValsY'] = self._getDistinctValues(allY)
+        if cr.get('distValsX') is None:
+            cr['distValsX'] = self._getDistinctValues(allX)
+        if cr.get('distValsY') is None:
+            cr['distValsY'] = self._getDistinctValues(allY)
         return cr[key]
+
 
     def _change_computed_result(self, key, value):
         """Set the value of key in __computed_results__ after computation.
@@ -281,19 +286,33 @@ class BaseGraph:
         return 1        
 
 
-    def _computeGridLines(self, minVal, maxVal, lines):
-        ystep = (maxVal - minVal) / float(abs(lines) + 1)
-        return [ minVal + (y * ystep) for y in range(1, abs(lines)+1) ]
+    def _computeGridLines(self, minVal, maxVal, lines, rtype):
+        """Compute the variable values for the gridlines.
 
-    def _computeGridLinesInt(self, minVal, maxVal, lines):
-        if ((maxVal - minVal) < lines):
+        minVal ... first grid value
+        maxVal ... last grid value
+        lines  ... number of lines in grid
+        rtype  ... <type 'int'> or <type 'float'> for type of the result values
+        """
+        if (rtype == int) and ((maxVal - minVal) < lines):
             lines = maxVal - minVal
-        ystep = (maxVal - minVal) / (abs(lines) + 1)
-        return [ int(minVal + (y * ystep)) for y in range(1, abs(lines) + 1) ]
+        ystep = (maxVal - minVal) / rtype(abs(lines) + 1)
+        return [rtype(minVal + (y * ystep)) for y in range(1, abs(lines) + 1)]
+    
 
-
-    def _drawXGridLines(self, grid):
+    def drawXGridLines(self):
         """Draw gridlines in parallel to the y-axis."""
+        if not self.gridlines:
+            return ''
+        if self.intcaption:
+            rtype = int
+        else:
+            rtype = float
+            
+        grid = self._computeGridLines(self.minX(),
+                                      self.maxX(),
+                                      self.gridlines,
+                                      rtype)
         res  = '<g id="xGrid">\n'
         for xval in grid:
             res +='<line x1="%s" x2="%s" y1="%s" y2="%s"/>\n' % (
@@ -308,25 +327,20 @@ class BaseGraph:
             res += '\n'
         return res + '</g>\n'
 
-    def drawXGridLines(self):
-        "Draw gridlines in parallel to the y-axis with float caption values."
-        if not self.gridlines:
-            return ''
-        return self._drawXGridLines(self._computeGridLines(self.minX(),
-                                                           self.maxX(),
-                                                           self.gridlines))
 
-    def drawXGridLinesInt(self):
-        "Draw gridlines in parallel to the y-axis with integer caption values."
-        if not self.gridlines:
-            return ''
-        return self._drawXGridLines(self._computeGridLinesInt(self.minX(),
-                                                              self.maxX(),
-                                                              self.gridlines))
-
-
-    def _drawYGridLines(self, grid):
+    def drawYGridLines(self):
         """Draw gridlines in parallel to the x-axis."""
+        if not self.gridlines:
+            return ''
+        if self.intcaption:
+            rtype = int
+        else:
+            rtype = float
+            
+        grid = self._computeGridLines(self.minY(),
+                                      self.maxY(),
+                                      self.gridlines,
+                                      rtype)
         res  = '<g id="yGrid">\n'
         for yval in grid:
             res +='<line x1="%s" x2="%s" y1="%s" y2="%s"/>\n' % (
@@ -340,22 +354,6 @@ class BaseGraph:
             res += '\n'
         return res + '</g>\n'
 
-    def drawYGridLines(self):
-        "Draw gridlines in parallel to the x-axis with float caption values."
-        if not self.gridlines:
-            return ''
-        grid = self._computeGridLines(self.minY(), self.maxY(), self.gridlines)
-        return self._drawYGridLines_do(grid)
-
-
-    def drawYGridLinesInt(self):
-        "Draw gridlines in parallel to the x-axis with integer caption values."
-        if not self.gridlines:
-            return ''
-        return self._drawYGridLines(self._computeGridLinesInt(self.minY(),
-                                                               self.maxY(),
-                                                               self.gridlines))
-    
 
     def drawXYAxis(self):
         """Draw the x- and y-axis."""
@@ -378,7 +376,7 @@ class BaseGraph:
         res = '<g id="title">\n'
         res += '<text x="%s" y="%s" style="text-anchor: middle;">%s</text>'\
                    % ((self.gridboundx + self.gridbasex) /2,
-                      self.gridboundy + 1,
+                      self.gridboundy - 4,
                       self.confLT(self.title))
         return res + '\n</g>\n'
 
@@ -512,9 +510,11 @@ class BaseGraph:
             labels = self.colnames
         for i in range(len(labels)):
             label = labels[i]
-            res += '<text x="5" y="%s" style="text-anchor:start;">%s</text>\n'\
-                   % (self.gridbasey - i * yHeight - firstHeight,
-                      self.confLT(label))
+            res += '''<text x="5" y="%s" style="text-anchor:start;">
+                        <tspan baseline-shift="sub">%s</tspan>
+                       </text>\n''' % (
+                self.gridbasey - i * yHeight - firstHeight,
+                self.confLT(label))
         return res
         
 
@@ -636,6 +636,6 @@ class DataOnXAxis(BaseGraph):
 
     def getDrawingActions(self):
         """Returns the methods which are used to draw the graph."""
-        return [self.computeXScale] + \
+        return [self.computeXScale,
+                self.drawXGridLines] + \
                 BaseGraph.getDrawingActions(self)
-

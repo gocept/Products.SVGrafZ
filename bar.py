@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ: BarGraphs
 ##
-## $Id: bar.py,v 1.19 2003/10/07 08:55:18 mac Exp $
+## $Id: bar.py,v 1.20 2003/10/08 07:47:26 mac Exp $
 ################################################################################
 
 from interfaces import IDiagramKind, IDefaultDiagramKind
@@ -56,12 +56,17 @@ class Simple(BarDiagram):
                           yHeight,
                           self.xScale * val,
                           SVGrafZ_default_Color)
+##                    res += '<line x1="5" x2="600" y1="%s" y2="%s" />'%(self.gridbasey-(j*yBarFull),
+##                                                                     self.gridbasey-(j*yBarFull)
+##                                                                     )
                 except KeyError:
                     pass
-                   
 
-        res += self.yAxis_horizontalLabels(distY, 
-                                           self.gridboundy+yBarFull/2-ySpace,
+##        import pdb
+##        pdb.set_trace()
+
+        res += self.yAxis_horizontalLabels(distY,
+                                           yBarFull/2,
                                            yBarFull)
         return res + '</g>\n'
 
@@ -87,32 +92,4 @@ class Simple(BarDiagram):
         self._change_computed_result('realMinX', 0.0)
         self._change_computed_result('minX',
                                      self._compRoundedValMax(0.0))
-
-    def getDrawingActions(self):
-        """Returns the methods which are used to draw the graph."""
-        return [self.computeXScale,
-                self.drawXGridLines] + \
-                BarDiagram.getDrawingActions(self)
-
-
-class IntX(Simple):
-    """BarGraph like Simple but with x-axis values rounded to int."""
-
-    __implements__ = IDiagramKind
-
-    name = 'bar diagram with int(x)'
-    
-    def description():
-        """see interfaces.IDiagamKind.description
-        """
-        return Simple.description() + [
-            'Values on x-axis are shown as integers.'
-            ]
-    description = staticmethod(description)
-    
-    def getDrawingActions(self):
-        """Returns the methods which are used to draw the graph."""
-        return [self.computeXScale,
-                self.drawXGridLinesInt] + \
-                BarDiagram.getDrawingActions(self)
 

@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: Test of ICRegistry
-## $Id: testICRegistry.py,v 1.4 2003/06/13 12:03:30 mac Exp $
+## $Id: testICRegistry.py,v 1.5 2003/10/08 07:47:26 mac Exp $
 ##
 ################################################################################
 
@@ -10,10 +10,6 @@ import unittest
 from icreg import ICRegistry
 from interfaces import IDiagramType, IInputConverter, IDefaultInputConverter,\
      IDataSource
-
-def pdb():
-    import pdb
-    pdb.set_trace()
 
 class NoDiagramType: pass
 class DiagramType1:

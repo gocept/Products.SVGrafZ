@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ: Interfaces
 ##
-## $Id: interfaces.py,v 1.14 2003/06/16 08:13:31 mac Exp $
+## $Id: interfaces.py,v 1.15 2003/10/08 07:47:26 mac Exp $
 ################################################################################
 
 from Interface import Interface,Attribute
@@ -21,15 +21,13 @@ class IDiagramKind(Interface):
     name = Attribute("Name of the DiagramKind.")
     specialAttribName = Attribute("Name of the special Attribute or None.")
 
-    def __init__(data=None,
-                 width=None,
-                 height=None,
-                 gridlines=None,
-                 legend=None,
-                 colnames=None,
-                 title=None,
-                 stylesheet=None,
-                 errortext=None):
+    def __init__(data        = None,
+                 legend      = None,
+                 colnames    = None,
+                 title       = None,
+                 stylesheet  = None,
+                 errortext   = None,
+                 otherParams = {}):
         """Initialize and set the parameters for the graph.
 
         Format of data:
@@ -41,17 +39,26 @@ class IDiagramKind(Interface):
         (First index is  number of datarow,
          second index is index of value of datarow.
          The Number of Values per datarow may vary.)
-
-        width, height ... width, height of image
-        gridlines     ... number of gridlines
-        legend        ... values for the Legend
+        legend     ... values for the Legend
                     should be is defined as:
                     legend = ['Name_Datarow_1', 'Name_Datarow_2', ...] || None
-        colnames      ... names of the Datacolumns
+        colnames   ... names of the Datacolumns
                     sould be defined as:
                     colnames = ['Name_Column_1', 'Name_Column_2', ...] || None
-        errortext     ... textual description of occured error during getting
-                           data or None if no error
+        errortext  ... textual description of occured error during getting
+                    data or None if no error
+        title      ... title of the Diagram
+        stylesheet ... name/path of stylesheet to be used for rednering the
+                    diagram on client
+        otherParams... dictionary which must contain the following keys
+                    width      ... width of image
+                    height     ... height of image
+                    gridlines  ... number of gridlines
+                    intcaption ... 0->float caption on axis
+                                   1->int caption
+                    fillgaps   ... 0->use data as is
+                                   1->fill out missing values data source col
+                                      (must be integer!)
         """
 
     def compute():

@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ: RowGraphs
 ##
-## $Id: row.py,v 1.4 2003/10/07 08:55:18 mac Exp $
+## $Id: row.py,v 1.5 2003/10/08 07:47:26 mac Exp $
 ################################################################################
 
 from interfaces import IDiagramKind
@@ -42,7 +42,7 @@ class Simple(RowDiagram):
         """Returns the methods which are used to draw the graph."""
         return [self.computeYScale,
                 self.drawYGridLines,] + \
-                BaseGraph.getDrawingActions(self)
+                RowDiagram.getDrawingActions(self)
 
     def description():
         """see interfaces.IDiagamKind.description
@@ -53,8 +53,21 @@ class Simple(RowDiagram):
             possible.",
             "The labels on the x-axis are written vertically.",
             ]
-
     description = staticmethod(description)
+
+    def specialAttribHook(self):
+        """Handling of the specialAttrib.
+
+        Test datatype of specialAttrib & change data influenced by
+          specialAttrib.
+
+        Return: void
+        On error: raise RuntimeError
+        """
+        self._change_computed_result('realMinY', 0.0)
+        self._change_computed_result('minY',
+                                     self._compRoundedValMax(0.0))
+
 
     def drawGraph(self):
         "Draw the Bars of the graph."
@@ -87,48 +100,3 @@ class Simple(RowDiagram):
 
         return res + '</g>\n'
 
-class FillingGaps(Simple):
-    """ColumnGraph like Simple but with integer values on x-axis,
-                                        filling gaps im x-axis (making data coninoous)."""
-
-    __implements__ = IDiagramKind
-
-    name = 'column diagram with int(x)'
-    
-    def description():
-        """see interfaces.IDiagamKind.description
-        """
-        return Simple.description() + [
-            'Values on x-axis are must be integer.',
-            'Missing values on x-Axis are added as zero-values (making data coninoous)'
-            'Values on y-axis are shown as integers.'
-            ]
-    description = staticmethod(description)
-
-
-    def getDrawingActions(self):
-        """Returns the methods which are used to draw the graph."""
-        return [self.makeXValsContinoous,
-                self.computeYScale,
-                self.drawYGridLinesInt,] + \
-                RowDiagram.getDrawingActions(self)
-
-    def makeXValsContinoous(self):
-        "Fill gaps in x-Values so that they are continoous."
-        distX = range(self.realMinX(), self.realMaxX())
-        self._change_computed_result('distValsX', distX)
-        return ''
-
-
-    def specialAttribHook(self):
-        """Handling of the specialAttrib.
-
-        Test datatype of specialAttrib & change data influenced by
-          specialAttrib.
-
-        Return: void
-        On error: raise RuntimeError
-        """
-        self._change_computed_result('realMinY', 0.0)
-        self._change_computed_result('minY',
-                                     self._compRoundedValMax(0.0))

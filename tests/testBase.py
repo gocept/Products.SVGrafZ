@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: Test of Class BaseGraph
-## Version: $Id: testBase.py,v 1.5 2003/10/07 08:55:18 mac Exp $
+## Version: $Id: testBase.py,v 1.6 2003/10/08 07:47:26 mac Exp $
 ##
 ################################################################################
 
@@ -11,9 +11,6 @@ from base import BaseGraph
 
 class BaseGraphData(BaseGraph):
     "Concrete subclass of BaseGraph, to get data into it."
-    def __init__(self, data, legend=None):
-        self.data = data
-        self.legend = legend
     
 
 class BaseGraphTests(unittest.TestCase):
@@ -275,18 +272,30 @@ class BaseGraphTests(unittest.TestCase):
 
     def test__computeGridLines(self):
         "Test _computeGridLines."
-        to_test = [[0, 1, 3, [0.25, 0.5, 0.75]],
-                   [0, 0, 3, [0,0,0]],
-                   [0, 1, 0, []],
-                   [0, 1, 1, [0.5]],
-                   [-2,-1,1, [-1.5]],
-                   [-2,2, 3, [-1,0,1]],
-                   [0, 1,-1, [0.5]],
+        to_test = [[0, 1, 3, [0.25, 0.5, 0.75], [0]],
+                   [0, 0, 3, [0,0,0],[]],
+                   [0, 1, 0, [], []],
+                   [0, 1, 1, [0.5], [0]],
+                   [-2,-1,1, [-1.5], [-2]],
+                   [-2,2, 3, [-1,0,1], [-1,0,1]],
+                   [0, 1,-1, [0.5], [0]],
                    ]
         g = BaseGraphData(self.to_test[0])
         for t in to_test:
-            r = g._computeGridLines(t[0],t[1],t[2])
-            self.assertEqual(r, t[3], '%s != %s' % (str(r), str(t[3])))
+            r = g._computeGridLines(t[0],t[1],t[2], float)
+            self.assertEqual(r, t[3], '%s,%s,%s,float (%s != %s)' % (
+                t[0],
+                t[1],
+                t[2],
+                str(r),
+                str(t[3])))
+            r = g._computeGridLines(t[0],t[1],t[2], int)
+            self.assertEqual(r, t[4], '%s,%s,%s,int (%s != %s)' %(
+                t[0],
+                t[1],
+                t[2],
+                str(r),
+                str(t[4])))
 
 
     
