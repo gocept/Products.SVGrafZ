@@ -1,13 +1,13 @@
 ################################################################################
 ## 
 ## SVGrafZ: Base
-## Version: $Id: base.py,v 1.10 2003/06/04 08:56:17 mac Exp $
+## Version: $Id: base.py,v 1.11 2003/06/04 09:08:57 mac Exp $
 ##
 ################################################################################
 
 from math import log10,floor,ceil
 from types import *
-from config import SVGrafZ_default_Color
+from config import SVGrafZ_default_Color, SVGrafZ_legend_name
 
 class BaseGraph:
     """Abstract base class for all diagramKinds providing base functionallity.
@@ -274,10 +274,11 @@ class BaseGraph:
         if not self.legend:
             return ''
         res = """<g id="legend">
-        <text x="%s" y="%s" style="%s">Legende</text>
+        <text x="%s" y="%s" style="%s">%s</text>
         """ % ((self.gridboundx + self.width) / 2,
                self.gridboundy + 10,
-               'text-anchor: middle; font-weight: bold;')
+               'text-anchor: middle; font-weight: bold;',
+               SVGrafZ_legend_name)
         for i in range(len(self.legend)):
             res += """<line class="%s" x1="%s" x2="%s" y1="%s" y2="%s" stroke-width="10" stroke-linecap="round" stroke="%s" />
             """ % ('dataset%s' % (i),
