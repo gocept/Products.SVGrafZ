@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ
-## Version: $Id: svgrafz.py,v 1.5 2003/04/17 10:43:19 mac Exp $
+## Version: $Id: svgrafz.py,v 1.6 2003/04/17 12:07:09 mac Exp $
 ##
 ################################################################################
 
@@ -163,12 +163,13 @@ class SVGrafZProduct(SimpleItem):
         try:
             if self.id == _defaultSVGrafZ:
                 # go one directory up, if self is defaultGraph
-                default = getattr(self.aq_inner.aq_parent.aq_parent, _defaultSVGrafZ)
+                default = getattr(self.aq_inner.aq_parent.aq_parent,
+                                  _defaultSVGrafZ)
             else:
                 # search in same dir first
                 default = getattr(self.aq_parent, _defaultSVGrafZ)
             if default == self:
-                # no default graph found in upper direction
+                # no default graph found in upper direction, use defaultDefault
                 raise AttributeError
             return default.getAttribute(attrib, defaultVal)
         except AttributeError:

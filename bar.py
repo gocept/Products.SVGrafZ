@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: SimpleBarGraph
-## Version: $Id: bar.py,v 1.5 2003/04/16 14:14:38 mac Exp $
+## Version: $Id: bar.py,v 1.6 2003/04/17 12:07:09 mac Exp $
 ##
 ################################################################################
 
@@ -125,11 +125,6 @@ class SimpleBarGraph(BaseGraph):
             
                 
         
-    def drawLegend(self):
-        """Draw the Legend."""
-        return ''
-
-
 class SimpleBarGraph2(BaseGraph):
     """Simple BarGraph testclass."""
 

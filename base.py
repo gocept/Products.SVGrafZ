@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: Base
-## Version: $Id: base.py,v 1.3 2003/04/16 14:14:38 mac Exp $
+## Version: $Id: base.py,v 1.4 2003/04/17 12:07:09 mac Exp $
 ##
 ################################################################################
 
@@ -233,3 +233,27 @@ class BaseGraph:
                       self.gridboundy,
                       self.title)
         return res + '\n</g>\n'
+
+    def drawLegend(self):
+        """Draw the Legend."""
+        if not self.legend:
+            return ''
+        res = """<g id="legend">
+        <text x="%s" y="%s" style="%s">Legende</text>
+        """ % ((self.gridboundx + self.width) / 2,
+               self.gridboundy + 10,
+               'text-anchor: middle; font-weight: bold;')
+        for i in range(len(self.legend)):
+            res += """<line class="%s" x1="%s" x2="%s" y1="%s" y2="%s" stroke-width="10" stroke-linecap="round"/>
+            """ % ('dataset%s' % (i),
+                   self.width - 5,
+                   self.width - 15,
+                   self.gridboundy + 26 + (15 * i),
+                   self.gridboundy + 26 + (15 * i),
+                   )
+            res += """<text x="%s" y="%s" style="text-anchor:end;">%s</text>"""\
+                   % (self.width - 25,
+                      self.gridboundy + 30 + (15 * i),
+                      self.legend[i],
+                      )
+        return res
