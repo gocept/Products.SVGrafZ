@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: Test of Class BaseGraph
-## Version: $Id: testBase.py,v 1.1 2003/04/10 13:58:50 mac Exp $
+## Version: $Id: testBase.py,v 1.2 2003/04/11 13:21:08 mac Exp $
 ##
 ################################################################################
 
@@ -17,8 +17,7 @@ class BaseGraphData(BaseGraph):
     
 
 class BaseGraphTests(unittest.TestCase):
-    """Tests for the DiagramType and -Kind Registry.
-    """
+    "Tests for the base class of diagram kinds."
 
     def setUp(self):
         self.errors = [None,[],]
@@ -30,7 +29,9 @@ class BaseGraphTests(unittest.TestCase):
                         [[[222,233]]],
                         [[[-1234,-2234]]],
                         [[[0,0]]],
-                        [[[1000,1000]]],                        
+                        [[[1000,1000]]],
+                        [[['Jugendamt', 1.4],['Jugendlicher', 2.6]]],
+                        [[[2.3, 'Eltern'],[4.2, 'andere']]],
                         ]
 
     def test_hasLegend(self):
@@ -80,7 +81,7 @@ class BaseGraphTests(unittest.TestCase):
 
     def test_realMinX(self):
         "Test realMinX."
-        res = [1,323493,1,222,-1234,0,1000]
+        res = [1,323493,1,222,-1234,0,1000, None, 2.3]
 
         for j in self.errors:
             g = BaseGraphData(j)
@@ -91,13 +92,13 @@ class BaseGraphTests(unittest.TestCase):
             g = BaseGraphData(self.to_test[i])
             self.assertEqual(res[i],
                              g.realMinX(),
-                             '%i != %i (%s)1' % (res[i],
+                             '%s != %s (%s)1' % (res[i],
                                                  g.realMinX(),
                                                  str(self.to_test[i])))
 
     def test_minX(self):
         "Test minX."
-        res = [0,200000,0,100,-3000,0,0]
+        res = [0,200000,0,100,-3000,0,0,None,1]
 
         for j in self.errors:
             g = BaseGraphData(j)
@@ -108,14 +109,14 @@ class BaseGraphTests(unittest.TestCase):
             g = BaseGraphData(self.to_test[i])
             self.assertEqual(res[i],
                              g.minX(),
-                             '%i != %i (%s)1' % (res[i],
+                             '%s != %s (%s)1' % (res[i],
                                                  g.minX(),
                                                  str(self.to_test[i])))
 
 
     def test_realMaxX(self):
         "Test realMaxX."
-        res = [5,323493,1,222,-1234,0,1000]
+        res = [5,323493,1,222,-1234,0,1000,None,4.2]
 
         for j in self.errors:
             g = BaseGraphData(j)
@@ -126,13 +127,13 @@ class BaseGraphTests(unittest.TestCase):
             g = BaseGraphData(self.to_test[i])
             self.assertEqual(res[i],
                              g.realMaxX(),
-                             '%i != %i (%s)1' % (res[i],
+                             '%s != %s (%s)1' % (res[i],
                                                  g.realMaxX(),
                                                  str(self.to_test[i])))
 
     def test_maxX(self):
         "Test maxX."
-        res = [6,500000,2,400,0,0,2000]
+        res = [6,500000,2,400,0,0,2000,None,6]
 
         for j in self.errors:
             g = BaseGraphData(j)
@@ -143,13 +144,13 @@ class BaseGraphTests(unittest.TestCase):
             g = BaseGraphData(self.to_test[i])
             self.assertEqual(res[i],
                              g.maxX(),
-                             '%i != %i (%s)1' % (res[i],
+                             '%s != %s (%s)1' % (res[i],
                                                  g.maxX(),
                                                  str(self.to_test[i])))
 
     def test_realMinY(self):
         "Test realMinY."
-        res = [1,34534,1,233,-2234,0,1000]
+        res = [1,34534,1,233,-2234,0,1000,1.4,None]
 
         for j in self.errors:
             g = BaseGraphData(j)
@@ -160,13 +161,13 @@ class BaseGraphTests(unittest.TestCase):
             g = BaseGraphData(self.to_test[i])
             self.assertEqual(res[i],
                              g.realMinY(),
-                             '%i != %i (%s)1' % (res[i],
+                             '%s != %s (%s)1' % (res[i],
                                                  g.realMinY(),
                                                  str(self.to_test[i])))
 
     def test_minY(self):
         "Test minY."
-        res = [0,20000,0,100,-4000,0,0]
+        res = [0,20000,0,100,-4000,0,0,0.0,None]
 
         for j in self.errors:
             g = BaseGraphData(j)
@@ -177,14 +178,14 @@ class BaseGraphTests(unittest.TestCase):
             g = BaseGraphData(self.to_test[i])
             self.assertEqual(res[i],
                              g.minY(),
-                             '%i != %i (%s)1' % (res[i],
+                             '%s != %s (%s)1' % (res[i],
                                                  g.minY(),
                                                  str(self.to_test[i])))
 
 
     def test_realMaxY(self):
         "Test realMaxY."
-        res = [5,34534,2,233,-2234,0,1000]
+        res = [5,34534,2,233,-2234,0,1000,2.6,None]
 
         for j in self.errors:
             g = BaseGraphData(j)
@@ -195,13 +196,13 @@ class BaseGraphTests(unittest.TestCase):
             g = BaseGraphData(self.to_test[i])
             self.assertEqual(res[i],
                              g.realMaxY(),
-                             '%i != %i (%s)1' % (res[i],
+                             '%s != %s (%s)1' % (res[i],
                                                  g.realMaxY(),
                                                  str(self.to_test[i])))
 
     def test_maxY(self):
         "Test maxY."
-        res = [6,50000,3,400,-1000,0,2000]
+        res = [6,50000,3,400,-1000,0,2000,4.0,None]
 
         for j in self.errors:
             g = BaseGraphData(j)
@@ -212,14 +213,14 @@ class BaseGraphTests(unittest.TestCase):
             g = BaseGraphData(self.to_test[i])
             self.assertEqual(res[i],
                              g.maxY(),
-                             '%i != %i (%s)1' % (res[i],
+                             '%s != %s (%s)1' % (res[i],
                                                  g.maxY(),
                                                  str(self.to_test[i])))
 
 
     def test_countDistX(self):
         "Test countDistX."
-        res = [5,1,1,1,1,1,1]
+        res = [5,1,1,1,1,1,1,2,2]
 
         for j in self.errors:
             g = BaseGraphData(j)
@@ -230,14 +231,14 @@ class BaseGraphTests(unittest.TestCase):
             g = BaseGraphData(self.to_test[i])
             self.assertEqual(res[i],
                              g.countDistX(),
-                             '%i != %i (%s)1' % (res[i],
+                             '%s != %s (%s)1' % (res[i],
                                                  g.countDistX(),
                                                  str(self.to_test[i])))
 
 
     def test_countDistY(self):
         "Test countDistY."
-        res = [4,1,2,1,1,1,1]
+        res = [4,1,2,1,1,1,1,2,2]
 
         for j in self.errors:
             g = BaseGraphData(j)
@@ -248,9 +249,26 @@ class BaseGraphTests(unittest.TestCase):
             g = BaseGraphData(self.to_test[i])
             self.assertEqual(res[i],
                              g.countDistY(),
-                             '%i != %i (%s)1' % (res[i],
+                             '%s != %s (%s)1' % (res[i],
                                                  g.countDistY(),
                                                  str(self.to_test[i])))
+
+
+    def test__computeGridLines(self):
+        "Test _computeGridLines."
+        to_test = [[0, 1, 3, [0.25, 0.5, 0.75]],
+                   [0, 0, 3, [0,0,0]],
+                   [0, 1, 0, []],
+                   [0, 1, 1, [0.5]],
+                   [-2,-1,1, [-1.5]],
+                   [-2,2, 3, [-1,0,1]],
+                   [0, 1,-1, [0.5]],
+                   ]
+        g = BaseGraphData(self.to_test[0])
+        for t in to_test:
+            r = g._computeGridLines(t[0],t[1],t[2])
+            self.assertEqual(r, t[3], '%s != %s' % (str(r), str(t[3])))
+
 
     
 def test_suite():

@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: SimpleBarGraph
-## Version: $Id: bar.py,v 1.3 2003/04/10 13:58:50 mac Exp $
+## Version: $Id: bar.py,v 1.4 2003/04/11 13:21:08 mac Exp $
 ##
 ################################################################################
 
@@ -43,12 +43,73 @@ class SimpleBarGraph(BaseGraph):
             self.gridboundx = self.width * 0.8
         else:
             self.gridboundx = self.width * 0.98
+
+        if self.maxX() is None:
+            raise RuntimeError, 'All values on x-axis must be numbers!'
+
+        difX = float(self.maxX() - self.minX())
+
+        if difX:
+            self.xScale = float((self.gridboundx - self.gridbasex) / difX)
+        else:
+            self.xScale = 1.0
         
         
     def compute(self):
         """Compute the Diagram."""
-        self.result = self.svgHeader()
-        self.result = self.result + svgRaster()
+        if self.result:
+            return self.result
+        else:
+            self.result  = self.svgHeader()
+            self.result += self.drawXGrindLines()
+            self.result += self.drawBars()
+            self.result += self.drawXYAxis()
+            self.result += self.drawLegend()
+            self.result += self.svgFooter()
+            return self.result
 
+
+    def drawBars(self):
+        "Draw the Bars of the graph."
+        yBarFull = (self.gridbasey - self.gridboundy) / self.countDistY()
+        yHeight  = 0.75  * yBarFull / self.numgraphs()
+        ySpace   = 0.125 * yBarFull
+        res      = '<g id="data">\n'
+        pos      = {} # storage for positions of y-values, so same y-values get
+        #               same position
         
+        for i in range(self.numgraphs()):
+            dataset = self.data[i]
+            for j in range(len(dataset)):
+                item = dataset[j]
+                if pos.has_key(item[1]):
+                    onPos = pos[item[1]]
+                else:
+                    onPos = len(pos)
+                    pos[item[1]] = onPos
+                res += '<rect class="dataset_%s" x="%s" y="%s" height="%s" width="%s"/>\n'\
+                       % (i,
+                          self.gridbasex,
+                          self.gridbasey-(onPos*yBarFull)-ySpace-(i+1)*yHeight,
+                          yHeight,
+                          self.xScale * item[0])
+
+        if self.colnames:
+            for i in range(len(self.colnames)):
+                colname = self.colnames[i]
+                res += '<text x="5" y="%s" style="text-anchor:start;">%s</text>\n'\
+                   % (self.gridbasey - i * yBarFull - 3.5 * ySpace,
+                      colname)
+        else:
+            for colname, onPos in pos.items():
+                res += '<text x="5" y="%s" style="text-anchor:start;">%s</text>\n'\
+                       % (self.gridbasey - onPos * yBarFull - 3.5 * ySpace,
+                          colname)
+
+        return res + '</g>\n'
+            
+                
         
+    def drawLegend(self):
+        """Draw the Legend."""
+        return ''

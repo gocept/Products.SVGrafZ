@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: Base
-## Version: $Id: base.py,v 1.1 2003/04/10 13:58:50 mac Exp $
+## Version: $Id: base.py,v 1.2 2003/04/11 13:21:08 mac Exp $
 ##
 ################################################################################
 
@@ -100,20 +100,44 @@ class BaseGraph:
 
         allX = []
         allY = []
+        stringInX = stringInY = 0
         for dataset in self.data:
             for value in dataset:
-                allX.append(float(value[0]))
-                allY.append(float(value[1]))
+                try:
+                    valx = float(value[0])
+                except ValueError:
+                    valx = value[0]
+                    stringInX = 1
+                try:
+                    valy = float(value[1])
+                except ValueError:
+                    valy = value[1]
+                    stringInY = 1
 
-        cr['realMaxX'] = max(allX)
-        cr['realMaxY'] = max(allY)
-        cr['maxX']     = compRoundedValMax(cr['realMaxX'])
-        cr['maxY']     = compRoundedValMax(cr['realMaxY'])
+                allX.append(valx)
+                allY.append(valy)
 
-        cr['realMinX'] = min(allX)
-        cr['realMinY'] = min(allY)
-        cr['minX']     = compRoundedValMin(cr['realMinX'])
-        cr['minY']     = compRoundedValMin(cr['realMinY'])
+        if stringInX:
+            cr['realMaxX'] = None
+            cr['maxX']     = None
+            cr['realMinX'] = None
+            cr['minX']     = None
+        else:
+            cr['realMaxX'] = max(allX)
+            cr['maxX']     = compRoundedValMax(cr['realMaxX'])
+            cr['realMinX'] = min(allX)
+            cr['minX']     = compRoundedValMin(cr['realMinX'])
+
+        if stringInY:
+            cr['realMaxY'] = None
+            cr['maxY']     = None
+            cr['realMinY'] = None
+            cr['minY']     = None
+        else:
+            cr['realMaxY'] = max(allY)
+            cr['maxY']     = compRoundedValMax(cr['realMaxY'])
+            cr['realMinY'] = min(allY)
+            cr['minY']     = compRoundedValMin(cr['realMinY'])
 
         cr['countDistX'] = countDistinctValues(allX)
         cr['countDistY'] = countDistinctValues(allY)
@@ -158,3 +182,41 @@ class BaseGraph:
                               Not allowed Type of %s.' \
                               % (k,j,i,type(dim))
         return 1        
+
+
+    def _computeGridLines(self, minVal, maxVal, lines):
+        ystep = (maxVal - minVal) / float(abs(lines) + 1)
+        return [ minVal + (y * ystep) for y in range(1, abs(lines)+1) ]
+
+
+    def drawXGrindLines(self):
+        """Draw gridlines in parallel to the y-axis."""
+        res  = '<g id="xGrid">\n'
+        grid = self._computeGridLines(self.minX(), self.maxX(), self.gridlines)
+        for xval in grid:
+            res +='<line x1="%s" x2="%s" y1="%s" y2="%s"/>\n' % (
+                self.gridbasex + xval * self.xScale,
+                self.gridbasex + xval * self.xScale,
+                self.gridbasey,
+                self.gridboundy)
+            res += '<text x="%s" y="%s" style="text-anchor: middle;">%s</text>'\
+                   % (self.gridbasex + xval * self.xScale,
+                      self.gridbasey + 15,
+                      xval)
+            res += '\n'
+        return res + '</g>\n'
+
+    def drawXYAxis(self):
+        """Draw the x- and y-axis."""
+        res  = '<g id="xyaxis" style="stroke:#000000; stroke-opacity:1;">\n'
+        res += '<line x1="%s" x2="%s" y1="%s" y2="%s"/>\n' % (
+            self.gridbasex - 10,
+            self.gridboundx,
+            self.gridbasey,
+            self.gridbasey)
+        res += '<line x1="%s" x2="%s" y1="%s" y2="%s"/>\n' % (
+            self.gridbasex,
+            self.gridbasex,
+            self.gridbasey + 10,
+            self.gridboundy)
+        return res + '</g>\n'
