@@ -2,9 +2,9 @@
 ###
 ### SVGrafZ
 ###
-### $Revision: 1.2 $
+### $Revision: 1.1 $
 ################################################################################
-$Id: INSTALL.txt,v 1.2 2003/05/30 13:20:06 mac Exp $
+$Id: INSTALL.txt,v 1.1 2003/06/13 08:43:22 mac Exp $
 
 
 REQUIREMENTS
@@ -18,10 +18,11 @@ RECOMANDATIONS
 --------------
  for generating PNG-Images for Browsers which have no SVG-Support
    batik-1.5beta5 or higher from http://xml.apache.org/batik/
+   (Binary distribution is fine.)
 
 INSTALL
 -------
- bla ... as usual for a Zope Product
+ blah ... as usual for a Zope Product
 
 CONFIGURE
 ---------

@@ -2,10 +2,11 @@
 ## 
 ## SVGrafZ: Registry of InputConverters
 ##
-## $Id: icreg.py,v 1.2 2003/05/30 11:42:24 mac Exp $
+## $Id: icreg.py,v 1.3 2003/06/13 08:43:22 mac Exp $
 ################################################################################
 
-from interfaces import IDiagramType, IInputConverter, IDataSource
+from interfaces import IDiagramType, IInputConverter, IDefaultInputConverter, \
+     IDataSource
 
 class ICRegistry:
     """Registry for InputConverters.
@@ -28,13 +29,18 @@ class ICRegistry:
         capabilities = converterInstance.registration()
 
         if capabilities: # only if converter is able to do something
+            if IDefaultInputConverter.isImplementedBy(converterInstance):
+                if not self._defaultConverterName is None:
+                    raise RuntimeError, \
+                          'DoubleRegistration of DefaultConverter %s' \
+                          % converter.name
+                else:
+                    self._defaultConverterName = converter.name
+
             if self._inputConverters.get(converter.name):
                 raise RuntimeError, 'DoubleRegistration of %s' % converter.name
             
             self._inputConverters[converter.name] = converterInstance
-
-            if self._defaultConverterName is None:
-                self._defaultConverterName = converter.name
 
             for diagramType in capabilities.keys():
                 for dataSource in capabilities[diagramType]:

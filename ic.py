@@ -2,17 +2,18 @@
 ## 
 ## SVGrafZ: InputConverters
 ##
-## $Id: ic.py,v 1.8 2003/06/11 13:16:30 mac Exp $
+## $Id: ic.py,v 1.9 2003/06/13 08:43:22 mac Exp $
 ################################################################################
 
-from interfaces import IInputConverter, IInputConverterWithLegend
+from interfaces import IInputConverter, IInputConverterWithLegend, \
+     IDefaultInputConverter
 from dtypes import *
 from DateTime import DateTime
 
 class NoneConverter:
     """DefaultConverter which does no conversion."""
     
-    __implements__ = IInputConverter
+    __implements__ = IDefaultInputConverter
     
     name = 'NoneConverter'
     

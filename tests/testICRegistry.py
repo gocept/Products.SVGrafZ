@@ -1,14 +1,15 @@
 ################################################################################
 ## 
 ## SVGrafZ: Test of ICRegistry
-## $Id: testICRegistry.py,v 1.2 2003/05/28 11:29:02 mac Exp $
+## $Id: testICRegistry.py,v 1.3 2003/06/13 08:43:23 mac Exp $
 ##
 ################################################################################
 
 import config
 import unittest
 from icreg import ICRegistry
-from interfaces import IDiagramType, IInputConverter, IDataSource
+from interfaces import IDiagramType, IInputConverter, IDefaultInputConverter,\
+     IDataSource
 
 def pdb():
     import pdb
@@ -52,7 +53,7 @@ class Converter3:
         return {DiagramType1: [NoDataSource]}
 
 class Converter4:
-    __implements__ = IInputConverter
+    __implements__ = IDefaultInputConverter
     name = 'Converter4'
     def registration(self):
         return {DiagramType1: [DataSource1]}
@@ -64,6 +65,17 @@ class Converter5:
         return {DiagramType1: [DataSource1, DataSource2],
                 DiagramType2: [DataSource2]}
 
+class Converter6:
+    __implements__ = IDefaultInputConverter
+    name = 'Converter6'
+    def registration(self):
+        return {DiagramType1: [DataSource2]}
+
+class Converter7:
+    __implements__ = IInputConverter
+    name = 'Converter7'
+    def registration(self):
+        return {DiagramType2: [DataSource2]}
 
 
 
@@ -292,9 +304,12 @@ class ICRegistryTests(unittest.TestCase):
     def test_8getDefaultConverterName(self):
         """Test getDefaultConverterName()."""
 
-        c1 = Converter1
-        c4 = Converter4
+        c1 = Converter1 # empty converter
+        c4 = Converter4 # default converter
         c5 = Converter5
+        c6 = Converter6 # second default
+        c7 = Converter7
+        
 
         ICRegistry._clear()
 
@@ -302,9 +317,20 @@ class ICRegistryTests(unittest.TestCase):
         self.failUnless(ICRegistry.register(c1))
         self.assertNone(ICRegistry.getDefaultConverterName(), 'empty reg 2nd')
         self.failUnless(ICRegistry.register(c5))
-        self.assertEqual(c5.name, ICRegistry.getDefaultConverterName(), 'c5')
+        self.assertNone(ICRegistry.getDefaultConverterName(), 'no default')
         self.failUnless(ICRegistry.register(c4))
-        self.assertEqual(c5.name, ICRegistry.getDefaultConverterName(), 'c5 2')
+        self.assertEqual(c4.name,
+                         ICRegistry.getDefaultConverterName(),
+                         'default')
+        self.assertRaises(RuntimeError, ICRegistry.register, c6) #second default
+        self.assertNone(ICRegistry.getConverter(c6.name), 'get 2nd default')
+        self.assertEqual(c4.name,
+                         ICRegistry.getDefaultConverterName(),
+                         'default 2')
+        self.failUnless(ICRegistry.register(c7))
+        self.assertEqual(c4.name,
+                         ICRegistry.getDefaultConverterName(),
+                         'default 3')
 
         
 def test_suite():

@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: FormatConverters
-## Version: $Id: svgconverters.py,v 1.2 2003/05/23 12:47:55 mac Exp $
+## Version: $Id: svgconverters.py,v 1.3 2003/06/13 08:43:22 mac Exp $
 ##
 ################################################################################
 
@@ -139,9 +139,9 @@ class SVG2PNG:
         Returns:
           URL or path of stylesheet
         """
-        self.stylesheetPath = mktemp('SVGrafZ')
+        self.stylesheetPath = mktemp('SVGrafZ.css')
         sfh = open(self.stylesheetPath, 'w')
-        sfh.write(obj.__str__())
+        sfh.write(str(obj))
         sfh.close()
         
         return self.stylesheetPath
