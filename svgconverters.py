@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: FormatConverters
-## Version: $Id: svgconverters.py,v 1.6 2003/06/17 13:04:24 mac Exp $
+## Version: $Id: svgconverters.py,v 1.7 2003/07/28 11:29:29 mac Exp $
 ##
 ################################################################################
 
@@ -108,6 +108,8 @@ class SVG2Batik (SVG2xxx):
         global SVGrafZ_Java_Path, SVGrafZ_Batik_Path
         global SVGrafZ_BatikServer_Host, SVGrafZ_BatikServer_Port
 
+        self.stylesheetPath = None
+
         try:
             a = SVGrafZ_Java_Path
             a = SVGrafZ_Batik_Path
@@ -190,7 +192,8 @@ class SVG2Batik (SVG2xxx):
             rfh.close()
 
         # cleaning up
-        unlink(self.stylesheetPath)
+        if self.stylesheetPath:
+            unlink(self.stylesheetPath)
         unlink(sourceFile)
         unlink(resultFile)
         return ret
