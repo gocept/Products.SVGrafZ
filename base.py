@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: Base
-## Version: $Id: base.py,v 1.5 2003/05/23 12:43:18 mac Exp $
+## Version: $Id: base.py,v 1.6 2003/05/27 13:39:42 mac Exp $
 ##
 ################################################################################
 
@@ -207,7 +207,7 @@ class BaseGraph:
             res += '<text x="%s" y="%s" style="text-anchor: middle;">%s</text>'\
                    % (self.gridbasex + xval * self.xScale,
                       self.gridbasey + 15,
-                      xval)
+                      self.confLT(xval))
             res += '\n'
         return res + '</g>\n'
 
@@ -231,7 +231,7 @@ class BaseGraph:
         res += '<text x="%s" y="%s" style="text-anchor: middle;">%s</text>'\
                    % ((self.gridboundx + self.gridbasex) /2,
                       self.gridboundy,
-                      self.title)
+                      self.confLT(self.title))
         return res + '\n</g>\n'
 
     def drawLegend(self):
@@ -254,6 +254,10 @@ class BaseGraph:
             res += """<text x="%s" y="%s" style="text-anchor:end;">%s</text>"""\
                    % (self.width - 25,
                       self.gridboundy + 30 + (15 * i),
-                      self.legend[i],
+                      self.confLT(self.legend[i]),
                       )
         return res+"\n</g>"
+
+    def confLT(self, text):
+        """Convert the littler than symbols ('<') to &lt;."""
+        return str(text).replace('<', '&lt;')

@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: SimpleBarGraph
-## Version: $Id: bar.py,v 1.7 2003/04/17 13:24:32 mac Exp $
+## Version: $Id: bar.py,v 1.8 2003/05/27 13:39:42 mac Exp $
 ##
 ################################################################################
 
@@ -114,12 +114,12 @@ class SimpleBarGraph(BaseGraph):
                 colname = self.colnames[i]
                 res += '<text x="5" y="%s" style="text-anchor:start;">%s</text>\n'\
                    % (self.gridbasey - i * yBarFull - 3.5 * ySpace,
-                      colname)
+                      self.confLT(colname))
         else:
             for colname, onPos in pos.items():
                 res += '<text x="5" y="%s" style="text-anchor:start;">%s</text>\n'\
                        % (self.gridbasey - onPos * yBarFull - 3.5 * ySpace,
-                          colname)
+                          self.confLT(colname))
 
         return res + '</g>\n'
             
