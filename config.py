@@ -3,7 +3,7 @@
 ## 
 ## SVGrafZ: Configure File
 ##
-## $Id: config.py,v 1.12 2004/04/08 07:14:37 mac Exp $
+## $Id: config.py,v 1.13 2004/04/08 07:25:46 mac Exp $
 ################################################################################
 
 
@@ -26,7 +26,7 @@ SVGrafZ_empty_dataset = 'Keine Daten! Also kann nichts dargestellt werden.'
 
 ## error text, if SVG images are not supported by browser
 # deutsch (German)
-SVGrafZ_SVG_not_supported = "Es können bei Ihnen keine SVG-Grafiken darstellt werden. Bitte stellen Sie im Modul 'Voreinstellungen' unter 'Diagrammdarstellung' auf PNG-Grafiken um oder wenden Sie sich an Ihren Administrator, um entsprechende Software installieren zu lassen, so dass SVG-Grafiken darstellt werden können."
+SVGrafZ_SVG_not_supported = "Es können bei Ihnen keine SVG-Grafiken darstellt werden. Bitte stellen Sie im Modul 'Voreinstellungen' unter 'Diagrammdarstellung' auf PNG-Grafiken um oder wenden Sie sich an Ihren Administrator, um entsprechende Software installieren zu lassen, so dass SVG-Grafiken dargestellt werden können."
 # English
 # SVGrafZ_SVG_not_supported = "Your Browser does not support SVG images. Please contact your Administrator."
 
