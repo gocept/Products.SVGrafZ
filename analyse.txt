@@ -1,7 +1,7 @@
 ANALYSE:
 --------
 
-$Id: analyse.txt,v 1.1 2003/04/09 12:25:55 mac Exp $
+$Id: analyse.txt,v 1.2 2003/05/22 10:21:42 mac Exp $
 
 
 Name: SVGrafZ (sprich: 'eswiegrafs')
@@ -32,3 +32,5 @@ Anforderungen:
           anhand vorhandener oder fehlender Property-Werte
         - Einbindung eines Diagramms in HTML-Seite mittels einer Methode des 
           Diagrammobjektes
+        - Möglichkeit der Anzeige der gerenderten SVG-Grafiken als 
+          Pixel-Grafiken für Anwender, die kein SVG-Plugin haben
