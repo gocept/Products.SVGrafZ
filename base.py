@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: Base
-## Version: $Id: base.py,v 1.12 2003/06/04 10:20:55 mac Exp $
+## Version: $Id: base.py,v 1.13 2003/06/06 13:36:56 mac Exp $
 ##
 ################################################################################
 
@@ -315,7 +315,7 @@ class BaseGraph:
         res += '<text x="%s" y="%s" font-size="12pt" text-anchor="middle" fill="red">%s</text>' % (
             self.width / 2,
             (self.gridbasey - self.gridboundy) / 2,
-            'Error: ' + self.errortext)
+            'Error: ' + self.confLT(self.errortext))
         return res
 
     def xAxis_verticalLabels(self, labels, firstWidth, xWidth):
@@ -415,7 +415,6 @@ class DataOnYAxis(BaseGraph):
         if self.result:
             return self.result
 
-        self.specialAttribHook()
         self.result = self.svgHeader()
         if self.errortext:
             self.result += self.printError()
@@ -423,6 +422,7 @@ class DataOnYAxis(BaseGraph):
             try:
                 if self.maxY() is None:
                     raise RuntimeError, 'All values on y-axis must be numbers!'
+                self.specialAttribHook()
                 difY = float(self.maxY() - self.minY())
                 if difY:
                     self.yScale = float((self.gridbasey-self.gridboundy) / difY)
@@ -450,7 +450,7 @@ class DataOnYAxis(BaseGraph):
           specialAttrib.
 
         Return: void
-        On error put textual description in self.errortext
+        On error: raise RuntimeError
         """
         pass # no specialAttrib things by default
 

@@ -3,7 +3,7 @@
 def update_all(self):
     ret = ''
     if self.meta_type == 'SVGrafZ':
-        ret += "updating: %s\n" % '/'.join(self.getPhysicalPath())
+        ret += "updated: %s\n" % '/'.join(self.getPhysicalPath())
         update = getattr(self, '_update')
         if callable(update):
             update()
@@ -14,6 +14,7 @@ def update_all(self):
     for child in childs:
         ret += update_all(child)
 
+    ret += "\nUpdate complete."
     return ret
         
 

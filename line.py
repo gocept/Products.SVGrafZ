@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ: LineGraphs
 ##
-## $Id: line.py,v 1.3 2003/06/04 08:56:17 mac Exp $
+## $Id: line.py,v 1.4 2003/06/06 13:36:56 mac Exp $
 ################################################################################
 
 from interfaces import IDiagramKind
@@ -77,6 +77,7 @@ class Mirrored(LineDiagram):
                       missing x-values are left out,
                       values on x-axis are taken as discrete,
                       specialAttribute for defining minimun units on y-axis,
+                      points are drawn as little x on diagram
     """
 
     __implements__ = IDiagramKind
@@ -99,36 +100,53 @@ class Mirrored(LineDiagram):
             
             
         except (ValueError, TypeError):
-            self.errortext = "'%s' must be a number." % self.specialAttribName
+            raise RuntimeError, "'%s' must be a number." % (self.specialAttribName)
             
     def drawGraph(self):
         "Draw the Lines of the graph and name the columns."
+        def drawCross(x,y,i):
+            return '''
+            <line class="dataset%s" x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" />
+            <line class="dataset%s" x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" />
+            ''' % (i, x-3, y-3, x+3, y+3, SVGrafZ_default_Color,
+                   i, x+3, y-3, x-3, y+3, SVGrafZ_default_Color,
+                   )
+        
         distX    = self.distValsX()
         lenDistX = len(distX)
         xWidth   = float(self.gridboundx - self.gridbasex) / (lenDistX + 1)
         base     = self.gridbasex + xWidth
         res      = '<g id="data">\n'
-        start    = 1
         
         distX.sort()
         for i in range(self.numgraphs()):
             dataset = dict(self.data[i])
+            points  = []
             for j in range(lenDistX):
+                if len(dataset) == 0:
+                    break
                 try:
                     val = float(dataset[distX[j]])
+                    x   = base + j * xWidth
+                    y   = self.gridboundy + (val * self.yScale)
+                    points.append([x,y])
+                    res += drawCross(x,y,i)
                 except KeyError:
-                    if not start:
-                        res +='"/>\n"'
-                        start = 1
-                if start:
-                    res += '<path class="dataset%s" stroke-width="2" fill="none" stroke="%s" d="M' % (i, SVGrafZ_default_Color)
-                else:
-                    res += 'L'
-                res += "%s,%s " % (base + j * xWidth,
-                                   self.gridboundy + (val * self.yScale))
-                start = 0
-            res += '"/>\n'
-            start = 1
+                    pass
+
+            if len(points) > 1:
+                start = 1
+                for point in points:
+                    if start:
+                        res += '<path class="dataset%s" stroke-width="2" fill="none" stroke="%s" d="M%s,%s' % (
+                            i,
+                            SVGrafZ_default_Color,
+                            point[0],
+                            point[1])
+                        start = 0
+                    else:
+                        res += ' L%s,%s' % (point[0], point[1])
+                res += '"/>\n'
 
         res += self.xAxis_verticalLabels(distX, base, xWidth)
         

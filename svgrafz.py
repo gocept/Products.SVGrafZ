@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ
 ##
-## $Id: svgrafz.py,v 1.17 2003/06/04 08:56:17 mac Exp $
+## $Id: svgrafz.py,v 1.18 2003/06/06 13:36:56 mac Exp $
 ################################################################################
 
 import os
@@ -30,7 +30,7 @@ class SVGrafZProduct(SimpleItem):
     """ProductClass of SVGrafZ."""
 
     meta_type = 'SVGrafZ'
-    version = '0.1a4'
+    version = '0.15'
 
     manage_options = (
         {'label':'Properties',
@@ -138,24 +138,35 @@ class SVGrafZProduct(SimpleItem):
                          'fixcolumn': None,
                          'specialattrib': None
                          })
+        self.current_version = self.version # set at creation & update
 
     def _update(self):
         """Update older versions."""
-        if self.dat['graphname'] == 'Einfaches Balkendiagramm' or \
-               self.dat['graphname'] == 'Zweifaches Balkendiagramm':
-           self.dat['graphname'] =  'simple bar diagram'
-        elif self.dat['graphname'] == 'Einfaches Liniendiagramm':
-            self.dat['graphname'] = 'simple line diagram'
-        elif self.dat['graphname'] == 'Gespiegeltes Liniendiagramm':
-            self.dat['graphname'] = 'mirrored line diagram'
-        elif self.dat['graphname'] == 'Einfaches Säulendiagramm':
-            self.dat['graphname'] = 'simple column diagram'
-        else:
-            print self.dat['graphname']
+        try:
+            version = self.current_version
+        except AttributeError:
+            # from 0.1a3 --> 0.1a4
+            if self.dat['graphname'] == 'Einfaches Balkendiagramm' or \
+                   self.dat['graphname'] == 'Zweifaches Balkendiagramm':
+                self.dat['graphname'] =  'simple bar diagram'
+            elif self.dat['graphname'] == 'Einfaches Liniendiagramm':
+                self.dat['graphname'] = 'simple line diagram'
+            elif self.dat['graphname'] == 'Gespiegeltes Liniendiagramm':
+                self.dat['graphname'] = 'mirrored line diagram'
+            elif self.dat['graphname'] == 'Einfaches Säulendiagramm':
+                self.dat['graphname'] = 'simple column diagram'
+
+            # from 0.1a4 --> 0.15
+            self.current_version = '0.15'
+            if self.dat['convertername'] == 'Z SQL Method to RowGraph':
+                self.dat['convertername'] = 'ZSQL (Data in Columns) to y-Axis'
+            elif self.dat['convertername'] == 'Z SQL Method to Graph':
+                self.dat['convertername'] = 'ZSQL (Data in Columns) to x-Axis'
+        if self.current_version == '0.15':
+            # set self.current_version to new version
+            pass
 
 
-
-        
     security.declareProtected('View management screens', 'equalsGraphName')
     def equalsGraphName(self, name):
         """Test if the given name is equal to real graphname."""
@@ -389,7 +400,6 @@ class SVGrafZProduct(SimpleItem):
             except RuntimeError:
                 import sys
                 errortext = str(sys.exc_info()[1])
-
         except (AttributeError, KeyError, CompilerError):
             errortext = 'DataSource "%s" is not existing.' % (current['data'])
         try:

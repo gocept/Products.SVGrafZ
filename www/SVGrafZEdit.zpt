@@ -1,7 +1,7 @@
 <!--
 Copyright (c) 2003 gocept gmbh & co. kg. All rights reserved.
 See also LICENSE.txt
-$Id: SVGrafZEdit.zpt,v 1.7 2003/06/03 15:03:18 mac Exp $
+$Id: SVGrafZEdit.zpt,v 1.8 2003/06/06 13:37:02 mac Exp $
 -->
 
   <h1 tal:replace="structure here/manage_page_header">Header</h1>
@@ -93,7 +93,7 @@ $Id: SVGrafZEdit.zpt,v 1.7 2003/06/03 15:03:18 mac Exp $
                    name="height"
                    tal:attributes="value cur/height"></td>
         <td class="form-mono" tal:content="def/height"></td>
-        <td class="form-text">ReferenceColumn: </td>
+        <td class="form-text">ReferenceColumn(s): </td>
         <td><input type="text"
                    name="fixcolumn"
                    tal:attributes="value cur/fixcolumn"></td>
