@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: Base
-## Version: $Id: base.py,v 1.18 2003/08/18 13:00:53 mac Exp $
+## Version: $Id: base.py,v 1.19 2003/10/07 08:55:18 mac Exp $
 ##
 ################################################################################
 
@@ -22,6 +22,46 @@ class BaseGraph:
 
     __computed_results__ = None
     specialAttribName    = None
+
+
+    def __init__(self,
+                 data=None,
+                 width=0,
+                 height=0,
+                 gridlines=0,
+                 legend=None,
+                 colnames=None,
+                 title=None,
+                 stylesheet=None,
+                 errortext=None):
+        "See IDiagramKind.__init__"
+        self.data       = data
+        self.width      = width
+        self.height     = height
+        self.legend     = legend
+        self.colnames   = colnames
+        self.gridlines  = gridlines
+        self.title      = title
+        self.stylesheet = stylesheet
+        self.errortext  = errortext
+        self.result     = ''
+
+##      Achtung: die Koordinaten 0,0 sind im SVG links oben!
+##        gridbasey   unteres Ende in y-Richtung
+##        gridboundy  oberes  Ende in y-Richtung
+##        gridbasey groesser gridboundy!
+##        gridbasex   unteres (linkes) Ende in x-Richtung
+##        gridboundx  oberes (rechtes) Ende in x-Richtung
+##        gridbasex kleiner gridboundx!
+
+        self.gridbasey  = self.height * 0.9333
+        self.gridboundy = self.height * 0.0333
+        self.gridbasex  = self.width  * 0.0666
+        if self.hasLegend():
+            self.gridboundx = self.width * 0.8
+        else:
+            self.gridboundx = self.width * 0.98
+        print self.data
 
 
     def setSpecialAttrib(self, value):
@@ -245,13 +285,16 @@ class BaseGraph:
         ystep = (maxVal - minVal) / float(abs(lines) + 1)
         return [ minVal + (y * ystep) for y in range(1, abs(lines)+1) ]
 
+    def _computeGridLinesInt(self, minVal, maxVal, lines):
+        if ((maxVal - minVal) < lines):
+            lines = maxVal - minVal
+        ystep = (maxVal - minVal) / (abs(lines) + 1)
+        return [ int(minVal + (y * ystep)) for y in range(1, abs(lines) + 1) ]
 
-    def drawXGrindLines(self):
+
+    def _drawXGridLines(self, grid):
         """Draw gridlines in parallel to the y-axis."""
-        if not self.gridlines:
-            return ''
         res  = '<g id="xGrid">\n'
-        grid = self._computeGridLines(self.minX(), self.maxX(), self.gridlines)
         for xval in grid:
             res +='<line x1="%s" x2="%s" y1="%s" y2="%s"/>\n' % (
                 self.gridbasex + xval * self.xScale,
@@ -265,12 +308,26 @@ class BaseGraph:
             res += '\n'
         return res + '</g>\n'
 
-    def drawYGrindLines(self):
-        """Draw gridlines in parallel to the x-axis."""
+    def drawXGridLines(self):
+        "Draw gridlines in parallel to the y-axis with float caption values."
         if not self.gridlines:
             return ''
+        return self._drawXGridLines(self._computeGridLines(self.minX(),
+                                                           self.maxX(),
+                                                           self.gridlines))
+
+    def drawXGridLinesInt(self):
+        "Draw gridlines in parallel to the y-axis with integer caption values."
+        if not self.gridlines:
+            return ''
+        return self._drawXGridLines(self._computeGridLinesInt(self.minX(),
+                                                              self.maxX(),
+                                                              self.gridlines))
+
+
+    def _drawYGridLines(self, grid):
+        """Draw gridlines in parallel to the x-axis."""
         res  = '<g id="yGrid">\n'
-        grid = self._computeGridLines(self.minY(), self.maxY(), self.gridlines)
         for yval in grid:
             res +='<line x1="%s" x2="%s" y1="%s" y2="%s"/>\n' % (
                 self.gridbasex,
@@ -282,6 +339,23 @@ class BaseGraph:
                       self.confLT(yval))
             res += '\n'
         return res + '</g>\n'
+
+    def drawYGridLines(self):
+        "Draw gridlines in parallel to the x-axis with float caption values."
+        if not self.gridlines:
+            return ''
+        grid = self._computeGridLines(self.minY(), self.maxY(), self.gridlines)
+        return self._drawYGridLines_do(grid)
+
+
+    def drawYGridLinesInt(self):
+        "Draw gridlines in parallel to the x-axis with integer caption values."
+        if not self.gridlines:
+            return ''
+        return self._drawYGridLines(self._computeGridLinesInt(self.minY(),
+                                                               self.maxY(),
+                                                               self.gridlines))
+    
 
     def drawXYAxis(self):
         """Draw the x- and y-axis."""
@@ -508,6 +582,11 @@ class BaseGraph:
                 self.drawLegend,
                 self.drawTitle]
 
+    def drawGraph(self):
+        "Abstract Method: Draw the the graph and name the columns."
+        raise RuntimeError, "Can't use the abstract method drawGraph!"
+
+
 
     
 class DataOnYAxis(BaseGraph):
@@ -519,45 +598,6 @@ class DataOnYAxis(BaseGraph):
         """
         return ['Continuous data on y-axis. Discrete data on x-axis.']
     description = staticmethod(description)
-
-    def __init__(self,
-                 data=None,
-                 width=0,
-                 height=0,
-                 gridlines=0,
-                 legend=None,
-                 colnames=None,
-                 title=None,
-                 stylesheet=None,
-                 errortext=None):
-        "See IDiagramKind.__init__"
-        self.data       = data
-        self.width      = width
-        self.height     = height
-        self.legend     = legend
-        self.colnames   = colnames
-        self.gridlines  = gridlines
-        self.title      = title
-        self.stylesheet = stylesheet
-        self.errortext  = errortext
-
-        self.result   = ''
-
-##      Achtung: die Koordinaten 0,0 sind im SVG links oben!
-##        gridbasey   unteres Ende in y-Richtung
-##        gridboundy  oberes  Ende in y-Richtung
-##        gridbasey groesser gridboundy!
-##        gridbasex   unteres (linkes) Ende in x-Richtung
-##        gridboundx  oberes (rechtes) Ende in x-Richtung
-##        gridbasex kleiner gridboundx!
-
-        self.gridbasey  = self.height * 0.9333
-        self.gridboundy = self.height * 0.0333
-        self.gridbasex  = self.width  * 0.0666
-        if self.hasLegend():
-            self.gridboundx = self.width * 0.8
-        else:
-            self.gridboundx = self.width * 0.98
 
 
     def specialAttribHook(self):
@@ -573,13 +613,29 @@ class DataOnYAxis(BaseGraph):
 
 
 
+class DataOnXAxis(BaseGraph):
+    "Abstract class for DiagramKinds which have their data on x-axis."
+
+    def description():
+        "see interfaces.IDiagamKind.description"
+        return ['Continuous data on x-axis. Discrete data on y-axis.']
+    description = staticmethod(description)
+
+
+    def specialAttribHook(self):
+        """Handling of the specialAttrib.
+
+        Test datatype of specialAttrib & change data influenced by
+          specialAttrib.
+
+        Return: void
+        On error: raise RuntimeError
+        """
+        pass # no specialAttrib things by default
+
+
     def getDrawingActions(self):
         """Returns the methods which are used to draw the graph."""
-        return [self.computeYScale,
-                self.drawYGrindLines,] + \
+        return [self.computeXScale] + \
                 BaseGraph.getDrawingActions(self)
-
-    def drawGraph(self):
-        "Abstract Method: Draw the Lines of the graph and name the columns."
-        raise RuntimeError, "Can't use the abstract methon drawGraph!"
 

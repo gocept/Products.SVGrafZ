@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ: LineGraphs
 ##
-## $Id: line.py,v 1.7 2003/06/19 12:53:32 mac Exp $
+## $Id: line.py,v 1.8 2003/10/07 08:55:18 mac Exp $
 ################################################################################
 
 from interfaces import IDiagramKind
@@ -24,6 +24,12 @@ class LineDiagram(DataOnYAxis):
         return DataOnYAxis.description() + [
             'Continuous data displayed as colored lines.',]
     description = staticmethod(description)
+
+    def getDrawingActions(self):
+        """Returns the methods which are used to draw the graph."""
+        return [self.computeYScale,
+                self.drawYGridLines,] + \
+                DataOnYAxis.getDrawingActions(self)
 
 
 class Simple(LineDiagram):
@@ -196,7 +202,7 @@ class Mirrored(LineDiagram):
         return res + '</g>\n'
 
 
-    def drawYGrindLines(self):
+    def drawYGridLines(self):
         """Draw gridlines in parallel to the x-axis.
 
         Overwriting existing method because of mirrored y-axis.

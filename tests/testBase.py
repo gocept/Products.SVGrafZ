@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: Test of Class BaseGraph
-## Version: $Id: testBase.py,v 1.4 2003/06/13 12:03:30 mac Exp $
+## Version: $Id: testBase.py,v 1.5 2003/10/07 08:55:18 mac Exp $
 ##
 ################################################################################
 
@@ -133,7 +133,7 @@ class BaseGraphTests(unittest.TestCase):
 
     def test_maxX(self):
         "Test maxX."
-        res = [6,500000,2,400,0,0,2000,None,6]
+        res = [6,400000,2,300,-1000,0,2000,None,5]
 
         for j in self.errors:
             g = BaseGraphData(j)
@@ -202,7 +202,7 @@ class BaseGraphTests(unittest.TestCase):
 
     def test_maxY(self):
         "Test maxY."
-        res = [6,50000,3,400,-1000,0,2000,4.0,None]
+        res = [6,40000,3,300,-2000,0,2000,3.0,None]
 
         for j in self.errors:
             g = BaseGraphData(j)

@@ -1,13 +1,13 @@
 ################################################################################
 ## 
 ## SVGrafZ: Test of Class SimpleBarGraph
-## Version: $Id: testBar.py,v 1.5 2003/06/13 12:03:30 mac Exp $
+## Version: $Id: testBar.py,v 1.6 2003/10/07 08:55:18 mac Exp $
 ##
 ################################################################################
 
 import config4test
 import unittest
-from bar import SimpleBarGraph
+from bar import Simple
 
 
 class SimpleBarGraphTests(unittest.TestCase):
@@ -33,14 +33,14 @@ class SimpleBarGraphTests(unittest.TestCase):
     def test_instantiation(self):
         "Test the instantiation of the class."
         for t in self.to_test:
-            self.failUnless(SimpleBarGraph(data=t), t)
+            self.failUnless(Simple(data=t), t)
 
     def test_instantiation2(self):
         "Parametertest for Instantiation."
-        a = SimpleBarGraph(data = [[[1,1]]], width=600, height=300)
-        b = SimpleBarGraph(data = [[[1,1]]], width=300, height=300)
-        c = SimpleBarGraph(data = [[[1,1]]], width=600, height=800)
-        d = SimpleBarGraph(data = [[[1,1]]],
+        a = Simple(data = [[[1,1]]], width=600, height=300)
+        b = Simple(data = [[[1,1]]], width=300, height=300)
+        c = Simple(data = [[[1,1]]], width=600, height=800)
+        d = Simple(data = [[[1,1]]],
                            width=600,
                            height=300,
                            legend=['test'])
@@ -54,7 +54,7 @@ class SimpleBarGraphTests(unittest.TestCase):
     def test_compute(self):
         "Test SimpleBarGraph.compute for exceptions."
         for e in self.errors:
-            g = SimpleBarGraph(data=e)
+            g = Simple(data=e)
             self.failUnless(RuntimeError, g.compute)
  
 def test_suite():

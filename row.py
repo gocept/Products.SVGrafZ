@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ: RowGraphs
 ##
-## $Id: row.py,v 1.3 2003/08/18 13:00:53 mac Exp $
+## $Id: row.py,v 1.4 2003/10/07 08:55:18 mac Exp $
 ################################################################################
 
 from interfaces import IDiagramKind
@@ -37,6 +37,12 @@ class Simple(RowDiagram):
 
     name = 'simple column diagram'
 
+
+    def getDrawingActions(self):
+        """Returns the methods which are used to draw the graph."""
+        return [self.computeYScale,
+                self.drawYGridLines,] + \
+                BaseGraph.getDrawingActions(self)
 
     def description():
         """see interfaces.IDiagamKind.description
@@ -99,10 +105,13 @@ class FillingGaps(Simple):
             ]
     description = staticmethod(description)
 
+
     def getDrawingActions(self):
         """Returns the methods which are used to draw the graph."""
-        return [self.makeXValsContinoous] + \
-               Simple.getDrawingActions(self)
+        return [self.makeXValsContinoous,
+                self.computeYScale,
+                self.drawYGridLinesInt,] + \
+                RowDiagram.getDrawingActions(self)
 
     def makeXValsContinoous(self):
         "Fill gaps in x-Values so that they are continoous."
@@ -110,12 +119,6 @@ class FillingGaps(Simple):
         self._change_computed_result('distValsX', distX)
         return ''
 
-
-    def _computeGridLines(self, minVal, maxVal, lines):
-        if ((maxVal - minVal) < lines):
-            lines = maxVal - minVal
-        ystep = (maxVal - minVal) / (abs(lines) + 1)
-        return [ int(minVal + (y * ystep)) for y in range(1, abs(lines) + 1) ]
 
     def specialAttribHook(self):
         """Handling of the specialAttrib.

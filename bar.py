@@ -2,16 +2,30 @@
 ## 
 ## SVGrafZ: BarGraphs
 ##
-## $Id: bar.py,v 1.18 2003/08/18 13:00:53 mac Exp $
+## $Id: bar.py,v 1.19 2003/10/07 08:55:18 mac Exp $
 ################################################################################
 
 from interfaces import IDiagramKind, IDefaultDiagramKind
-from base import BaseGraph
+from base import DataOnXAxis
 from dtypes import *
 from config import SVGrafZ_default_Color
 
+class BarDiagram(DataOnXAxis):
+    """Abstract superclass for concrete BarDiagram classes."""
 
-class SimpleBarGraph(BaseGraph):
+    def registration():
+        """See IDiagramKind.registration()."""
+        return [BarGraphs]
+    registration = staticmethod(registration)
+
+    def description():
+        "See interfaces.IDiagamKind.description."
+        return DataOnXAxis.description() + [
+            'Continuous data is shown as horizontal bars of different colors.']
+    description = staticmethod(description)
+
+
+class Simple(BarDiagram):
     """Simple BarGraph with multiple DataRows,
                        without negative values,
                        x-axis always starting at zero."""
@@ -19,50 +33,6 @@ class SimpleBarGraph(BaseGraph):
     __implements__ = IDefaultDiagramKind
 
     name = 'simple bar diagram'
-
-    def registration():
-        """See IDiagramKind.registration()."""
-        return [BarGraphs]
-    registration = staticmethod(registration)
-
-    def __init__(self,
-                 data=None,
-                 width=0,
-                 height=0,
-                 gridlines=0,
-                 legend=None,
-                 colnames=None,
-                 title=None,
-                 stylesheet=None,
-                 errortext=None):
-        "See IDiagramKind.__init__"
-        self.data       = data
-        self.width      = width
-        self.height     = height
-        self.legend     = legend
-        self.colnames   = colnames
-        self.gridlines  = gridlines
-        self.title      = title
-        self.stylesheet = stylesheet
-        self.errortext  = errortext
-        
-        self.result     = ''
-
-##      Achtung: die Koordinaten 0,0 sind im SVG links oben!
-##        gridbasey   unteres Ende in y-Richtung
-##        gridboundy  oberes  Ende in y-Richtung
-##        gridbasey groesser gridboundy!
-##        gridbasex   unteres (linkes) Ende in x-Richtung
-##        gridboundx  oberes (rechtes) Ende in x-Richtung
-##        gridbasex kleiner gridboundx!
-
-        self.gridbasey  = self.height * 0.9333
-        self.gridboundy = self.height * 0.0333
-        self.gridbasex  = self.width  * 0.0666
-        if self.hasLegend():
-            self.gridboundx = self.width * 0.8
-        else:
-            self.gridboundx = self.width * 0.98
 
     def drawGraph(self):
         "Draw the Bars of the graph."
@@ -96,17 +66,12 @@ class SimpleBarGraph(BaseGraph):
         return res + '</g>\n'
 
 
-
     def description():
         """see interfaces.IDiagamKind.description
         """
-        return ['Continuous data on x-axis. Discrete data on y-axis.',
-                'Continuous data is shown as bars of different colors.',
-                'You can have multiple Datasets.',
-                'X-axis is always starting at zero, so you cannot have negative\
-                continuous values.',
-                ]
-    
+        return BarDiagram.description() + [
+            'You can have multiple Datasets.',
+            'X-axis is always starting at zero, so you cannot have negative continuous values.',]
     description = staticmethod(description)
 
 
@@ -123,10 +88,31 @@ class SimpleBarGraph(BaseGraph):
         self._change_computed_result('minX',
                                      self._compRoundedValMax(0.0))
 
-
     def getDrawingActions(self):
         """Returns the methods which are used to draw the graph."""
         return [self.computeXScale,
-                self.drawXGrindLines,] + \
-                BaseGraph.getDrawingActions(self)
+                self.drawXGridLines] + \
+                BarDiagram.getDrawingActions(self)
+
+
+class IntX(Simple):
+    """BarGraph like Simple but with x-axis values rounded to int."""
+
+    __implements__ = IDiagramKind
+
+    name = 'bar diagram with int(x)'
+    
+    def description():
+        """see interfaces.IDiagamKind.description
+        """
+        return Simple.description() + [
+            'Values on x-axis are shown as integers.'
+            ]
+    description = staticmethod(description)
+    
+    def getDrawingActions(self):
+        """Returns the methods which are used to draw the graph."""
+        return [self.computeXScale,
+                self.drawXGridLinesInt] + \
+                BarDiagram.getDrawingActions(self)
 
