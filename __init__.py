@@ -2,7 +2,7 @@
 ################################################################################
 ## 
 ## SVGrafZ
-## Version: $Id: __init__.py,v 1.13 2004/03/09 21:21:59 ctheune Exp $
+## Version: $Id: __init__.py,v 1.14 2004/03/09 21:23:57 ctheune Exp $
 ##
 ################################################################################
 
@@ -42,9 +42,6 @@ def initialize(registrar):
         icon = 'www/icon.gif'
         )
     registrar.registerHelp()
-    
-    if config.SVGrafZ_BatikServer_Invoke_Cmd:
-        startBatikServer()
 
 def registerConverters(module):
     """Registers all input converters found in the given module."""
