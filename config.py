@@ -3,7 +3,7 @@
 ## 
 ## SVGrafZ: Configure File
 ##
-## $Id: config.py,v 1.8 2003/11/21 12:22:01 ctheune Exp $
+## $Id: config.py,v 1.9 2003/12/03 10:11:49 mac Exp $
 ################################################################################
 
 
@@ -51,8 +51,10 @@ SVGrafZ_download_PDF = "PDF-Datei herunterladen"
 SVGrafZ_BatikServer_Host = 'localhost'
 ## batikServer - port number
 SVGrafZ_BatikServer_Port = 54822
-
-SVGrafZ_BatikServer_Binary = '/home/ctheune/tmp/runBatikServer'
+## If you want to start Batikserver when you start Zope enter here the
+## command to do so.
+SVGrafZ_BatikServer_Invoke_Cmd = '/home/mac/bin/runBatikServer '\
+                                 '-l /home/mac/tmp/tmp/batikServer.log'
 
 ### batikRasterizer
 ## batikRasterizer - absolute Path to Java 1.3+ interpreter binary
