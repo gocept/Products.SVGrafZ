@@ -3,7 +3,7 @@
 ## 
 ## SVGrafZ: LineGraphs
 ##
-## $Id: line.py,v 1.14 2003/10/27 10:14:06 mac Exp $
+## $Id: line.py,v 1.15 2004/02/23 08:33:22 mac Exp $
 ################################################################################
 
 from interfaces import IDiagramKind
@@ -15,6 +15,7 @@ class LineDiagram(DataOnYAxis):
     """Abstract superclass for concrete LineDiagram classes."""
 
     pointsAsCrosses = 0
+    y_axis = 'continuous' # continuous values on y-axis
     mirrored = 0
     labels = 'vertical'
 
@@ -64,6 +65,9 @@ class LineDiagram(DataOnYAxis):
         xWidth   = float(self.gridboundx - self.gridbasex) / lenDistX
         base     = self.gridbasex + xWidth / 2
         res      = '<g id="data">\n'
+        if self.y_axis == 'discrete':
+            distY = self.distValsY()
+            distY.sort()
         
         distX.sort()
         for i in range(self.numgraphs()):
@@ -73,7 +77,10 @@ class LineDiagram(DataOnYAxis):
                 if len(dataset) == 0:
                     break
                 try:
-                    val = float(dataset[distX[j]])
+                    if self.y_axis == 'discrete':
+                        val = distY.index(dataset[distX[j]]) + 1 # start at 1
+                    else:
+                        val = float(dataset[distX[j]])
                     x   = base + j * xWidth
                     if self.mirrored:
                         y = self.gridboundy + (val * self.yScale)
@@ -237,7 +244,7 @@ class SimpleCrossed(PointsAsCrosses):
                       missing x-values are left out,
                       values on x-axis are taken as discrete,
                       points are drawn as little x on diagram
-                      labels on x-axis diagonally written
+                      labels on x-axis vertical written
     """
 
     __implements__  = IDiagramKind
@@ -260,3 +267,55 @@ class SimpleCrossed(PointsAsCrosses):
         "Do the checking of specialAttrib things."
         self._change_computed_result('realMinY', 0.0) # min of y is zero
         self._change_computed_result('minY', self._compRoundedValMin(0.0))
+
+
+class CrossedDiscrete(PointsAsCrosses):
+    """LineGraph with multiple DataRows,
+                      no double values on x-axis allowed. (if so, random value
+                          gets choosen),
+                      missing x-values are left out,
+                      values on x-axis are taken as discrete,
+                      values on y-axis are taken as discrete,
+                      points are drawn as little x on diagram
+                      labels on x-axis diagonally written
+    """
+    __implements__  = IDiagramKind
+    name            = 'line diagram for discrete data with crosses as points'
+    y_axis          = 'discrete'
+    pointsAsCrosses = 1
+    mirrored        = 0
+    labels          = 'diagonally'
+
+    def description():
+        """see interfaces.IDiagamKind.description
+        """
+        return PointsAsCrosses.description() + [
+            "All values must be discrete but there is no need that they are\
+            numbers.",
+            "The labels on the x-axis written diagonally, so the diagramm must \
+            be high enough so that the labels find place.",
+            ]
+    description = staticmethod(description)
+
+    def specialAttribHook(self):
+        "Do the checking of specialAttrib things."
+        self._change_computed_result('realMinY', 1.0) # min of y is zero
+        self._change_computed_result('minY', self._compRoundedValMin(1.0))
+        
+        max = float(len(self.distValsY()) + 1) # max of y is num of distvals
+        self._change_computed_result('realMaxY', max)
+        self._change_computed_result('maxY', max)
+        self.gridbasey  = self.height * 0.88 # more room for labels on y-axis
+        
+    def computeYScale(self):
+        "Own method to avoid error because specialAttribHook is called after maxY"
+        self._change_computed_result('maxY', 0)
+        return PointsAsCrosses.computeYScale(self)
+
+    def getDrawingActions(self):
+        """Returns the methods which are used to draw the graph."""
+        return [self.computeYScale] + \
+               DataOnYAxis.getDrawingActions(self) + \
+               [self.drawYGridLinesDiscrete,]
+
+

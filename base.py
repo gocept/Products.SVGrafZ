@@ -2,7 +2,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: Base
-## Version: $Id: base.py,v 1.26 2003/12/11 10:35:00 mac Exp $
+## Version: $Id: base.py,v 1.27 2004/02/23 08:33:22 mac Exp $
 ##
 ################################################################################
 
@@ -362,6 +362,38 @@ class BaseGraph:
             res += '<text x="3" y="%s" style="text-anchor: start;">%s</text>'\
                    % (self.gridbasey - yval * self.yScale + 5,
                       self.confLT(yval))
+            res += '\n'
+        return res + '</g>\n'
+
+    def drawYGridLinesDiscrete(self):
+        """Draw gridlines in parallel to the x-axis label it with the discrete values."""
+        if not self.gridlines:
+            return ''
+        if self.intcaption:
+            rtype = int
+        else:
+            rtype = float
+
+        distY = self.distValsY()
+        distY.sort()
+        grid = self._computeGridLines(self.minY(),
+                                      self.maxY(),
+                                      self.gridlines,
+                                      rtype)
+        res  = '<g id="yGrid">\n'
+        for yval in grid:
+            if yval == 0:
+                text = ''
+            else:
+                text = distY[yval - 1]
+            res +='<line x1="%s" x2="%s" y1="%s" y2="%s"/>\n' % (
+                self.gridbasex,
+                self.gridboundx,
+                self.gridbasey - yval * self.yScale,
+                self.gridbasey - yval * self.yScale)
+            res += '<text x="3" y="%s" style="text-anchor: start;">%s</text>'\
+                   % (self.gridbasey - yval * self.yScale + 5,
+                      self.confLT(text))
             res += '\n'
         return res + '</g>\n'
 

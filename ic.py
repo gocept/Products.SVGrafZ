@@ -3,7 +3,7 @@
 ## 
 ## SVGrafZ: InputConverters
 ##
-## $Id: ic.py,v 1.14 2003/10/15 07:08:34 mac Exp $
+## $Id: ic.py,v 1.15 2004/02/23 08:33:22 mac Exp $
 ################################################################################
 
 from interfaces import IInputConverter, IInputConverterWithLegend, \
@@ -332,8 +332,14 @@ class xGraph_ZSQLMethod_DataInRows_Date(ConvertFrom_ZSQLMethod_DataInRows):
 
     def _getValList(self, contVal, discVal):
         """Put continuous and discrete value into a list in the right order."""
-        return [DateTime_GermanStr(discVal, datefmt = "international"),
-                float(contVal)]
+        try: 
+            return [DateTime_GermanStr(discVal, datefmt = "international"),
+                    contVal]
+        except ValueError:
+            raise RuntimeError, \
+                  'Continuous data column contains "%s" which is no number.' % \
+                  contVal
+        
 
 
 class DateTime_GermanStr (DateTime):
