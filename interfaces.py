@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: Interfaces
-## Version: $Id: interfaces.py,v 1.3 2003/04/10 13:58:50 mac Exp $
+## Version: $Id: interfaces.py,v 1.4 2003/04/16 14:14:38 mac Exp $
 ##
 ################################################################################
 
@@ -20,7 +20,14 @@ class IDiagramKind(Interface):
 
     name = Attribute ("Get the Name of the DiagramKind.")
 
-    def __init__(data, width, height, gridlines, legend, colnames):
+    def __init__(data=None,
+                 width=None,
+                 height=None,
+                 gridlines=None,
+                 legend=None,
+                 colnames=None,
+                 title=None,
+                 stylesheet=None):
         """Initialize and set the parameters for the graph.
 
         Format of data:

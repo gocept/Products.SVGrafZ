@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: Base
-## Version: $Id: base.py,v 1.2 2003/04/11 13:21:08 mac Exp $
+## Version: $Id: base.py,v 1.3 2003/04/16 14:14:38 mac Exp $
 ##
 ################################################################################
 
@@ -19,8 +19,11 @@ class BaseGraph:
 
 
     def svgHeader(self):
-        return """
-        <svg xmlns="http://www.w3.org/2000/svg"
+        res = u"""<?xml version="1.0" encoding="UTF-8" ?>\n"""
+        if self.stylesheet:
+            res += u"""<?xml-stylesheet href="%s" type="text/css"?>\n""" % (
+                self.stylesheet)
+        return res + """<svg xmlns="http://www.w3.org/2000/svg"
              xmlns:xlink="http://www.w3.org/1999/xlink"
              width="%i"
              height="%i">
@@ -146,6 +149,8 @@ class BaseGraph:
 
 
     def _testFormatOfData(self):
+        if self.data is None:
+            raise RuntimeError, 'No Data. (Data is None)'
         if type(self.data) != ListType:
             raise RuntimeError, 'Data is not a list.'
         if len(self.data) == 0:
@@ -220,3 +225,11 @@ class BaseGraph:
             self.gridbasey + 10,
             self.gridboundy)
         return res + '</g>\n'
+
+    def drawTitle(self):
+        res = '<g id="title">\n'
+        res += '<text x="%s" y="%s" style="text-anchor: middle;">%s</text>'\
+                   % ((self.gridboundx + self.gridbasex) /2,
+                      self.gridboundy,
+                      self.title)
+        return res + '\n</g>\n'

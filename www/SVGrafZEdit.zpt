@@ -1,0 +1,98 @@
+<!--
+Copyright (c) 2003 gocept gmbh & co. kg. All rights reserved.
+See also LICENSE.txt
+$Id: SVGrafZEdit.zpt,v 1.1 2003/04/16 14:14:39 mac Exp $
+-->
+
+  <h1 tal:replace="structure here/manage_page_header">Header</h1>
+  <span tal:define="manage_tabs_message options/manage_tabs_message | nothing"
+    tal:replace="structure here/manage_tabs">Tabs</span>
+  
+  <h2 tal:define="form_title string:Edit SVGrafZ"
+    tal:replace="structure here/manage_form_title">Form Title</h2>
+  <form action="manage_edit">
+    <table tal:define="def here/getDefaultPropertyValues">
+      <tr>
+        <td colspan="2"></td>
+        <th>Default</th>
+        <td colspan="2"></td>
+        <th>Default</th>
+      </tr>
+      <tr>
+        <td class="form-text">Title:</td>
+        <td><input type="text" name="title" tal:attributes="value here/title"></td>
+        <td class="form-mono" tal:content="def/title"></td>
+      </tr>
+      <tr>
+        <td class="form-text">DiagramKind: </td>
+        <td><select name="graph" size="1">
+            <optgroup tal:repeat="graphtype here/getPossibleDiagrams"
+              tal:attributes="label graphtype/name">
+              <tal:block tal:repeat="graph graphtype/kinds">
+                <option
+                  tal:condition="python: graph.get('name') != here.graphname"
+                  tal:attributes="value graph/name"
+                  tal:content="graph/name">DiagramKind not selected
+                </option>
+                <option
+                  tal:condition="python: graph.get('name') == here.graphname"
+                  tal:attributes="value graph/name"
+                  tal:content="graph/name" selected="1">selected DiagramKind
+                </option>
+              </tal:block>
+            </optgroup>
+          </select>
+        </td>
+        <td class="form-mono" tal:content="def/graphname"></td>
+        <td class="form-text">DataSource (TALES): </td>
+        <td><input type="text"
+                   name="data"
+                   tal:attributes="value here/getDataMethodExpression"></td>
+        <td class="form-mono" tal:content="def/data"></td>
+      </tr>
+      <tr>
+        <td class="form-text">Grindlines: </td>
+        <td><input type="text"
+                   name="gridlines"
+                   tal:attributes="value here/gridlines"></td>
+        <td class="form-mono" tal:content="def/gridlines"></td>
+        <td class="form-text">ColumnNames (TALES): </td>
+        <td><input type="text"
+                   name="colnames"
+                   tal:attributes="value here/getColnamesMethodExpression"></td>
+        <td class="form-mono" tal:content="def/colnames"></td>
+      </tr>
+      <tr>
+        <td class="form-text">Height: </td>
+        <td><input type="text"
+                   name="height"
+                   tal:attributes="value here/height"></td>
+        <td class="form-mono" tal:content="def/height"></td>
+        <td class="form-text">Legend (TALES): </td>
+        <td><input type="text"
+                   name="legend"
+                   tal:attributes="value here/getLegendMethodExpression"></td>
+        <td class="form-mono" tal:content="def/legend"></td>
+      </tr>
+      <tr>
+        <td class="form-text">Width: </td>
+        <td><input type="text"
+                   name="width"
+                   tal:attributes="value here/width"></td>
+        <td class="form-mono" tal:content="def/width"></td>
+        <td class="form-text">StyleSheet (Path): </td>
+        <td><input type="text"
+                   name="stylesheet"
+                   tal:attributes="value here/stylesheet"></td>
+        <td class="form-mono" tal:content="def/stylesheet"></td>
+      </tr>
+      <tr>
+        <td>
+          <input type="submit" name="submit" value=" Save ">
+        </td>
+      </tr>
+    </table>
+  </form>
+    
+<h1 tal:replace="structure here/manage_page_footer">Footer</h1>
+

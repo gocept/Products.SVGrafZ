@@ -1,0 +1,47 @@
+<!--
+Copyright (c) 2003 gocept gmbh & co. kg. All rights reserved.
+See also LICENSE.txt
+$Id: addDiagramForm.zpt,v 1.1 2003/04/16 14:14:39 mac Exp $
+-->
+
+  <h1 tal:replace="structure here/manage_page_header">Header</h1>
+  <span tal:define="manage_tabs_message options/manage_tabs_message | nothing"
+    tal:replace="structure here/manage_tabs">Tabs</span>
+  
+  <p class="form-help">
+    Add a new SVGrafZ-GraphDiagramm.
+  </p>
+
+
+
+  <h2 tal:define="form_title string:Add SVGrafZ"
+    tal:replace="structure here/manage_form_title">Form Title</h2>
+  <form action="manage_addDiagramFunction" method="POST">
+    <table>
+      <tr>
+        <td class="form-text">Id: </td>
+        <td><input type="text" name="id"/></td>
+      </tr>
+      <tr tal:condition="here/manage_defaultPossible">
+        <td align="right">
+          <input type="checkbox" name="makeDefault" value="1"/>
+        </td>
+        <td class="form-text">
+          Make this Diagram containing default property values for all Diagrams aquiring its properties.
+        </td>
+      </tr>
+      <tr tal:condition="not:here/manage_defaultPossible">
+        <td> </td>
+        <td class="form-text">
+          Default Diagram already existing in this folder.
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input type="submit" name="submit" value=" Save ">
+        </td>
+      </tr>
+    </table>
+  </form>
+    
+<h1 tal:replace="structure here/manage_page_footer">Footer</h1>

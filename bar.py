@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: SimpleBarGraph
-## Version: $Id: bar.py,v 1.4 2003/04/11 13:21:08 mac Exp $
+## Version: $Id: bar.py,v 1.5 2003/04/16 14:14:38 mac Exp $
 ##
 ################################################################################
 
@@ -17,7 +17,15 @@ class SimpleBarGraph(BaseGraph):
 
     name = 'Einfaches Balkendiagramm'
 
-    def __init__(self, data, width=600, height=300, gridlines=10, legend=None, colnames=None):
+    def __init__(self,
+                 data=None,
+                 width=0,
+                 height=0,
+                 gridlines=0,
+                 legend=None,
+                 colnames=None,
+                 title=None,
+                 stylesheet=None):
         "see IDiagramKind.__init__"
         self.data     = data
         self.width    = width
@@ -25,6 +33,8 @@ class SimpleBarGraph(BaseGraph):
         self.legend   = legend
         self.colnames = colnames
         self.gridlines= gridlines
+        self.title    = title
+        self.stylesheet=stylesheet
 
         self.result   = ''
 
@@ -44,27 +54,32 @@ class SimpleBarGraph(BaseGraph):
         else:
             self.gridboundx = self.width * 0.98
 
-        if self.maxX() is None:
-            raise RuntimeError, 'All values on x-axis must be numbers!'
 
-        difX = float(self.maxX() - self.minX())
-
-        if difX:
-            self.xScale = float((self.gridboundx - self.gridbasex) / difX)
-        else:
-            self.xScale = 1.0
-        
-        
     def compute(self):
         """Compute the Diagram."""
         if self.result:
             return self.result
         else:
             self.result  = self.svgHeader()
-            self.result += self.drawXGrindLines()
-            self.result += self.drawBars()
-            self.result += self.drawXYAxis()
-            self.result += self.drawLegend()
+            try:
+                if self.maxX() is None:
+                    raise RuntimeError, 'All values on x-axis must be numbers!'
+                difX = float(self.maxX() - self.minX())
+                if difX:
+                    self.xScale = float((self.gridboundx-self.gridbasex)/difX)
+                else:
+                    self.xScale = 1.0
+                    
+                self.result += self.drawXGrindLines()
+                self.result += self.drawBars()
+                self.result += self.drawXYAxis()
+                self.result += self.drawLegend()
+            except RuntimeError:
+                import sys
+                ev,en,et = sys.exc_info()
+                self.title=str(en)
+            
+            self.result += self.drawTitle()
             self.result += self.svgFooter()
             return self.result
 
@@ -87,7 +102,7 @@ class SimpleBarGraph(BaseGraph):
                 else:
                     onPos = len(pos)
                     pos[item[1]] = onPos
-                res += '<rect class="dataset_%s" x="%s" y="%s" height="%s" width="%s"/>\n'\
+                res += '<rect class="dataset%s" x="%s" y="%s" height="%s" width="%s"/>\n'\
                        % (i,
                           self.gridbasex,
                           self.gridbasey-(onPos*yBarFull)-ySpace-(i+1)*yHeight,
@@ -113,3 +128,20 @@ class SimpleBarGraph(BaseGraph):
     def drawLegend(self):
         """Draw the Legend."""
         return ''
+
+
+class SimpleBarGraph2(BaseGraph):
+    """Simple BarGraph testclass."""
+
+    __implements__ = IDiagramKind
+
+    name = 'Zweifaches Balkendiagramm'
+
+    def __init__(self, data, width=600, height=300, gridlines=10, legend=None, colnames=None):
+        "see IDiagramKind.__init__"
+        
+        
+    def compute(self):
+        """Compute the Diagram."""
+        return 'leer'
+

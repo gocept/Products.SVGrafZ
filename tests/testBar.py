@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: Test of Class SimpleBarGraph
-## Version: $Id: testBar.py,v 1.2 2003/04/11 13:22:53 mac Exp $
+## Version: $Id: testBar.py,v 1.3 2003/04/16 14:14:38 mac Exp $
 ##
 ################################################################################
 
@@ -32,18 +32,18 @@ class SimpleBarGraphTests(unittest.TestCase):
 
     def test_instantiation(self):
         "Test the instantiation of the class."
-        for e in self.errors:
-            self.assertRaises(RuntimeError, SimpleBarGraph, e)
-
         for t in self.to_test:
-            self.failUnless(SimpleBarGraph(t), t)
+            self.failUnless(SimpleBarGraph(data=t), t)
 
     def test_instantiation2(self):
         "Parametertest for Instantiation."
-        a = SimpleBarGraph([[[1,1]]])
-        b = SimpleBarGraph([[[1,1]]], width =300)
-        c = SimpleBarGraph([[[1,1]]], height=800)
-        d = SimpleBarGraph([[[1,1]]], legend=['test'])
+        a = SimpleBarGraph(data = [[[1,1]]], width=600, height=300)
+        b = SimpleBarGraph(data = [[[1,1]]], width=300, height=300)
+        c = SimpleBarGraph(data = [[[1,1]]], width=600, height=800)
+        d = SimpleBarGraph(data = [[[1,1]]],
+                           width=600,
+                           height=300,
+                           legend=['test'])
 
         self.failUnless(a.gridbasey == b.gridbasey, 'a,b gridbasey')
         self.failUnless(a.gridbasex >  b.gridbasex, 'a,b gridbasex')
@@ -51,6 +51,11 @@ class SimpleBarGraphTests(unittest.TestCase):
         self.failUnless(a.gridbasex == c.gridbasex, 'a,c gridbasex')
         self.failUnless(a.gridboundx > d.gridboundx, 'a,d gridboundx')
 
+    def test_compute(self):
+        "Test SimpleBarGraph.compute for exceptions."
+        for e in self.errors:
+            g = SimpleBarGraph(data=e)
+            self.failUnless(RuntimeError, g.compute)
  
 def test_suite():
     suite = unittest.TestSuite()

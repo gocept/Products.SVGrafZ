@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ_Registry
-## Version: $Id: registry.py,v 1.3 2003/04/11 14:06:54 mac Exp $
+## Version: $Id: registry.py,v 1.4 2003/04/16 14:14:38 mac Exp $
 ##
 ################################################################################
 
@@ -12,7 +12,9 @@ class Registry:
     """
 
     def __init__(self):
-        self._diagrams = {}
+        self._diagramTypes = {}
+        self._diagramKinds = {}
+        self._defaultDiagramKindName = None
 
     _clear = __init__
 
@@ -28,15 +30,15 @@ class Registry:
         if not IDiagramType.isImplementedByInstancesOf(type):
             raise RuntimeError, 'Not implementing IDiagramType.'
                      
-        if type.name in self._diagrams.keys():
+        if type.name in self._diagramTypes.keys():
             return 0
         
-        self._diagrams[type.name] = {}
+        self._diagramTypes[type.name] = []
         return 1
 
     def getTypes(self):
         """Get the registered DiagramTypes."""
-        return self._diagrams.keys()
+        return self._diagramTypes.keys()
 
 
     def registerKind(self, type, kind):
@@ -57,17 +59,20 @@ class Registry:
         if not IDiagramKind.isImplementedByInstancesOf(kind):
             raise RuntimeError, 'Not implementing IDiagramKind.'
 
-        if type.name not in self._diagrams.keys():
+        if type.name not in self._diagramTypes.keys():
             self.registerType(type)
 
-        if kind.name in self._diagrams[type.name].keys():
+        if kind.name in self._diagramTypes[type.name]:
             return 0
         
-        self._diagrams[type.name][kind.name] = kind
+        self._diagramTypes[type.name].append(kind.name)
+        self._diagramKinds[kind.name] = kind
+        if self._defaultDiagramKindName is None:
+            self._defaultDiagramKindName = kind.name
         return 1
 
 
-    def getKinds(self, typeName):
+    def getKindNames(self, typeName):
         """Get the DiagramKinds registered for a DiagrammType.
 
         typeName ... Name of the DiagramType
@@ -75,8 +80,19 @@ class Registry:
         returns dictionary kindName:kindObj
                 None when typeName is not a registered Type
         """
-        return self._diagrams.get(typeName, None)
+        return self._diagramTypes.get(typeName, None)
 
+
+    def getKind(self, name):
+        """Get the ClassObject of a DiagramKind.
+
+        name ... Name of the DiagramKind
+        """
+
+        if name not in self._diagramKinds:
+            raise RuntimeError, 'DiagramKind %s does not exist.' % (name)
+
+        return self._diagramKinds[name]
 
     def getAllKindNames(self):
         """Get all Names of DiagramKinds.
@@ -86,12 +102,21 @@ class Registry:
         """
         res = []
 
-        for typ in self._diagrams.values():
-            for kind in typ.keys():
+        for typ in self._diagramTypes.values():
+            for kind in typ:
                 if kind not in res:
                     res.append(kind)
         res.sort()
         return res
 
+    def getDefaultKindName(self):
+        """Get the Name of the default DiagramKind.
+
+        The default one is the first one which got registered.
+        None is returned when no DiagramKind was registered so far."""
+
+        return self._defaultDiagramKindName
+        
+        
 
 Registry = Registry() # make it Singleton-like
