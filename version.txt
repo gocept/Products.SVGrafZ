@@ -1,1 +1,1 @@
-SVGrafZ 0.22.2
+SVGrafZ 0.22.3
