@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: Base
-## Version: $Id: base.py,v 1.21 2003/10/08 08:17:24 mac Exp $
+## Version: $Id: base.py,v 1.22 2003/10/10 09:00:17 mac Exp $
 ##
 ################################################################################
 
@@ -375,7 +375,7 @@ class BaseGraph:
             return ''
         res = '<g id="title">\n'
         res += '<text x="%s" y="%s" style="text-anchor: middle;">%s</text>'\
-                   % ((self.gridboundx + self.gridbasex) /2,
+                   % (self.width / 2,
                       self.gridboundy - 4,
                       self.confLT(self.title))
         return res + '\n</g>\n'
