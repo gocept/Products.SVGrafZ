@@ -2,7 +2,7 @@
 ## 
 ## SVGrafZ
 ##
-## $Id: svgrafz.py,v 1.21 2003/06/16 08:13:31 mac Exp $
+## $Id: svgrafz.py,v 1.22 2003/06/16 08:15:15 mac Exp $
 ################################################################################
 
 import os
@@ -28,7 +28,7 @@ class SVGrafZProduct(SimpleItem):
     """ProductClass of SVGrafZ."""
 
     meta_type = 'SVGrafZ'
-    version = '0.16'
+    version = '0.17'
 
     manage_options = (
         {'label':'Properties',
