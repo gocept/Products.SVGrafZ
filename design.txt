@@ -1,0 +1,13 @@
+DESIGN:
+-------
+
+$Id: design.txt,v 1.1 2003/04/09 12:25:55 mac Exp $
+
+Klassen:
+        - Registry
+        - SVGrafZ
+        - SVGrafZDefault (extends SVGrafZ)
+        - IDiagramType + Klassen, die das Interface implementieren
+        - IDiagramKind + Klassen, die das Interface implementieren
+
+singelten
