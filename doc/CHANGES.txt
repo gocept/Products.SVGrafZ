@@ -1,9 +1,15 @@
 ################################################################################
 ##
 ## SVGrafZ: CHANGES
-## Version: $Id: CHANGES.txt,v 1.6 2005/02/16 09:08:36 mac Exp $
+## Version: $Id: CHANGES.txt,v 1.7 2005/02/28 11:29:44 mac Exp $
 ##
 ################################################################################
+
+2005-02-28
+  - Configuration is now easier: SVGrafZ comes with two examples for
+    german and english. See doc/INSTALL.py how to use them.
+  - some bug fixes
+  - released minor version 0.22.4
 
 2005-02-16
   - refactoring:
