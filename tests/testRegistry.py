@@ -1,7 +1,7 @@
 ################################################################################
 ## 
 ## SVGrafZ: Test of Registry
-## Version: $Id: testRegistry.py,v 1.6 2003/05/27 15:24:09 mac Exp $
+## Version: $Id: testRegistry.py,v 1.7 2003/05/30 08:19:04 mac Exp $
 ##
 ################################################################################
 
@@ -14,8 +14,7 @@ def pdb():
     import pdb
     pdb.set_trace()
 
-class NoDiagramType:
-    pass
+class NoDiagramType: pass
 class DiagramType1:
     __implements__ = IDiagramType
     name = 'Type1'
@@ -24,20 +23,44 @@ class DiagramType2:
     __implements__ = IDiagramType
     name = 'Type2'
 
-class NoDiagramKind:
-    pass
+class NoDiagramKind: pass
 class DiagramKind1:
     __implements__ = IDiagramKind
     name = 'Kind1'
+    def registration():
+        return []
+    registration = staticmethod(registration)
     
 class DiagramKind2:
     __implements__ = IDiagramKind
     name = 'Kind2'
+    def registration():
+        return [NoDiagramType]
+    registration = staticmethod(registration)
+    
+class DiagramKind3:
+    __implements__ = IDiagramKind
+    name = 'Kind3'
+    def registration():
+        return [DiagramType1]
+    registration = staticmethod(registration)
+    
+class DiagramKind4:
+    __implements__ = IDiagramKind
+    name = 'Kind4'
+    def registration():
+        return [DiagramType1, DiagramType2]
+    registration = staticmethod(registration)
 
 
 class RegistryTests(unittest.TestCase):
     """Tests for the DiagramType and -Kind Registry.
     """
+
+    def assertNone(self, expr, msg=None):
+        """Fail the test unless the expression is None."""
+        if expr is not None: raise self.failureException, msg
+
 
     def test_1singleton(self):
         """Test if Registry is a singleton."""
@@ -46,43 +69,45 @@ class RegistryTests(unittest.TestCase):
         b = Registry
 
         self.assertEqual(str(a.__class__), 'registry.Registry', 'classtest')
-        self.assertRaises(AttributeError, Registry) # failig of instanciation
+        self.assertRaises(AttributeError, Registry) # failing of instanciation
         self.assertEqual(a, b, 'a==b')
         a.testAttributeWhichRegistryNeverHas = 'test'
         self.assertEqual(a.testAttributeWhichRegistryNeverHas,
                          b.testAttributeWhichRegistryNeverHas,
                          'a.attrib==b.attrib')
 
-    def test_2register_get_Type(self):
-        """Test registerType(type) and getType()."""
+    def test_2_register_get_Type(self):
+        """Test _registerType(type) and getType()."""
 
         n = NoDiagramType
         a = DiagramType1
         b = DiagramType1
         c = DiagramType2
+
+        self.assertEqual([], Registry.getTypes(), 'get from empty reg')
+        self.assertRaises(RuntimeError, Registry._registerType, n)
+        self.failUnless(Registry._registerType(a), 'register type1')
+        self.failIf(Registry._registerType(a), 'register type1 second time')
+        self.failIf(Registry._registerType(b), 'register type1 third time')
         
-        self.assertRaises(RuntimeError, Registry.registerType, n)
-        self.failUnless(Registry.registerType(a), 'register type1')
-        self.failIf(Registry.registerType(a), 'register type1 second time')
-        self.failIf(Registry.registerType(b), 'register type1 third time')
-        
-        self.assertEqual(['Type1'], Registry.getTypes())
-        self.failUnless(Registry.registerType(c), 'register type2')
-        self.assertEqual(['Type1', 'Type2'], Registry.getTypes())
+        self.assertEqual([a.name], Registry.getTypes())
+        self.failUnless(Registry._registerType(c), 'register type2')
+        self.assertEqual([a.name, c.name], Registry.getTypes())
         
     def test_3_clear(self):
         """Test of _clear()."""
         a = DiagramType1
 
         self.failIf(Registry._clear(), '1st clear')
-        self.failIf(Registry.getTypes(), '1st get')
-        self.failUnless(Registry.registerType(a), 'register type1')
-        self.failUnless(Registry.getTypes(), '2nd get')
+        self.assertEqual([], Registry.getTypes(), '1st get')
+        self.failUnless(Registry._registerType(a), 'register type1')
+        self.assertEqual([a.name], Registry.getTypes(), '2nd get')
         self.failIf(Registry._clear(), '2nd clear')
-        self.failIf(Registry.getTypes(), '3rd get')
+        self.assertEqual([], Registry.getTypes(), '3rd get')
 
-    def test_4register_get_KindNames(self):
-        """Test registerKind and getKindNames."""
+
+    def test_4_register_get_KindNames(self):
+        """Test _registerKind and getKindNames."""
         Registry._clear() # remove previously registered Things
 
         nt = NoDiagramType
@@ -93,9 +118,9 @@ class RegistryTests(unittest.TestCase):
         k11= DiagramKind1
         k2 = DiagramKind2
         
-        self.assertRaises(RuntimeError, Registry.registerKind, nt, nk)
-        self.assertRaises(RuntimeError, Registry.registerKind, t1, nk)
-        self.assertRaises(RuntimeError, Registry.registerKind, nt, k1)
+        self.assertRaises(RuntimeError, Registry._registerKind, nt, nk)
+        self.assertRaises(RuntimeError, Registry._registerKind, t1, nk)
+        self.assertRaises(RuntimeError, Registry._registerKind, nt, k1)
 
         self.assertEqual(None, Registry.getKindNames(t1.name), 'get 0')
         self.assertEqual([],
@@ -103,50 +128,88 @@ class RegistryTests(unittest.TestCase):
                          'getall 0: %s' %(Registry.getAllKindNames()))
         
 
-        self.failUnless(Registry.registerKind(t1, k1), 'register t1,k1')
-        self.failIf(Registry.registerKind(t1,k1), 'register t1,k1 second time')
-        self.failIf(Registry.registerKind(t1,k11), 'register t1,k1 third time')
+        self.failUnless(Registry._registerKind(t1, k1), 'register t1,k1')
+        self.failIf(Registry._registerKind(t1,k1), 'register t1,k1 second time')
+        self.failIf(Registry._registerKind(t1,k11), 'register t1,k1 third time')
         
         self.assertEqual([k1.name], Registry.getKindNames(t1.name), 'get 1')
         self.assertEqual(None, Registry.getKindNames(t2.name), 'get 2')
         self.assertEqual([k1.name], Registry.getAllKindNames(), 'getall 1')
         
         
-        self.failUnless(Registry.registerKind(t1,k2), 'register t1,k2')
-        self.assertEqual([k1.name, k2.name], Registry.getKindNames(t1.name), 'get 3')
+        self.failUnless(Registry._registerKind(t1,k2), 'register t1,k2')
+        self.assertEqual([k1.name, k2.name],
+                         Registry.getKindNames(t1.name),
+                         'get 3')
         self.assertEqual([k1.name,k2.name],
                          Registry.getAllKindNames(),
                          'getall 2: %s' % Registry.getAllKindNames())
 
-        self.failUnless(Registry.registerType(t2), 'register t2')
-        self.failUnless(Registry.registerKind(t2,k1), 'register t2,k1')
-        self.failIf(Registry.registerKind(t2,k1), 'register t2,k1 2nd')
+        self.failUnless(Registry._registerType(t2), 'register t2')
+        self.failUnless(Registry._registerKind(t2,k1), 'register t2,k1')
+        self.failIf(Registry._registerKind(t2,k1), 'register t2,k1 2nd')
         self.assertEqual([k1.name], Registry.getKindNames(t2.name), 'get 4')
-        self.assertEqual([k1.name,k2.name], Registry.getAllKindNames(), 'getall 3')
+        self.assertEqual([k1.name,k2.name],
+                         Registry.getAllKindNames(),
+                         'getall 3')
 
+    def test_45register(self):
+        "Test register(diagramKind)."
+        Registry._clear()
+
+        t1 = DiagramType1.name
+        t2 = DiagramType2.name
+        n  = NoDiagramKind
+        d1 = DiagramKind1
+        d2 = DiagramKind2
+        d3 = DiagramKind3
+        d32= DiagramKind3
+        d4 = DiagramKind4
+                                
+
+        self.assertRaises(RuntimeError, Registry.register, n)
+        self.assertRaises(RuntimeError, Registry.register, d2)
+        self.failUnless(Registry.register(d1), 'reg d1')
+        self.failUnless(Registry.register(d1), 'reg d1 2nd')
+        self.assertEqual([], Registry.getAllKindNames(), 'getall 1')
+
+        self.failUnless(Registry.register(d3), 'reg d3')
+        self.assertRaises(RuntimeError, Registry.register, d3)
+        self.assertRaises(RuntimeError, Registry.register, d32)
+        self.assertEqual([d3.name], Registry.getKindNames(t1), 'get t1')
+        self.assertNone(Registry.getKindNames(t2), 'get t2')
+        
+        self.failUnless(Registry.register(d4), 'reg d4')
+        self.assertEqual([d3.name, d4.name],
+                         Registry.getKindNames(t1),
+                         'get t1 2nd')
+        self.assertEqual([d4.name],
+                         Registry.getKindNames(t2),
+                         'get t2 2nd')
+        self.assertEqual([d3.name, d4.name],
+                         Registry.getAllKindNames(),
+                         'getall 2')
+
+        
     def test_5getKind(self):
-        "Test getKind."
+        "Test getKind(name)."
         Registry._clear() # remove previously registered Things
         
         t1 = DiagramType1
         t2 = DiagramType2
-        k1 = DiagramKind1
-        k2 = DiagramKind2
+        k3 = DiagramKind3
+        k4 = DiagramKind4
 
-        self.assertRaises(RuntimeError, Registry.getKind, k1.name)
-        self.assertRaises(RuntimeError, Registry.getKind, k2.name)
+        self.assertRaises(RuntimeError, Registry.getKind, k3.name)
+        self.assertRaises(RuntimeError, Registry.getKind, k4.name)
 
-        self.failUnless(Registry.registerKind(t1, k1), 'register t1,k1')
-        self.assertEqual(k1, Registry.getKind(k1.name), 'get1 k1')
-        self.assertRaises(RuntimeError, Registry.getKind, k2.name)
+        self.failUnless(Registry.register(k3), 'reg k3')
+        self.assertEqual(k3, Registry.getKind(k3.name), 'get1 k3')
+        self.assertRaises(RuntimeError, Registry.getKind, k4.name)
 
-        self.failUnless(Registry.registerKind(t2, k1), 'register t2,k1')
-        self.assertEqual(k1, Registry.getKind(k1.name), 'get2 k1')
-        self.assertRaises(RuntimeError, Registry.getKind, k2.name)
-
-        self.failUnless(Registry.registerKind(t2, k2), 'register t1,k2')
-        self.assertEqual(k1, Registry.getKind(k1.name), 'get3 k1')
-        self.assertEqual(k2, Registry.getKind(k2.name), 'get4 k2')
+        self.failUnless(Registry.register(k4), 'reg k4')
+        self.assertEqual(k3, Registry.getKind(k3.name), 'get2 k3')
+        self.assertEqual(k4, Registry.getKind(k4.name), 'get k4')
 
 
     def test_6getDefaultKindName(self):
@@ -154,16 +217,17 @@ class RegistryTests(unittest.TestCase):
         Registry._clear() # remove previously registered Things
         
         t1 = DiagramType1
-        k1 = DiagramKind1
-        k2 = DiagramKind2
+        k3 = DiagramKind3
+        k4 = DiagramKind4
         
         self.failIf(Registry.getDefaultKindName(), 'get 0')
-        self.failUnless(Registry.registerType(t1))
-        self.failIf(Registry.getDefaultKindName(), 'get 1')
-        self.failUnless(Registry.registerKind(t1, k2))
-        self.assertEqual(k2.name, Registry.getDefaultKindName(), 'get 2')
-        self.failUnless(Registry.registerKind(t1, k1))
-        self.assertEqual(k2.name, Registry.getDefaultKindName(), 'get 3')
+        self.failUnless(Registry.register(k3))
+        self.assertEqual(k3.name,
+                         Registry.getDefaultKindName(),
+                         'get 2 (%s!=%s)' % (k3.name,
+                                             Registry.getDefaultKindName()))
+        self.failUnless(Registry.register(k4))
+        self.assertEqual(k3.name, Registry.getDefaultKindName(), 'get 3')
 
 def test_suite():
     suite = unittest.TestSuite()
