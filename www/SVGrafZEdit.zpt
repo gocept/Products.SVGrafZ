@@ -1,7 +1,7 @@
 <!--
 Copyright (c) 2003 gocept gmbh & co. kg. All rights reserved.
 See also LICENSE.txt
-$Id: SVGrafZEdit.zpt,v 1.13 2003/10/14 10:41:10 mac Exp $
+$Id: SVGrafZEdit.zpt,v 1.14 2003/10/27 10:49:51 mac Exp $
 -->
 
   <h1 tal:replace="structure here/manage_page_header">Header</h1>
@@ -206,17 +206,21 @@ $Id: SVGrafZEdit.zpt,v 1.13 2003/10/14 10:41:10 mac Exp $
         <td class="form-mono" tal:content="defs/legend"></td>
       </tr>
       <tr tal:define="specialAttrib here/getSpecialAttribName">
-        <td colspan="3">
-          <input type="submit" name="submit" value=" Save ">
-        </td>
         <tal:block tal:condition="specialAttrib">
           <td class="form-text" tal:content="specialAttrib"></td>
-          <td><input type="text"
-                     name="specialattrib"
-                     tal:attributes="value cur/specialattrib"></td>
+          <td colspan="4">
+            <input size="75"
+                   type="text"
+                   name="specialattrib"
+                   tal:attributes="value cur/specialattrib"></td>
           <td class="form-mono" tal:content="defs/specialattrib"></td>
         </tal:block>
         <td tal:condition="not:specialAttrib" colspan="3"></td>
+      </tr>
+      <tr>
+        <td colspan="3">
+          <input type="submit" name="submit" value=" Save ">
+        </td>
       </tr>
       <tr tal:condition="hasErrors">
         <td align="left" valign="middle" class="form-label">Errors</td>
