@@ -3,7 +3,7 @@
 ## 
 ## SVGrafZ: Configure File
 ##
-## $Id: config.py,v 1.7 2003/10/15 08:17:46 mac Exp $
+## $Id: config.py,v 1.8 2003/11/21 12:22:01 ctheune Exp $
 ################################################################################
 
 
@@ -52,7 +52,7 @@ SVGrafZ_BatikServer_Host = 'localhost'
 ## batikServer - port number
 SVGrafZ_BatikServer_Port = 54822
 
-
+SVGrafZ_BatikServer_Binary = '/home/ctheune/tmp/runBatikServer'
 
 ### batikRasterizer
 ## batikRasterizer - absolute Path to Java 1.3+ interpreter binary

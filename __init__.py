@@ -2,7 +2,7 @@
 ################################################################################
 ## 
 ## SVGrafZ
-## Version: $Id: __init__.py,v 1.9 2003/11/20 15:18:21 ctheune Exp $
+## Version: $Id: __init__.py,v 1.10 2003/11/21 12:22:01 ctheune Exp $
 ##
 ################################################################################
 
@@ -15,11 +15,11 @@ from interfaces import IInputConverter, IDiagramKind
 
 from svgrafz import SVGrafZProduct, manage_addDiagramForm, \
      manage_addDiagramFunction, manage_defaultPossible
+import config
 
 from zLOG import *
 import os
 
-BATIK_SERVER_LOCATION = ""
 
 def initialize(registrar):
     # register diagramkinds
@@ -63,7 +63,7 @@ def registerDiagramKinds(module):
 
 
 # Initialize BatikServer 
-if BATIK_SERVER_LOCATION:
-    streams = os.popen3(BATIK_SERVER_LOCATION)
+if config.SVGrafZ_BatikServer_Binary:
+    streams = os.popen3(config.SVGrafZ_BatikServer_Binary)
     LOG("SVGrafZ", 0, "Starting Batikserver [TODO: Status check]")
 
