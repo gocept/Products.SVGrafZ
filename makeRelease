@@ -32,6 +32,7 @@ cp doc/INSTALL.txt $DOC
 cp doc/LICENSE.txt $DOC
 cp doc/update.txt $DOC
 cp doc/README.txt $DIR
+cp doc/USAGE.txt $DIR
 
 
 cp doc/analyse.txt $GDOC

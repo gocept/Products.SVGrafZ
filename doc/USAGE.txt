@@ -1,10 +1,9 @@
 ################################################################################
 ###
 ### SVGrafZ: USAGE
+### $Id: USAGE.txt,v 1.2 2005/02/11 17:17:49 mac Exp $
 ###
-### $Revision: 1.1 $
 ################################################################################
-$Id: USAGE.txt,v 1.1 2005/02/11 17:08:34 mac Exp $
 
 
 First SVGrafZ-Diagram
@@ -19,7 +18,7 @@ you do not set them explicitly.)
 
 - On the Propterties-Sheet enter the following values:
 
-  - Title
+  - Title (as you like it)
 
   - Set DiagramKind to "simple line diagram"
 

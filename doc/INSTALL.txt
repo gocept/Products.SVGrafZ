@@ -2,16 +2,16 @@
 ###
 ### SVGrafZ: INSTALL
 ###
-### $Revision: 1.13 $
+### $Revision: 1.14 $
 ################################################################################
-$Id: INSTALL.txt,v 1.13 2005/02/11 17:09:51 mac Exp $
+$Id: INSTALL.txt,v 1.14 2005/02/11 17:17:49 mac Exp $
 
 
 REQUIREMENTS
 ------------
   - Zope-Version: tested 2.6+ should do fine
   - installed Zope-Products:
-      + PageTemplates
+      + PageTemplates (should be always there :-)
   - Python 2.2 or newer
 
 
@@ -41,7 +41,7 @@ TESTED ZOPE versions:
 
 INSTALL
 -------
-  As usual for a Zope Product.
+  As usual for a Zope Product: Copy to Products directory of your Zope Instance.
 
 CONFIGURE
 ---------
@@ -51,12 +51,14 @@ CONFIGURE
 DOCUMENTATION
 -------------
 
+- Get your first SVGrafZ-Diagram by reading doc/USING.txt.
 - Some documentation can be found under Zope-Help.
 - When you choose a diagramkind or a converter you get information about its
   capabilities.
 - Some docs are also in the doc directory and some (maybe old) german ones are
   in doc/german.
-- For all other documentation needs: Use the source, luke.
+- For all other documentation needs: Use the source, luke. (sorry for that)
+
 
 BUGS
 ----
