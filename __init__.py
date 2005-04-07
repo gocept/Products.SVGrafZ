@@ -2,7 +2,7 @@
 ################################################################################
 ## 
 ## SVGrafZ
-## Version: $Id: __init__.py,v 1.17 2005/02/16 09:06:52 mac Exp $
+## Version: $Id: __init__.py,v 1.18 2005/04/07 09:00:43 mac Exp $
 ##
 ################################################################################
 
@@ -68,34 +68,17 @@ def registerDiagramKinds(module):
 
 
 # Start BatikServer 
-def startBatikServer():
-    def connect_BatikServer(logtxt):
+def testConnectionToBatikServer():
+    try:
         conn = Telnet(config.SVGrafZ_BatikServer_Host,
                       config.SVGrafZ_BatikServer_Port)
         conn.write('HELLO BatikServer\n\n')
         res = conn.read_all()
         if res:
-            LOG("SVGrafZ", 0, logtxt)
+            LOG("SVGrafZ", 0, "Connecting to BatikServer ... success.")
         conn.close()
-        return res
-    
-    
-    # Start a new batik server blindly
-    LOG("SVGrafZ", 0, "Starting new BatikServer.")
-    if os.name == "posix":
-        pathsep = ":"
-    elif os.name == "nt":
-        pathsep = ";"
-    else:
-        raise AssertionError, "Unsupported Operating System: %s" % os.name
-    os.spawnl(os.P_NOWAIT, config.SVGrafZ_Java_Path, "-Djava.awt.headless==true", "-classpath", "%s%s%s" % (config.SVGrafZ_Batik_Path, pathsep, config.SVGrafZ_BatikServer), "batikServer", "-l", "batikserver.log")
-    sleep(3)
-
-    try:
-        res = connect_BatikServer("Connecting to BatikServer ... success.")
     except socket.error:
         res = None
-
     if res != '0':
-        LOG("SVGrafZ", 100, "Connecting to BatikServer ... failure. Maybe later.")
+        LOG("SVGrafZ", 100, "Connecting to BatikServer ... failure.")
 

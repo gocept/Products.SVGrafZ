@@ -3,7 +3,7 @@
 ## 
 ## SVGrafZ: Configure File
 ##
-## $Id: config.py,v 1.15 2005/02/28 11:18:57 mac Exp $
+## $Id: config.py,v 1.16 2005/04/07 09:00:43 mac Exp $
 ################################################################################
 
 # explanation of the variable meanings see customconfig.py.*
@@ -19,7 +19,6 @@ SVGrafZ_download_PDF = u"PDF-Dokument herunterladen"
 SVGrafZ_BatikServer_Host = u"localhost"
 SVGrafZ_BatikServer_Port = 54822
 
-SVGrafZ_BatikServer = u"set by customconfig.py"
 SVGrafZ_Java_Path = u"set by customconfig.py"
 SVGrafZ_Batik_Path = u"set by customconfig.py"
 

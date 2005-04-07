@@ -41,13 +41,6 @@ SVGrafZ_BatikServer_Host = u"localhost"
 ## port number to connect BatikServer on BatikServer host (default: 54822)
 SVGrafZ_BatikServer_Port = 54822
 
-## If BatikServer gets started from inside Zope (via
-## Products.SVGrafZ.startBatikServer) enter the path to
-## batikServer.class here..
-SVGrafZ_BatikServer = u"/usr/lib/BatikServer/" # linux example
-#SVGrafZ_BatikServer = ur"c:\Programme\BatikServer" # windows example
-
-
 
 ### Settings for batikRasterizer ###
 
