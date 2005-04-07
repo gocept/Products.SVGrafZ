@@ -1,7 +1,6 @@
 ReleaseHowTo
 ------------
 
-- in makeRelease hinter DIR die Versionsnummer ändern
 - version.txt updaten
 - in doc/CHANGES.txt Änderungen eintragen
 - cvs checkin der Änderungen

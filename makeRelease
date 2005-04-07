@@ -1,6 +1,6 @@
 #! /bin/bash
 
-DIR=SVGrafZ_0.22.5
+DIR=`cat version.txt | tr " " "_"`
 
 ##
 DOC=$DIR/doc

@@ -1,15 +1,23 @@
 ################################################################################
 ##
 ## SVGrafZ: CHANGES
-## Version: $Id: CHANGES.txt,v 1.7 2005/02/28 11:29:44 mac Exp $
+## Version: $Id: CHANGES.txt,v 1.8 2005/04/07 09:15:09 mac Exp $
 ##
 ################################################################################
+
+2005-04-07
+  - It is not possible any more to start BatikServer from inside Zope. (This
+    made big problems with Zope running as a service on Windows.)
+    Use BatikServer 0.3.0 (or higher) which runs as a daemon or service.
+  - Added possibility to check if BatikServer is running (see __init__.py)
+  - released minor version 0.22.6
+
 
 2005-02-28
   - Configuration is now easier: SVGrafZ comes with two examples for
     german and english. See doc/INSTALL.py how to use them.
   - some bug fixes
-  - released minor version 0.22.4
+  - released minor version 0.22.5
 
 2005-02-16
   - refactoring:
@@ -18,6 +26,7 @@
 
 2005-02-11
   - Added documentation.
+  - released minor version 0.22.4
 
 2004-07-29
   - generated PDFs now are no more displayed inline in InternetExplorer

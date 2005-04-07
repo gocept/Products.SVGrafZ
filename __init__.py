@@ -2,7 +2,7 @@
 ################################################################################
 ## 
 ## SVGrafZ
-## Version: $Id: __init__.py,v 1.18 2005/04/07 09:00:43 mac Exp $
+## Version: $Id: __init__.py,v 1.19 2005/04/07 09:15:09 mac Exp $
 ##
 ################################################################################
 
@@ -67,8 +67,11 @@ def registerDiagramKinds(module):
             pass
 
 
-# Start BatikServer 
 def testConnectionToBatikServer():
+    """Test if a connection to BatikServer is possible and greet it.
+
+    Errors are written into event.log.
+    """
     try:
         conn = Telnet(config.SVGrafZ_BatikServer_Host,
                       config.SVGrafZ_BatikServer_Port)
