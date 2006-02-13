@@ -1,7 +1,7 @@
 ################################################################################
 ###
 ### SVGrafZ: USAGE
-### $Id: USAGE.txt,v 1.2 2005/02/11 17:17:49 mac Exp $
+### $Id$
 ###
 ################################################################################
 
@@ -51,3 +51,26 @@ properties you can read about the converter and the format it
 converts.
 
 - The DiagramKind has also such a self description.
+
+
+Including SVGrafZ in PageTemplate
+---------------------------------
+
+To include the graph in a PageTemplate use:
+
+<div tal:replace="here/graph/html" />
+
+Where graph is the name of the SVGrafZ-Object.
+
+To when Zope should create an PNG image or PDF document instead of a
+SVG image you have to set SVGrafZ_PixelMode in request or session.
+Set it to 'png' for a PNG image or 'pdf' for a PDF document.
+
+e.g. for PNG set in session
+<div tal:define="dummy python: request.SESSION.set('SVGrafZ_PixelMode',
+                                                   'png')" />
+
+or to get a Link to the PDF (graph is the name of the SVGrafZ-Object):
+<a tal:attributes="href string:graph?SVGrafZ_PixelMode=pdf">PDF</a>
+
+
