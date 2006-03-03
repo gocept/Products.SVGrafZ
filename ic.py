@@ -3,7 +3,7 @@
 ## 
 ## SVGrafZ: InputConverters
 ##
-## $Id: ic.py,v 1.17 2005/02/16 09:06:52 mac Exp $
+## $Id$
 ################################################################################
 
 # Zope imports
@@ -33,7 +33,7 @@ class NoneConverter:
                 "The outer list is the list of the datasets. Each "
                 "dataset is displayed as a graph.",
                 "Each dataset is a list which contains list of a "
-                "lengh of two. These lists represent the pounts of the "
+                "lengh of two. These lists represent the points of the "
                 "displayed graph. The first value ist the x-coordinate "
                 "and the scecond one is the y-coordinate of the point in "
                 "the graph.",
