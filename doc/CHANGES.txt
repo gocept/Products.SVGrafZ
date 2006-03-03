@@ -5,6 +5,9 @@
 ##
 ################################################################################
 
+2006-03-03
+  - Fixed documentation in USAGE.txt
+
 2006-02-13
   - Added some documentation in USAGE.txt
 

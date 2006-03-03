@@ -58,7 +58,7 @@ Including SVGrafZ in PageTemplate
 
 To include the graph in a PageTemplate use:
 
-<div tal:replace="here/graph/html" />
+<div tal:replace="structure here/graph/html" />
 
 Where graph is the name of the SVGrafZ-Object.
 
