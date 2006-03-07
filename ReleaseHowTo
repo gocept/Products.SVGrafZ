@@ -3,9 +3,9 @@ ReleaseHowTo
 
 - version.txt updaten
 - in doc/CHANGES.txt Änderungen eintragen
-- cvs checkin der Änderungen
-- cvs tag SVGrafZ_release_x_yy_z_tag
+- svn checkin der Änderungen
+- svn copy . tags/SVGrafZ_release_x_yy_z_tag
 - ./makeRelease ausrufen
 - Dokumentation auf Webseite updaten 
-  http://wwwadmin.gocept.com/angebot/opensource/SVGrafZ/index_html/view
+  http://wwwadmin.gocept.com/open_source_software/SVGrafZ/index_html/view
 - NewsItem for SVGrafZ machen
