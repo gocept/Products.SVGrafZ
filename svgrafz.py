@@ -1,15 +1,16 @@
-# -*- coding: latin1 -*-
+# -*- coding: latin-1 -*-
 ################################################################################
 ## 
 ## SVGrafZ
 ##
-## $Id: svgrafz.py,v 1.37 2005/02/16 09:06:52 mac Exp $
+## $Id$
 ################################################################################
 
 # python imports
 import os
 import random
 from sys import exc_info
+from urllib import urlencode
 
 # Zope imports
 from OFS.SimpleItem import SimpleItem
@@ -440,18 +441,21 @@ class SVGrafZProduct(SimpleItem):
 
 
     security.declareProtected('View', 'html')
-    def html(self, REQUEST=None):
+    def html(self, REQUEST=None, params={}):
         """Get HTML-Text to embed Image."""
         converter, value = self._getOutputConverter()
-        url = self.absolute_url() + '?SVGrafZ_PixelMode=%s&amp;rnd=%s' % (
-            value,
-            self._v_rnd.random())
+        params_ = {"SVGrafZ_PixelMode": value,
+                   "rnd": self._v_rnd.random(),
+                   }
+        params_.update(params)
+        url = self.absolute_url() + '?' + \
+            urlencode(params_).replace("&", "&amp;")
         # rnd is to prevent caching of browser
         return converter.getHTML(url,
                                  self.height(),
                                  self.width())
 
-    security.declareProtected('View', 'html')
+    security.declareProtected('View', 'html2')
     def html2(self, REQUEST=None):
         """HTML-Text to embed Image + HTML-tags"""
         return '<HTML><HEAD><TITLE>%s</TITLE></HEAD><BODY>%s</BODY></HTML>'%(

@@ -5,6 +5,10 @@
 ##
 ################################################################################
 
+2006-06-13
+  - added a keyword parameter to SVGraphZProduct.html() to pass additional
+    query arguments
+
 2006-03-07
   -released minor version 0.22.7
 
