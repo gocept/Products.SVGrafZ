@@ -5,6 +5,10 @@
 ##
 ################################################################################
 
+2006-06-26
+  - avoid converting any values on one axis to float if one value on that axis
+    can't be converted
+
 2006-06-16
   - added a keyword parameter to SVGraphZProduct.html() to switch between
     absolute and relative URLs so graphs found by acquisition may be rendered

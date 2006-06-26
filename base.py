@@ -1,8 +1,8 @@
-# -*- coding: latin1 -*-
+# -*- coding: latin-1 -*-
 ################################################################################
 ## 
 ## SVGrafZ: Base
-## Version: $Id: base.py,v 1.29 2005/02/28 11:19:25 mac Exp $
+## Version: $Id$
 ##
 ################################################################################
 
@@ -195,22 +195,24 @@ class BaseGraph:
 
         allX = []
         allY = []
-        stringInX = stringInY = 0
+        allXfloat = []
+        allYfloat = []
+        stringInX = stringInY = False
         for dataset in self.data:
             for value in dataset:
-                try:
-                    valx = float(value[0])
-                except ValueError:
-                    valx = value[0]
-                    stringInX = 1
-                try:
-                    valy = float(value[1])
-                except ValueError:
-                    valy = value[1]
-                    stringInY = 1
+                allX.append(value[0])
+                if not stringInX:
+                    try:
+                        allXfloat.append(float(value[0]))
+                    except ValueError:
+                        stringInX = True
 
-                allX.append(valx)
-                allY.append(valy)
+                allY.append(value[1])
+                if not stringInY:
+                    try:
+                        allYfloat.append(float(value[1]))
+                    except ValueError:
+                        stringInY = True
 
         if stringInX:
             cr['realMaxX']  = None
@@ -224,6 +226,7 @@ class BaseGraph:
             cr['minX']      = self._compRoundedValMin(cr['realMinX'])
             if self.fillgaps:
                 cr['distValsX'] = range(cr['realMinX'], cr['realMaxX'] + 1)
+            allX = allXfloat
 
         if stringInY:
             cr['realMaxY']  = None
@@ -237,6 +240,7 @@ class BaseGraph:
             cr['minY']      = self._compRoundedValMin(cr['realMinY'])
             if self.fillgaps:
                 cr['distValsY'] = range(cr['realMinY'], cr['realMaxY'] + 1)
+            allY = allYfloat
 
         cr['allX'] = allX
         cr['allY'] = allY
