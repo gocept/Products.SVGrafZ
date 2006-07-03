@@ -5,6 +5,10 @@
 ##
 ################################################################################
 
+2006-07-03
+  - added possibility to give an URL for the graph which is different from its
+    absolute or relative URL
+
 2006-06-26
   - avoid converting any values on one axis to float if one value on that axis
     can't be converted

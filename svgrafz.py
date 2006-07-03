@@ -441,17 +441,25 @@ class SVGrafZProduct(SimpleItem):
 
 
     security.declareProtected('View', 'html')
-    def html(self, REQUEST=None, params={}, absolute=True):
-        """Get HTML-Text to embed Image."""
+    def html(self, REQUEST=None, params={}, absolute=True, url=""):
+        """Get HTML-Text to embed Image.
+
+        params   ... dict: {key: value} which is used as request parameters for
+                           graph
+        absolute ... bool: use an absolute url instead of a relative one
+        url      ... string: use this string as URL (if used, 'absolute' is not
+                             used as parameter)
+        """
         converter, value = self._getOutputConverter()
         params_ = {"SVGrafZ_PixelMode": value,
                    "rnd": self._v_rnd.random(),
                    }
         params_.update(params)
-        if absolute:
-            url = self.absolute_url()
-        else:
-            url = self.getId()
+        if not url:
+            if absolute:
+                url = self.absolute_url()
+            else:
+                url = self.getId()
         url += '?' + urlencode(params_).replace("&", "&amp;")
         # rnd is to prevent caching of browser
         return converter.getHTML(url,
