@@ -1,9 +1,9 @@
-# -*- coding: latin1 -*-
+# -*- coding: latin-1 -*-
 ################################################################################
 ## 
 ## SVGrafZ: BarGraphs
 ##
-## $Id: bar.py,v 1.22 2005/02/16 09:06:52 mac Exp $
+## $Id$
 ################################################################################
 
 from Products.SVGrafZ.interfaces import IDiagramKind, IDefaultDiagramKind
@@ -13,6 +13,8 @@ from Products.SVGrafZ import config
 
 class BarDiagram(DataOnXAxis):
     """Abstract superclass for concrete BarDiagram classes."""
+
+    downwardsYAxis = False
 
     def registration():
         """See IDiagramKind.registration()."""
@@ -45,6 +47,9 @@ class Simple(BarDiagram):
         res      = '<g id="data">\n'
 
         distY.sort()
+        if bool(self.downwardsYAxis):
+            distY.reverse()
+
         for i in range(self.numgraphs()):
             dataset     = dict([[x[1],x[0]] for x in self.data[i]]) # switch x,y
             for j in range(lenDistY):
@@ -94,3 +99,23 @@ class Simple(BarDiagram):
         self._change_computed_result('minX',
                                      self._compRoundedValMax(0.0))
 
+
+
+class Reverse(Simple):
+    """Simple BarGraph with multiple DataRows,
+                       without negative values,
+                       x-axis always starting at zero,
+                       y-axis sorted from top to bottom."""
+
+    __implements__ = IDiagramKind
+
+    name = "simple bar diagram with downwards-sorted y axis"
+
+    downwardsYAxis = True
+
+    def description():
+        """see interfaces.IDiagamKind.description
+        """
+        return Simple.description() + [
+            'Y-axis is sorted from top to bottom.']
+    description = staticmethod(description)
