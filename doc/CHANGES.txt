@@ -5,6 +5,9 @@
 ##
 ################################################################################
 
+2006-07-19
+  - released minor version 0.22.8
+
 2006-07-03
   - added possibility to give an URL for the graph which is different from its
     absolute or relative URL
@@ -23,7 +26,7 @@
     query arguments
 
 2006-03-07
-  -released minor version 0.22.7
+  - released minor version 0.22.7
 
 2006-03-03
   - Fixed documentation in USAGE.txt
