@@ -74,7 +74,7 @@ class BaseGraph:
 
     def hasLegend(self):
         "Has the graph a legend?"
-        return (type(self.legend) == type([])) and self.legend
+        return (type(self.legend) in (type([]), type({}))) and self.legend
 
     def getDom(self):
         self.xmldoc = Document()
