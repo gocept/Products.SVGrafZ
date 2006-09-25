@@ -5,8 +5,11 @@
 ##
 ################################################################################
 
+2006-09-25
+  - released minor version 0.22.9
+
 2006-07-21
-  - hasLegend-Method now also returns true, if the legend is a dict.
+  - Bugfix: hasLegend-Method now also returns true, if the legend is a dict.
 
 2006-07-19
   - released minor version 0.22.8
