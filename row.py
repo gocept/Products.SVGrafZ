@@ -3,7 +3,7 @@
 ## 
 ## SVGrafZ: RowGraphs
 ##
-## $Id: row.py,v 1.9 2005/02/16 09:06:52 mac Exp $
+## $Id$
 ################################################################################
 
 from Products.SVGrafZ.interfaces import IDiagramKind
@@ -133,7 +133,8 @@ class ABC_Analysis(Simple):
         "Draw the rows of the graph."
         allX  = self.allX()
         lenAllX = len(allX)
-        xBarFull = (self.gridboundx - self.gridbasex) / lenAllX
+        # xBarFull must be at least one also if there are more rows than pixels
+        xBarFull = ((self.gridboundx - self.gridbasex) / lenAllX) or 1
         xWidth   = 0.9 * xBarFull
         xSpace   = 0.1 / 2 * xBarFull
         res      = '<g id="data">\n'
