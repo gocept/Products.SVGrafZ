@@ -5,6 +5,12 @@
 ##
 ################################################################################
 
+2006-12-14 
+  - Bugfix: Whether there were in an ABC analysis diagramm more rows
+    to display than the diagram width in pixels than nothing was
+    displayed.
+  - released minor version 0.22.10
+
 2006-09-25
   - released minor version 0.22.9
 
