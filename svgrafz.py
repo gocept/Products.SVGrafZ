@@ -21,7 +21,10 @@ from ComputedAttribute import ComputedAttribute
 
 # Zope products 
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
-from Products.PageTemplates.TALES import CompilerError
+try:
+    from zope.tales.tales import CompilerError
+except ImportError:
+    from Products.PageTemplates.TALES import CompilerError
 
 # sibling imports
 from Products.SVGrafZ.interfaces import IInputConverterWithLegend
