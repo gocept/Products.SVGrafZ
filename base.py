@@ -206,12 +206,16 @@ class BaseGraph:
                         allXfloat.append(float(value[0]))
                     except ValueError:
                         stringInX = True
+                    if isinstance(value[0], basestring):
+                        stringInX = True
 
                 allY.append(value[1])
                 if not stringInY:
                     try:
                         allYfloat.append(float(value[1]))
                     except ValueError:
+                        stringInY = True
+                    if isinstance(value[1], basestring):
                         stringInY = True
 
         if stringInX:
