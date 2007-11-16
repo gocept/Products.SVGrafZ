@@ -42,7 +42,7 @@ cp doc/inputKonverter.txt $GDOC
 
 tar -czf $TGZ $DIR
 rm -rf $DIR
-md5sum $TGZ >$MD5
+gmd5sum $TGZ >$MD5
 
 scp $TGZ $MD5 mac@amy.gocept.com:/usr/local/ftp/SVGrafZ
 
