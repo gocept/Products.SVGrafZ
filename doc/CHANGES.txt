@@ -9,6 +9,7 @@
   - Bugfix: If the x- or y-values where strings which are convertable to float
     they would be handled like floats, but this failed later because they
     are no floats.
+  - released minor version 0.22.11
 
 2006-12-14 
   - Bugfix: Whether there were in an ABC analysis diagramm more rows
