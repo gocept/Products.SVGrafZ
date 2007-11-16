@@ -1,7 +1,7 @@
 ANALYSE:
 --------
 
-$Id: analyse.txt,v 1.1 2003/05/27 13:38:32 mac Exp $
+$Id$
 
 
 Name: SVGrafZ (sprich: 'eswiegrafs')

@@ -3,7 +3,7 @@
 ## 
 ## SVGrafZ: Configure File
 ##
-## $Id: config.py,v 1.16 2005/04/07 09:00:43 mac Exp $
+## $Id$
 ################################################################################
 
 # explanation of the variable meanings see customconfig.py.*

@@ -3,7 +3,7 @@
 ## 
 ## SVGrafZ: LineGraphs
 ##
-## $Id: line.py,v 1.16 2005/02/16 09:06:52 mac Exp $
+## $Id$
 ################################################################################
 
 from Products.SVGrafZ.interfaces import IDiagramKind

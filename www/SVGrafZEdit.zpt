@@ -1,7 +1,7 @@
 <!--
 Copyright (c) 2003-2005 gocept gmbh & co. kg. All rights reserved.
 See also LICENSE.txt
-$Id: SVGrafZEdit.zpt,v 1.15 2005/02/11 17:08:34 mac Exp $
+$Id$
 -->
 
   <h1 tal:replace="structure here/manage_page_header">Header</h1>

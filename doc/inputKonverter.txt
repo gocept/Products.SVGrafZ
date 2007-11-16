@@ -2,7 +2,7 @@
 ##
 ## Specification für InputDaten-Konverter (in von SVGrafZ erwartetes Format)
 ##
-## $Id: inputKonverter.txt,v 1.3 2003/06/13 08:43:22 mac Exp $
+## $Id$
 ################################################################################
 
 allgemein:

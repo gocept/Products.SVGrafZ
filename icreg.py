@@ -3,7 +3,7 @@
 ## 
 ## SVGrafZ: Registry of InputConverters
 ##
-## $Id: icreg.py,v 1.6 2005/02/16 09:06:52 mac Exp $
+## $Id$
 ################################################################################
 
 from Products.SVGrafZ.interfaces import \

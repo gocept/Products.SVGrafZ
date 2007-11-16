@@ -3,7 +3,7 @@
 ## 
 ## SVGrafZ_DiagramRegistry
 ##
-## Version: $Id: registry.py,v 1.12 2005/02/16 09:06:52 mac Exp $
+## Version: $Id$
 ################################################################################
 
 from Products.SVGrafZ.interfaces import \
