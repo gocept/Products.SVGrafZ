@@ -1,6 +1,6 @@
-# -*- coding: latin1 -*-
+# -*- coding: latin-1 -*-
 ################################################################################
-## 
+##
 ## SVGrafZ: Test of Class SimpleBarGraph
 ## Version: $Id$
 ##
@@ -64,7 +64,7 @@ class SimpleBarGraphTests(unittest.TestCase):
         for e in self.errors:
             g = Simple(data=e)
             self.failUnless(RuntimeError, g.compute)
- 
+
 def test_suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(SimpleBarGraphTests))
