@@ -1,5 +1,10 @@
-SVGrafZ - Zope Product to draw charts
-Copyright (C) 2003-2005  Michael Howitz, gocept gmbh & co. kg
+=========
+ SVGrafZ
+=========
+
+Zope Product to draw charts
+
+Copyright (C) 2003-2010  Michael Howitz, gocept gmbh & co. kg
 
 LICENSE:
   see doc/LICENSE.txt
@@ -21,11 +26,3 @@ BUGS:
 
 CONTACT:
   mh@gocept.com
-
-  http://www.gocept.com/angebot/opensource/SVGrafZ
-  
-  gocept gmbh & co. kg
-  z. Hd. Michael Howitz
-  Schalaunische Strasse 6
-  D-06366 Koethen/Anhalt
-  GERMANY
