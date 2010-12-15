@@ -1,9 +1,6 @@
-################################################################################
-###
-### SVGrafZ: USAGE
-### $Id$
-###
-################################################################################
+=======
+ Usage
+=======
 
 
 First SVGrafZ-Diagram
@@ -11,10 +8,10 @@ First SVGrafZ-Diagram
 
 - Create an SVGrafZ-Object via ZMI Add Menu.
 
-- Enter an id for your diagram. (If you make your diagram a default
-one it will ge a fixed name of "defaultSVGrafZ" and all SVGrafZ
-diagrams which are in folders below this one aquire its properties if
-you do not set them explicitly.)
+- Enter an id for your diagram. (If you make your diagram a default one it
+  will ge a fixed name of "defaultSVGrafZ" and all SVGrafZ diagrams which
+  are in folders below this one aquire its properties if you do not set them
+  explicitly.)
 
 - On the Propterties-Sheet enter the following values:
 
@@ -22,7 +19,7 @@ you do not set them explicitly.)
 
   - Set DiagramKind to "simple line diagram"
 
-  - On DataSource (TALES) enter "python:[[[1,2],[2,3]],[[1,3],[2,5]]]"
+  - On DataSource (TALES) enter ``python:[[[1,2],[2,3]],[[1,3],[2,5]]]``
 
   - Set "Axis Caption Rounded to Integer" to yes.
 
@@ -31,7 +28,7 @@ you do not set them explicitly.)
 - Klick on one of the view tabs.
 
 - You should see a graph containing two raising lines and the title
-you entered.
+  you entered.
 
 
 Next steps
@@ -40,15 +37,14 @@ Next steps
 - You may try other settings for the properties.
 
 - Some help is to be found in Zope Help (Help!-Link on
-SVGrafZ-Properties-Page)
+  SVGrafZ-Properties-Page)
 
 - The "DataSource (TALES)" must be a TALES-Expression, so you can also
-use a python script or a ZSQL Method to get the data for the graph
+  use a python script or a ZSQL Method to get the data for the graph
 
-- The input data must be in SVGrafZ-InputFormat or convertible using
-the given converter. When you select a converter and save the
-properties you can read about the converter and the format it
-converts.
+- The input data must be in SVGrafZ-InputFormat or convertible using the
+  given converter. When you select a converter and save the properties you
+  can read about the converter and the format it converts.
 
 - The DiagramKind has also such a self description.
 
@@ -56,9 +52,9 @@ converts.
 Including SVGrafZ in PageTemplate
 ---------------------------------
 
-To include the graph in a PageTemplate use:
+To include the graph in a PageTemplate use::
 
-<div tal:replace="structure here/graph/html" />
+  <div tal:replace="structure here/graph/html" />
 
 Where graph is the name of the SVGrafZ-Object.
 
@@ -66,11 +62,13 @@ To when Zope should create an PNG image or PDF document instead of a
 SVG image you have to set SVGrafZ_PixelMode in request or session.
 Set it to 'png' for a PNG image or 'pdf' for a PDF document.
 
-e.g. for PNG set in session
-<div tal:define="dummy python: request.SESSION.set('SVGrafZ_PixelMode',
-                                                   'png')" />
+e.g. for PNG set in session::
 
-or to get a Link to the PDF (graph is the name of the SVGrafZ-Object):
-<a tal:attributes="href string:graph?SVGrafZ_PixelMode=pdf">PDF</a>
+  <div tal:define="dummy python: request.SESSION.set('SVGrafZ_PixelMode',
+                                                     'png')" />
+
+or to get a Link to the PDF (graph is the name of the SVGrafZ-Object)::
+
+  <a tal:attributes="href string:graph?SVGrafZ_PixelMode=pdf">PDF</a>
 
 

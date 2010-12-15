@@ -1,76 +1,68 @@
-################################################################################
-###
-### SVGrafZ: INSTALL
-###
-### $Revision$
-################################################################################
-$Id$
+==============
+ Installation
+==============
 
-
-REQUIREMENTS
+Requirements
 ------------
-  - Zope-Version: tested 2.6+ should do fine
-  - installed Zope-Products:
-      + PageTemplates (should be always there :-)
+
+  - Zope-Version: tested 2.11+ should do fine
+
   - Python 2.2 or newer
 
 
-RECOMANDATIONS
+Recomandations
 --------------
  * For generating PNG-Images or PDF-Files for Browsers which have no SVG-Support
      resp. printers:
+
      + batikServer (which needs also batikRasterizer) -- batikServer is about
        3 times faster than batikRasterizer
        http://www.gocept.com/angebot/opensource/BatikServer
 
      + or only batikRasterizer from
-        batik-1.5beta5 or higher from http://xml.apache.org/batik/
+        batik-1.5 or higher from http://xml.apache.org/batik/
         (Binary distribution is fine.)
 
  * Tested Batik versions: 1.5beta5, 1.5, 1.5.1
 
-TESTED ZOPE versions:
----------------------
- 2.6-HEAD
- 2.7rc2
- 2.7.3
+Tested Zope versions
+--------------------
 
-INSTALLATION
+- 2.11.7
+
+Installation
 ------------
 
-  - As usual for a Zope Product: Copy SVGrafZ directory to Products
-    directory of your Zope Instance.
+  - As usual for a Zope product.
 
 
-CONFIGURE
+Configure
 ---------
 
-  - Copy either customconfig.py.english_example or
-    customconfig.py.german_example to customconfig.py.
+  - You might copy either ``customconfig.py.english_example`` or
+    ``customconfig.py.german_example`` to
+    ``src/Products/SVGrafZ/customconfig.py``.
 
-  - Edit customconfig.py.
-
-  - Restart Zope.
-
+  - Edit ``customconfig.py``.
 
 
-DOCUMENTATION
+Documentation
 -------------
 
-- Get your first SVGrafZ-Diagram by reading doc/USING.txt.
+- Get your first SVGrafZ-Diagram by reading `doc/USING.txt`.
 
-- Some documentation can be found under Zope-Help.
+- Some documentation can be found under Zope-Help. (Zope 2.11)
 
 - When you choose a diagramkind or a converter you get information about its
   capabilities.
 
 - Some docs are also in the doc directory and some (maybe old) german ones are
-  in doc/german.
+  in `doc/german`.
 
 - For all other documentation needs: Use the source, luke. (sorry for that)
 
 
-BUGS
+Bugs
 ----
 
 - Put them into http://bugs.gocept.com (Product: SVGrafZ)
