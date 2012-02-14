@@ -1,6 +1,6 @@
 # -*- coding: latin-1 -*-
 ################################################################################
-## 
+##
 ## SVGrafZ: BarGraphs
 ##
 ## $Id$
@@ -37,13 +37,19 @@ class Simple(BarDiagram):
 
     name = 'simple bar diagram'
 
+    def __init__(self, *args, **kw):
+        Reverse.__init__(self, *args, **kw)
+        self.gridbasex  = 3 # No room left of diagram
+
     def drawGraph(self):
         "Draw the Bars of the graph."
         distY    = self.distValsY()
         lenDistY = len(distY)
         yBarFull = (self.gridbasey - self.gridboundy) / lenDistY
-        yHeight  = 0.75  * yBarFull / self.numgraphs()
-        ySpace   = 0.125 * yBarFull
+        yHeight  = 0.7  * yBarFull / self.numgraphs()
+        ySpace   = 0.2 * yBarFull / self.numgraphs()
+        if self.numgraphs() == 1:
+            ySpace = 0
         res      = '<g id="data">\n'
 
         distY.sort()
@@ -58,8 +64,8 @@ class Simple(BarDiagram):
                     res += '<rect class="dataset%s" x="%s" y="%s" height="%s" width="%s" fill="%s"/>\n'\
                        % (i,
                           self.gridbasex,
-                          self.gridbasey-(j*yBarFull)-ySpace-(i+1)*yHeight,
-                          yHeight,
+                          self.gridbasey-(j*yBarFull)-(i+1)*(yHeight+ySpace),
+                          yHeight-ySpace,
                           self.xScale * val,
                           config.SVGrafZ_default_Color)
 ##                    res += '<line x1="5" x2="600" y1="%s" y2="%s" />'%(self.gridbasey-(j*yBarFull),
