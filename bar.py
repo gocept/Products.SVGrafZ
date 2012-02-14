@@ -38,7 +38,7 @@ class Simple(BarDiagram):
     name = 'simple bar diagram'
 
     def __init__(self, *args, **kw):
-        Reverse.__init__(self, *args, **kw)
+        BarDiagram.__init__(self, *args, **kw)
         self.gridbasex  = 3 # No room left of diagram
 
     def drawGraph(self):
