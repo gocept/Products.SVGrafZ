@@ -4,8 +4,5 @@ ReleaseHowTo
 - version.txt updaten
 - in doc/CHANGES.txt Änderungen eintragen
 - svn ci -m 'preparing release x.yy.z'
-- svn copy https://mac@svn.gocept.com/repos/gocept/SVGrafZ/trunk  https://mac@svn.gocept.com/repos/gocept/SVGrafZ/tags/x.yy.z
+- svn copy https://mac@code.gocept.com/svn/gocept/SVGrafZ/trunk https://mac@code.gocept.com/svn/gocept/SVGrafZ/tags/x.yy.z
 - ./makeRelease aufrufen
-- Dokumentation auf Webseite updaten 
-  http://wwwadmin.gocept.com/open_source_software/SVGrafZ/index_html/view
-- NewsItem for SVGrafZ machen

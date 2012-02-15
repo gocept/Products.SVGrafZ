@@ -6,7 +6,6 @@ DIR=`cat version.txt | tr " " "_"`
 DOC=$DIR/doc
 GDOC=$DOC/german
 TGZ=$DIR.tgz
-MD5=$TGZ.md5
 
 mkdir -p $DIR
 mkdir -p $DOC
@@ -42,8 +41,7 @@ cp doc/inputKonverter.txt $GDOC
 
 tar -czf $TGZ $DIR
 rm -rf $DIR
-gmd5sum $TGZ >$MD5
 
-scp $TGZ $MD5 mac@amy.gocept.com:/usr/local/ftp/SVGrafZ
+scp $TGZ download.gocept.com:/srv/www/download.gocept.com/htdocs/packages
 
-rm $TGZ $MD5
+rm $TGZ
